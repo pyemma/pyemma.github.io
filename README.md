@@ -1,3 +1,1 @@
-# The Plain v1
-
-A minimalist Jekyll theme, made with passion for simplicity by [Heiswayi Nrird](http://heiswayi.github.io). More details about it [**here**](http://heiswayi.github.io/the-plain.html); **theme description**, **screenshot**, **install instructions** and **demo link**.
+This blog is used to record whatever I have learned from books, blogs or other resources. It will contain some technology introduction articles and some solutions to the coding assignments I have done.
