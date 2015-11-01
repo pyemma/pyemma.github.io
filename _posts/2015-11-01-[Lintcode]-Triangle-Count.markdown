@@ -7,7 +7,7 @@ tags:
 ---
 > Given an array of integers, how many three numbers can be found in the array, so that we can build an triangle whose three edges length is the three numbers that we find?
 
-The most naive solution is to enumerate all triples and then check if they can construct a triangle or not. The time complexity would be $$O(n)$$. A better solution is to first sort the elements in the array, then enumerate the two shorter edge and use binary search to locate the position of the longest edge. The time complexity would be $$O(nlogn) + O(n^2logn) = O(n^2logn)$$.
+The most naive solution is to enumerate all triples and then check if they can construct a triangle or not. The time complexity would be $$O(n^3)$$. A better solution is to first sort the elements in the array, then enumerate the two shorter edge and use binary search to locate the position of the longest edge. The time complexity would be $$O(nlogn) + O(n^2logn) = O(n^2logn)$$.
 {% highlight ruby %}
 public int triangleCount(int S[]) {
     // write your code here
