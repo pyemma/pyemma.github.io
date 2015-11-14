@@ -6,6 +6,7 @@ tags:
 - interview
 ---
 The problem is available [here](https://www.hackerrank.com/challenges/cut-the-tree). The idea is to use postorder traversal of the tree to enumerate each possible remove of edge, and return the sum of the sub-tree to its parent node. This problem represent the tree as a acyclic undirected graph, which is a quite wired representation.
+
 {% highlight java %}
 public class Solution {
 
