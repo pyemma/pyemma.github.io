@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>/notes/lintcode-interval-sum-ii</loc>
+    <lastmod>2015-11-13T00:00:00-08:00</lastmod>
+  </url>
+  <url>
+    <loc>/notes/lintcode-count-of-smaller-number-before-itself</loc>
+    <lastmod>2015-11-13T00:00:00-08:00</lastmod>
+  </url>
+  <url>
+    <loc>/notes/hackerrank-cut-the-tree</loc>
+    <lastmod>2015-11-13T00:00:00-08:00</lastmod>
+  </url>
+  <url>
     <loc>/notes/simple-bloom-filter-implementation-part-2</loc>
     <lastmod>2015-11-12T00:00:00-08:00</lastmod>
   </url>
