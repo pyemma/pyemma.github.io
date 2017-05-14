@@ -2,21 +2,16 @@
 layout: default
 ---
 
-<section>
-	<ul>
+<div class="home">
 
-		{% for post in site.posts %}
+  <h1>Posts</h1>
 
-		<li>
-			<div class="post-date">
-				<span>{{ post.date | date: "%b %d, %Y" }}</span>
-			</div>
-			<div class="title">
-				<a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-			</div>
-		</li>
+  <ul class="posts">
+    {% for post in site.posts %}
+      <li><span class="post-date">{{ post.date | date: "%b %-d, %Y" }}</span> <a class="post-link" href="{{ post.url }}">{{ post.title }}</a></li>
+    {% endfor %}
+  </ul>
 
-		{% endfor %}
+  <p class="rss-subscribe">subscribe <a href="/feed.xml">via RSS</a></p>
 
-	</ul>
-</section>
+</div>

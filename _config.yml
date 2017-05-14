@@ -1,55 +1,6 @@
-# Site Info
-title:              "Move Fast and Be Bold"
-description:        "A new software engineer's blog"
-google_verify:      # Put your Google Verification here
-google_analytics:   # Put your Google Analytics code
-
-# Author Info
-author_name:        "Yang Pei"
-author_email:       pyemma1991@gmail.com
-author_gravatar:    483a9a64afff77f3c3d40c89212ec7bc # Gravatar md5 hash
-twitter_username:   pyemma
-
-# Site Settings
-baseurl:            "" # Base URL must end WITHOUT a slash, default: ""
-permalink:          /notes/:title # Post permalink
-timezone:           America/Los_Angeles # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-
-# Site Build
-highlighter:        pygments
-#markdown:           redcarpet
-#redcarpet:
-#    extensions:     ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data", "highlight", "footnotes"]
-markdown:           kramdown
-kramdown:
-    input:          GFM
-sass:
-    style:          :compressed
-
-# Other Params
-include:            [ "robots.txt" ]
-exclude:            [ "LICENSE", "README.md", "CNAME", "vendor", "Gemfile" ]
-gems:
-  - jekyll-sitemap
-
-compress_html:
-    clippings:      all
-    ingore:
-        envs:       [ "test" ]
-
-defaults:
-  -
-    scope:
-      path:         ""
-    values:
-      layout:       "null"
-  -
-    scope:
-      type:         "pages"
-    values:
-      layout:       "page"
-  -
-    scope:
-      type:         "posts"
-    values:
-      layout:       "post"
+name: Coding Monkey
+markdown: redcarpet
+highligher: 'pygments'
+description: "A coding monkey, who is passionate in algorithm and machine learning, hoping one day to become a coding machine."
+url: "pyemma.github.io"
+permalink: /posts/:title

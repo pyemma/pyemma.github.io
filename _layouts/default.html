@@ -1,31 +1,19 @@
----
-layout: compress
----
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
-	<head>
-		{% include head.html %}
-	</head>
+  {% include head.html %}
 
-	<body>
+    <body>
 
-		{% include header.html %}
+    {% include header.html %}
 
-		<main>
-			{{ content | replace: '&#8617;', '&#8617;&#xfe0e;' }}
-		</main>
+    <div class="page-content">
+      <div class="wrap">
+      {{ content }}
+      </div>
+    </div>
 
-		{% if page.path contains '_posts' %}
+    {% include footer.html %}
 
-			{% if content contains 'reversefootnote' %}
-				<aside class="note"></aside>
-				<script async src="{{site.baseurl}}/assets/footnotes.js"></script>
-			{% endif %}
-
-		{% endif %}
-
-	</body>
-
+    </body>
 </html>
