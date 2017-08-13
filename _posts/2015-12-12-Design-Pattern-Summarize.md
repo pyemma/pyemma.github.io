@@ -1,3 +1,7 @@
+---
+layout: post
+title: "Design Pattern Summarization"
+---
 # Design Pattern Summarization
 
 **Strategy Pattern**

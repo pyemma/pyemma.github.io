@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
       <head>
         <meta charset="utf-8">
@@ -17,6 +18,31 @@
     <body>
 
     <header class="site-header">
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+  </script>
+
+  <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+          var all = MathJax.Hub.getAllJax(), i;
+          for(i=0; i < all.length; i += 1) {
+              all[i].SourceElement().parentNode.className += ' has-jax';
+          }
+      });
+  </script>
 
   <div class="wrap">
 
@@ -44,6 +70,7 @@
 
 </header>
 
+
     <div class="page-content">
       <div class="wrap">
       <div class="post">
@@ -54,19 +81,17 @@
   </header>
 
   <article class="post-content">
-  <p>Recently, I&#39;m studying some basic concepts in distributed system. The materials I&#39;m using is <a href="http://www.amazon.com/Distributed-Systems-Concepts-Design-5th/dp/0132143011/ref=sr_1_3?ie=UTF8&amp;qid=1446522616&amp;sr=8-3&amp;keywords=distributed+system">Distributed Systems Concepts</a>. I know that simply reading the book is far not enough: the concepts are abstract, but we need to handle partical problem. So I decided to do some simple projects, using some existing technoloy, to better understand these concepts and how to apply them to real world. These projects can be very very simple, and I&#39;m definitely sure that there are better production available, but building something by your own hands can give you a feeling of achievement, no matter it is perfect or not, and this would be the biggest impluse for you to move on.</p>
+  <p>Recently, I’m studying some basic concepts in distributed system. The materials I’m using is <a href="http://www.amazon.com/Distributed-Systems-Concepts-Design-5th/dp/0132143011/ref=sr_1_3?ie=UTF8&amp;qid=1446522616&amp;sr=8-3&amp;keywords=distributed+system">Distributed Systems Concepts</a>. I know that simply reading the book is far not enough: the concepts are abstract, but we need to handle partical problem. So I decided to do some simple projects, using some existing technoloy, to better understand these concepts and how to apply them to real world. These projects can be very very simple, and I’m definitely sure that there are better production available, but building something by your own hands can give you a feeling of achievement, no matter it is perfect or not, and this would be the biggest impluse for you to move on.</p>
 
-<h3>Introduction</h3>
+<h3 id="introduction">Introduction</h3>
+<p>The first project is to implement a simple <a href="https://en.wikipedia.org/wiki/Bloom_filter">bloom filter</a>. Bloom filter is an advanced data structure mainly used for membership test (check if a given element is in or not). The advantage of adopting bloom filter is lower collision and lower space consumption. The traditional implementation of bloom filter is to use a bit vector. When we try to add a new element, we apply several different hash function on the element to generate several keys and use these keys as indexes to set the corresponding position in the bit vector to <code class="highlighter-rouge">true</code>. When we try to check if a given element is in it or not, we apply the same hash functions to generate a set of keys and we check if each position in the bit vector is <code class="highlighter-rouge">true</code> or not: only when all positions are marked as true, this element is considered to be in the set. The problem with bloom filter is that it can have false positive, but this kinds of error is relatively small. Typacilly, I support two kinds of operations: <code class="highlighter-rouge">add</code> and <code class="highlighter-rouge">contain</code>. <code class="highlighter-rouge">add</code> is used for adding an element and <code class="highlighter-rouge">contain</code> is used for checking existence.</p>
 
-<p>The first project is to implement a simple <a href="https://en.wikipedia.org/wiki/Bloom_filter">bloom filter</a>. Bloom filter is an advanced data structure mainly used for membership test (check if a given element is in or not). The advantage of adopting bloom filter is lower collision and lower space consumption. The traditional implementation of bloom filter is to use a bit vector. When we try to add a new element, we apply several different hash function on the element to generate several keys and use these keys as indexes to set the corresponding position in the bit vector to <code>true</code>. When we try to check if a given element is in it or not, we apply the same hash functions to generate a set of keys and we check if each position in the bit vector is <code>true</code> or not: only when all positions are marked as true, this element is considered to be in the set. The problem with bloom filter is that it can have false positive, but this kinds of error is relatively small. Typacilly, I support two kinds of operations: <code>add</code> and <code>contain</code>. <code>add</code> is used for adding an element and <code>contain</code> is used for checking existence. </p>
+<p>Currently, there is still nothing related to <strong>distributed system</strong>. What it happens is here: I make this bloom filter a distributed service. We can run a bloom filter service on a machine, and call the functions <code class="highlighter-rouge">add</code> and <code class="highlighter-rouge">contain</code> from another machine, or we can run the service in one process and call the functions from another process within the same machine. In both side, the caller could not directly access the content in bloom filter, and thus the functions have to be remotely invoked. I use <strong>Thrift</strong> to implement this part. Thrift is a set of software stack that help implement cross language PRC (remote procedure call): it contains IDL (interface definition language) to help define data structure to be used and the interface of the service; it can also generate necessary code such as mapping data type to a specific language’s supported data type accroding to your configuration file.</p>
 
-<p>Currently, there is still nothing related to <strong>distributed system</strong>. What it happens is here: I make this bloom filter a distributed service. We can run a bloom filter service on a machine, and call the functions <code>add</code> and <code>contain</code> from another machine, or we can run the service in one process and call the functions from another process within the same machine. In both side, the caller could not directly access the content in bloom filter, and thus the functions have to be remotely invoked. I use <strong>Thrift</strong> to implement this part. Thrift is a set of software stack that help implement cross language PRC (remote procedure call): it contains IDL (interface definition language) to help define data structure to be used and the interface of the service; it can also generate necessary code such as mapping data type to a specific language&#39;s supported data type accroding to your configuration file.</p>
-
-<h3>Implementation details</h3>
-
+<h3 id="implementation-details">Implementation details</h3>
 <p>The project can be found <a href="https://github.com/pyemma/BloomFilter">here</a>. Now, I will explain some details of the implementation.</p>
 
-<p>The most impotant thing in <code>BloomFilter&lt;T&gt;</code> class is that I use a list of <code>Hashable&lt;T&gt;</code> object to represent the hash functions. <code>Hashable&lt;T&gt;</code> is an interface with only one function <code>hash(T t)</code>, which takes one type of element as input and return an integer. We can design different kinds of concert class to support different kinds of hash function for different types, e.g. I create a StringHash class which can hash a string data. We can add different kinds of <code>Hashable</code> on the same type <code>T</code> to this list. This kinds of design is called <strong>Strategy Pattern</strong>. It utilizes composition to reduce the cohesion of the code.</p>
+<p>The most impotant thing in <code class="highlighter-rouge">BloomFilter&lt;T&gt;</code> class is that I use a list of <code class="highlighter-rouge">Hashable&lt;T&gt;</code> object to represent the hash functions. <code class="highlighter-rouge">Hashable&lt;T&gt;</code> is an interface with only one function <code class="highlighter-rouge">hash(T t)</code>, which takes one type of element as input and return an integer. We can design different kinds of concert class to support different kinds of hash function for different types, e.g. I create a StringHash class which can hash a string data. We can add different kinds of <code class="highlighter-rouge">Hashable</code> on the same type <code class="highlighter-rouge">T</code> to this list. This kinds of design is called <strong>Strategy Pattern</strong>. It utilizes composition to reduce the cohesion of the code.</p>
 
 <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BloomFilter</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Hashable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span> <span class="n">hashFunctions</span><span class="o">;</span>
@@ -86,12 +111,14 @@
 }</code></pre></figure>
 
 <p>The following part is modified from the online tutorial <a href="http://thrift-tutorial.readthedocs.org/en/latest/usage-example.html">here</a>.
-After run thrift with command <code>thrift -r -gen java bloomfilterservice.thrift</code>, it will create a class called BloomFilterService.class in a folder called gen-java. It contains all necessary code for implementing RPC. The things we need to do is:
-1. Implement the core logical to actually provide the service
-2. Implement server code to run the service
-3. Implement client code to call the service</p>
+After run thrift with command <code class="highlighter-rouge">thrift -r -gen java bloomfilterservice.thrift</code>, it will create a class called BloomFilterService.class in a folder called gen-java. It contains all necessary code for implementing RPC. The things we need to do is:</p>
+<ol>
+  <li>Implement the core logical to actually provide the service</li>
+  <li>Implement server code to run the service</li>
+  <li>Implement client code to call the service</li>
+</ol>
 
-<p>I create a class called BloomFilterHandler.java to handle the actual logic of bloom filter service. In this handler, it contains a <code>BloomFilter</code> object as its data member and it implements an interface provided in BloomFilterService.java, called <code>BloomFilterService.Iface</code>. This interface contains the provided to API can be called by clients. An instance would be passed to a processor introduced later to provide the service logic.</p>
+<p>I create a class called BloomFilterHandler.java to handle the actual logic of bloom filter service. In this handler, it contains a <code class="highlighter-rouge">BloomFilter</code> object as its data member and it implements an interface provided in BloomFilterService.java, called <code class="highlighter-rouge">BloomFilterService.Iface</code>. This interface contains the provided to API can be called by clients. An instance would be passed to a processor introduced later to provide the service logic.</p>
 
 <figure class="highlight"><pre><code class="language-java" data-lang="java"> 
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">BloomFilterHandler</span> <span class="kd">implements</span> <span class="n">BloomFilterService</span><span class="o">.</span><span class="na">Iface</span> <span class="o">{</span>
@@ -117,7 +144,7 @@ After run thrift with command <code>thrift -r -gen java bloomfilterservice.thrif
     <span class="o">}</span>
 <span class="o">}</span></code></pre></figure>
 
-<p>The next thing is the server code. In the server code, I create a list of <code>Hashable</code> object to be passed into the bloom filter in the <code>BloomFilterHandler</code>. Then we create a <code>processor</code> also defined in <code>BloomFilterService</code> and use the <code>handler</code> we created to initialize it. The rule or <code>processor</code> is to read in the parameters, call the <code>handler</code> provided and then return the output. We create a <code>server</code> provided by Thrift and use a <code>transport</code> object to initialize the server. The <code>server</code> would response for dispatch the call to corresponding function and the <code>transport</code> object would response for read and write to wire.</p>
+<p>The next thing is the server code. In the server code, I create a list of <code class="highlighter-rouge">Hashable</code> object to be passed into the bloom filter in the <code class="highlighter-rouge">BloomFilterHandler</code>. Then we create a <code class="highlighter-rouge">processor</code> also defined in <code class="highlighter-rouge">BloomFilterService</code> and use the <code class="highlighter-rouge">handler</code> we created to initialize it. The rule or <code class="highlighter-rouge">processor</code> is to read in the parameters, call the <code class="highlighter-rouge">handler</code> provided and then return the output. We create a <code class="highlighter-rouge">server</code> provided by Thrift and use a <code class="highlighter-rouge">transport</code> object to initialize the server. The <code class="highlighter-rouge">server</code> would response for dispatch the call to corresponding function and the <code class="highlighter-rouge">transport</code> object would response for read and write to wire.</p>
 
 <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BloomFilterServer</span> <span class="o">{</span>
 
@@ -158,7 +185,7 @@ After run thrift with command <code>thrift -r -gen java bloomfilterservice.thrif
     <span class="o">}</span>    
 <span class="o">}</span></code></pre></figure>
 
-<p>The client code is relative simple. We also use an object provided in the <code>BloomFilterService</code> called <code>BloomFilterService.Client</code>. We create a such object by providing a <code>transport</code> object, determining how data would be written onto wire, and a <code>protocol</code> object, determining how data would be serialized and deserialzied. Then use the <code>client</code> object, we can call the API provided by the service.</p>
+<p>The client code is relative simple. We also use an object provided in the <code class="highlighter-rouge">BloomFilterService</code> called <code class="highlighter-rouge">BloomFilterService.Client</code>. We create a such object by providing a <code class="highlighter-rouge">transport</code> object, determining how data would be written onto wire, and a <code class="highlighter-rouge">protocol</code> object, determining how data would be serialized and deserialzied. Then use the <code class="highlighter-rouge">client</code> object, we can call the API provided by the service.</p>
 
 <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BloomFilterClient</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span> <span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
@@ -187,18 +214,18 @@ After run thrift with command <code>thrift -r -gen java bloomfilterservice.thrif
     <span class="o">}</span>
 <span class="o">}</span></code></pre></figure>
 
-<h3>Notes</h3>
+<h3 id="notes">Notes</h3>
+<p>There are typically five components in RPC: client stub procedure, communication module, dispatcher, server stub procedure and service procedure. The mapping of Thrift components to these five components can be viewed as:</p>
+<ol>
+  <li>client stub procedure =&gt; BloomFilterService.Client</li>
+  <li>communication module =&gt; server and transport object</li>
+  <li>dispatcher =&gt; server object</li>
+  <li>server stub procedure =&gt; BloomFilterService.Processor</li>
+  <li>service procedure =&gt; BloomFilterHandler</li>
+</ol>
 
-<p>There are typically five components in RPC: client stub procedure, communication module, dispatcher, server stub procedure and service procedure. The mapping of Thrift components to these five components can be viewed as:
-1. client stub procedure =&gt; BloomFilterService.Client
-2. communication module =&gt; server and transport object
-3. dispatcher =&gt; server object
-4. server stub procedure =&gt; BloomFilterService.Processor
-5. service procedure =&gt; BloomFilterHandler</p>
-
-<h3>Next step</h3>
-
-<p>The current version bloom filter only use a very simple data type <code>String</code>. The next is to use a more complex data type to test if it works or</p>
+<h3 id="next-step">Next step</h3>
+<p>The current version bloom filter only use a very simple data type <code class="highlighter-rouge">String</code>. The next is to use a more complex data type to test if it works or</p>
 
   </article>
 

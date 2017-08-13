@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
       <head>
         <meta charset="utf-8">
@@ -17,6 +18,31 @@
     <body>
 
     <header class="site-header">
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+  </script>
+
+  <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+          var all = MathJax.Hub.getAllJax(), i;
+          for(i=0; i < all.length; i += 1) {
+              all[i].SourceElement().parentNode.className += ' has-jax';
+          }
+      });
+  </script>
 
   <div class="wrap">
 
@@ -44,6 +70,7 @@
 
 </header>
 
+
     <div class="page-content">
       <div class="wrap">
       <div class="post">
@@ -56,10 +83,10 @@
   <p>Some projects I have worked on</p>
 
 <ul>
-<li><a href="https://github.com/pyemma/deeplearning">CS231N Assignment</a>: The calss assignments of Stanford CS231N, where you are asked to impelement CNN/RNN on your own.</li>
-<li><a href="https://github.com/pyemma/leetcode">LeetCode</a>: Interview solutions in JAVA.</li>
-<li><a href="https://github.com/pyemma/lego">Lego</a>: Learning by doing, my personal machine learning lib.</li>
-<li><a href="https://github.com/pyemma/Yeap">Yeap</a>: A calss project, where we made a mini clone of Yelp :)</li>
+  <li><a href="https://github.com/pyemma/deeplearning">CS231N Assignment</a>: The calss assignments of Stanford CS231N, where you are asked to impelement CNN/RNN on your own.</li>
+  <li><a href="https://github.com/pyemma/leetcode">LeetCode</a>: Interview solutions in JAVA.</li>
+  <li><a href="https://github.com/pyemma/lego">Lego</a>: Learning by doing, my personal machine learning lib.</li>
+  <li><a href="https://github.com/pyemma/Yeap">Yeap</a>: A calss project, where we made a mini clone of Yelp :)</li>
 </ul>
 
   </article>

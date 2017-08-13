@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
       <head>
         <meta charset="utf-8">
@@ -17,6 +18,31 @@
     <body>
 
     <header class="site-header">
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+  </script>
+
+  <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+          var all = MathJax.Hub.getAllJax(), i;
+          for(i=0; i < all.length; i += 1) {
+              all[i].SourceElement().parentNode.className += ' has-jax';
+          }
+      });
+  </script>
 
   <div class="wrap">
 
@@ -44,6 +70,7 @@
 
 </header>
 
+
     <div class="page-content">
       <div class="wrap">
       <div class="post">
@@ -55,9 +82,11 @@
 
   <article class="post-content">
   <blockquote>
-<p>Given an integer array in the construct method, implement two methods query(start, end) and modify(index, value):
-* For query(start, end), return the sum from index start to index end in the given array.
-* For modify(index, value), modify the number in the given index to value</p>
+  <p>Given an integer array in the construct method, implement two methods query(start, end) and modify(index, value):</p>
+  <ul>
+    <li>For query(start, end), return the sum from index start to index end in the given array.</li>
+    <li>For modify(index, value), modify the number in the given index to value</li>
+  </ul>
 </blockquote>
 
 <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Solution</span> <span class="o">{</span>
@@ -145,6 +174,7 @@
         <span class="o">}</span>
     <span class="o">}</span>
 <span class="o">}</span></code></pre></figure>
+
 
   </article>
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
       <head>
         <meta charset="utf-8">
@@ -17,6 +18,31 @@
     <body>
 
     <header class="site-header">
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+  </script>
+
+  <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+          var all = MathJax.Hub.getAllJax(), i;
+          for(i=0; i < all.length; i += 1) {
+              all[i].SourceElement().parentNode.className += ' has-jax';
+          }
+      });
+  </script>
 
   <div class="wrap">
 
@@ -44,6 +70,7 @@
 
 </header>
 
+
     <div class="page-content">
       <div class="wrap">
       <div class="post">
@@ -55,7 +82,7 @@
 
   <article class="post-content">
   <blockquote>
-<p>Give you an integer array (index from 0 to n-1, where n is the size of this array, value from 0 to 10000) . For each element <code>Ai</code> in the array, count the number of element before this element <code>Ai</code> is smaller than it and return count number array.</p>
+  <p>Give you an integer array (index from 0 to n-1, where n is the size of this array, value from 0 to 10000) . For each element <code class="highlighter-rouge">Ai</code> in the array, count the number of element before this element <code class="highlighter-rouge">Ai</code> is smaller than it and return count number array.</p>
 </blockquote>
 
 <p>In this problem, we need to first build an big enough (0 to 10000) segment tree which hold the count of elements in each range. Then as we go along the array, we update the segment tree and query the segment tree. At first, I was trying to <strong>adding</strong> new tree node into this segment tree, but this method does not work, since it needs to <strong>rearrange</strong> the segment tree to make it stay in a consistent state. So the better way is to initialize a big enough tree first and then modify on it.</p>
@@ -132,6 +159,7 @@
         <span class="o">}</span>
     <span class="o">}</span>
 <span class="o">}</span></code></pre></figure>
+
 
   </article>
 

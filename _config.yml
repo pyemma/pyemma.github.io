@@ -1,5 +1,6 @@
 name: Coding Monkey
-markdown: redcarpet
+# markdown: redcarpet
+markdown: kramdown
 highligher: 'pygments'
 description: "A coding monkey, who is passionate in algorithm and machine learning, hoping one day to become a coding machine."
 url: "pyemma.github.io"

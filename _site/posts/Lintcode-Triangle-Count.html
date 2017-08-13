@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
       <head>
         <meta charset="utf-8">
@@ -17,6 +18,31 @@
     <body>
 
     <header class="site-header">
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+  </script>
+
+  <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+          var all = MathJax.Hub.getAllJax(), i;
+          for(i=0; i < all.length; i += 1) {
+              all[i].SourceElement().parentNode.className += ' has-jax';
+          }
+      });
+  </script>
 
   <div class="wrap">
 
@@ -44,6 +70,7 @@
 
 </header>
 
+
     <div class="page-content">
       <div class="wrap">
       <div class="post">
@@ -55,10 +82,10 @@
 
   <article class="post-content">
   <blockquote>
-<p>Given an array of integers, how many three numbers can be found in the array, so that we can build an triangle whose three edges length is the three numbers that we find?</p>
+  <p>Given an array of integers, how many three numbers can be found in the array, so that we can build an triangle whose three edges length is the three numbers that we find?</p>
 </blockquote>
 
-<p>The most naive solution is to enumerate all triples and then check if they can construct a triangle or not. The time complexity would be $$O(n^3)$$. A better solution is to first sort the elements in the array, then enumerate the two shorter edge and use binary search to locate the position of the longest edge. The time complexity would be $$O(nlogn) + O(n^2logn) = O(n^2logn)$$.</p>
+<p>The most naive solution is to enumerate all triples and then check if they can construct a triangle or not. The time complexity would be <script type="math/tex">O(n^3)</script>. A better solution is to first sort the elements in the array, then enumerate the two shorter edge and use binary search to locate the position of the longest edge. The time complexity would be <script type="math/tex">O(nlogn) + O(n^2logn) = O(n^2logn)</script>.</p>
 
 <figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="kp">public</span> <span class="n">int</span> <span class="n">triangleCount</span><span class="p">(</span><span class="n">int</span> <span class="no">S</span><span class="p">[])</span> <span class="p">{</span>
     <span class="sr">//</span> <span class="n">write</span> <span class="n">your</span> <span class="n">code</span> <span class="n">here</span>
