@@ -7,6 +7,161 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Reinforcement Learning Lesson 1</title>
+        <description>&lt;p&gt;This is the first post for the series reinforcement learning. The main source for the entier series is &lt;a href=&quot;http://www0.cs.ucl.ac.uk/staff/D.Silver/web/Teaching.html&quot;&gt;here&lt;/a&gt;. The post mainly focus on summarizing the content introduced in the video and slides, as well as some of my own understanding. Any feedback is welcomed.&lt;/p&gt;
+
+&lt;p&gt;In this post, we will talk about Markov Decision Process (MDP), which is a pretty fundmental model in many reinforcement learning cases.&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Allmost all RL problems can be formalized as MDP&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&quot;markov-process&quot;&gt;Markov Process&lt;/h4&gt;
+&lt;p&gt;In order to learn about MDP, we need to first know what is Markov Process (MP). This introduces the following two concept:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Markov Property&lt;/li&gt;
+  &lt;li&gt;State Transition Matrix&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In the most simple word, &lt;strong&gt;Markov Property&lt;/strong&gt; means that the future state is independent on the history given the current state. It can be formulized using following statement:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbb{P}[S_{t+1}|S_{t}] = \mathbb{P}[S_{t+1}|S_1, ..., S_t]&lt;/script&gt;
+
+&lt;p&gt;This means that the current state contains all they necessary information for the future, and we can discard all history information.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;State Transition Matrix&lt;/strong&gt; contains the probability we go from on state to another one. Given a state $s$ and its succssor state $s^\prime$, the probability from $s$ goes to $s^\prime$ is given by&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;P_{ss\prime} = \mathbb{P}[S_{t+1}=s\prime|S_{t}=s]&lt;/script&gt;
+
+&lt;p&gt;And the State Transition Matrix is by&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+P =
+\begin{Bmatrix}
+P_{11} &amp; ... &amp; P_{1n} \\
+\vdots &amp; ... &amp; \vdots \\
+P_{n1} &amp; ... &amp; P_{nn}
+\end{Bmatrix} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;From the above two concept, we can notice two things and these are also the constraint for MDP:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;The state is finite (otherwise the definition of State Transition Matrix is problematic)&lt;/li&gt;
+  &lt;li&gt;The enviornment is fully observable, no hidden state exists&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We can obtain a defination for MP as a tuple $&amp;lt;S, P&amp;gt;$:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;$S$ is a finite state set&lt;/li&gt;
+  &lt;li&gt;$P$ is a state tranitition matrix&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;An example of MP:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/assets/mdp.png&quot; alt=&quot;Markov Process&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;markov-reward-process&quot;&gt;Markov Reward Process&lt;/h4&gt;
+&lt;p&gt;Markov Process combined with values, then we have Markov Reward Process (MRP), defined by a tuple $&amp;lt;S, P, R, \gamma&amp;gt;$:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;$S$ is a finite state set&lt;/li&gt;
+  &lt;li&gt;$P$ is a state transition matrix&lt;/li&gt;
+  &lt;li&gt;$R$ is a reward function,
+&lt;script type=&quot;math/tex&quot;&gt;R_{s} = \mathbb{E}[R_{t+1}|S_{t}=s]&lt;/script&gt;&lt;/li&gt;
+  &lt;li&gt;$\gamma$ is a discounting ratio&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;As we have introduced reward, we can measure how many rewards we can get in each state. We define return $G_t$ as the discounted rewards we can get from timestamp $t$, and state value function $v(s)$ the expected return we can get starting from state $s$:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;G_t = R_{t+1} + \gamma R_{t+2} + ... = \sum_{k=1}^{\infty}\gamma^{k}R_{t+k+1}&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;v(s) = \mathbb{E}[G_t|S_t=s]&lt;/script&gt;
+
+&lt;p&gt;Note that the return is accumulated with discounting. This is important is:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Avoid infity loop that might exist in MDP (e.g. self loop)&lt;/li&gt;
+  &lt;li&gt;Model the uncertenity about the future&lt;/li&gt;
+  &lt;li&gt;From common sense, humman prefer immediate reward than long term ones&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We can breakdown the state value function into two parts, immediate and long term. Using recurse, we have the Bellman Equation for MRP:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;v(s) = \mathbb{E}[R_{t+1} + \gamma v(S_{t+1})|S_t=s]&lt;/script&gt;
+
+&lt;p&gt;By expanding the above exception and using sum to replace exception operator, we have:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;v(s) = R_s + \gamma\sum_{s^\prime\in S}P_{ss^\prime}v(s^\prime)&lt;/script&gt;
+
+&lt;h4 id=&quot;markov-decision-process&quot;&gt;Markov Decision Process&lt;/h4&gt;
+&lt;p&gt;Adding the actions we can make among the state, we finally have the defination for MDP, which is $&amp;lt;S, A, P, R, \gamma&amp;gt;$$:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;$S$ is a finite state set&lt;/li&gt;
+  &lt;li&gt;$A$ is a finite action set&lt;/li&gt;
+  &lt;li&gt;$P$ is a state transition matrix,
+&lt;script type=&quot;math/tex&quot;&gt;P_{ss^\prime}^a = \mathbb{P}[S_{t+1}=s^\prime|S_{t}=s, A_t=a]&lt;/script&gt;&lt;/li&gt;
+  &lt;li&gt;$R$ is a reward function,
+&lt;script type=&quot;math/tex&quot;&gt;R_{s}^a = \mathbb{E}[R_{t+1}|S_{t}=s, A_t=a]&lt;/script&gt;&lt;/li&gt;
+  &lt;li&gt;$\gamma$ is a discounting ratio&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Notice the change on the state transition matrix, before we only have a single matrix, and now we have one for each action $a$ (we can think of in the pervious case, we have only single action). Under different action $a$, the transition probability can be different between the two state. We can now regard the new state transition matrix as a tensor with three dimension.&lt;/p&gt;
+
+&lt;p&gt;As we have actions to now, we need to make decsion how to take actions. A &lt;strong&gt;policy&lt;/strong&gt; is a distribution over actions given a state:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\pi(a|s) = \mathbb{P}[A_t=a|S_t=s]&lt;/script&gt;
+
+&lt;p&gt;A policy fully determines how an agent would act, and it does not depend on the history. Similar to MRP, we have state value function for MDP as the expected return statring from $s$, following the policy $\pi$:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_{\pi}(s) = \mathbb{E}_{\pi}[G_t|S_t=s]&lt;/script&gt;
+
+&lt;p&gt;We can also define an action value function, which is the expected return we get starting from state $s$, taking action $a$ and following policy $\pi$:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_{\pi}(s, a) = \mathbb{E}_{\pi}[G_t|S_t=s, A_t=a]&lt;/script&gt;
+
+&lt;p&gt;These two functions have relationship and can be transfromed to each other easily, to get state value function, we can summation over all the action value function for the action that state we could get, weight by the policy:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_\pi(s) = \sum_{a\in A}\pi(a|s)q_{\pi}(s, a)&lt;/script&gt;
+
+&lt;p&gt;And the action value function can be obtained by summation overall all state we can transation to, weighted by the state transition matrix:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_\pi(s, a) = R_s^a + \gamma\sum_{s^\prime}P_{ss^\prime}^a v(s^\prime)&lt;/script&gt;
+
+&lt;p&gt;Comebine the above equations, we can obtain the Bellman Exception Equation as:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_\pi(s) = \sum_{a\in A}\pi(a|s)(R_s^a + \gamma\sum_{s^\prime}P_{ss^\prime}^a v(s^\prime))&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_\pi(s, a) = R_s^a + \gamma\sum_{s^\prime}P_{ss^\prime}^a \sum_{a\in A}\pi(a|s^\prime)q_{\pi}(s^\prime, a)&lt;/script&gt;
+
+&lt;p&gt;Given a MDP, if we want to solve it (to know what’s the best performance we can get, e.g. What’s the maximum rewards we can get in the terminate state), we need to find the optimal value function for it. As long as we have obtain the optimal value function, we can compose an optimal policy easily:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\pi_{*}(a|s) =
+\begin{cases}
+1,  &amp; \text{if $a = argmax_{a\in A} q(s, a)$} \\
+0, &amp; \text{otherwise}
+\end{cases} %]]&gt;&lt;/script&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;There exists an optimal policy $\pi_{*}$ that is better than or equal to all other policy for any MDP. All optimal policy achieve optimal state value function and optimal action value function&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Following this policy, we can change our Bellman Exception Equation to Bellman Optimality Equation:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_*(s)=argmax_{a}(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^a v_*(s^\prime))&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_*(s, a)=R_s^a + \gamma\sum_{s^\prime\in S} argmax_{a} P_{ss^\prime}^a v_*(s^\prime)&lt;/script&gt;
+
+&lt;p&gt;Bellman Optimality Equation is non-linear, there is no closed form solution for it. However, we can solve it by some iterative methods (will introduce in later lectures):&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Policy Iteration&lt;/li&gt;
+  &lt;li&gt;Value Iteration&lt;/li&gt;
+  &lt;li&gt;Q-learning&lt;/li&gt;
+  &lt;li&gt;Sarsa&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Sun, 13 Aug 2017 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000//posts/Reinforcement-Learning-Lesson-1</link>
+        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lesson-1</guid>
+      </item>
+    
+      <item>
         <title>Math Equation</title>
         <description>&lt;p&gt;Use &lt;code class=&quot;highlighter-rouge&quot;&gt;$$&lt;/code&gt; to write math equation&lt;/p&gt;
 
@@ -42,7 +197,7 @@ n/2,  &amp; \text{if $n$ is even} \\
 3n+1, &amp; \text{if $n$ is odd}
 \end{cases} %]]&gt;&lt;/script&gt;
 </description>
-        <pubDate>Sat, 12 Aug 2017 00:00:00 -0700</pubDate>
+        <pubDate>Sat, 12 Aug 2017 00:00:00 +0800</pubDate>
         <link>http://localhost:4000//posts/Math-Equation</link>
         <guid isPermaLink="true">http://localhost:4000//posts/Math-Equation</guid>
       </item>
@@ -108,7 +263,7 @@ Class should be open for extension but close for modification. Adding feature by
 &lt;p&gt;##Concurrency
 I have no experience in terms of writing concurrency code. I think I will learn this part recently and have another blog to summarize some basic concepts.&lt;/p&gt;
 </description>
-        <pubDate>Sun, 07 Feb 2016 00:00:00 -0800</pubDate>
+        <pubDate>Sun, 07 Feb 2016 00:00:00 +0800</pubDate>
         <link>http://localhost:4000//posts/Clean-Code-Summarize</link>
         <guid isPermaLink="true">http://localhost:4000//posts/Clean-Code-Summarize</guid>
       </item>
@@ -136,7 +291,7 @@ Attaches additional responsibilities to an object dynamically.  Decorators provi
 [Image: file:///-/blob/eDDAAAJA4tZ/CZDVKsQpkr5esaaJQoFwgg]Java I/O use decorator pattern to add additional functionality.
 [Image: file:///-/blob/eDDAAAJA4tZ/SIGPLcv8wUOvYcMxmfma8Q]&lt;/p&gt;
 </description>
-        <pubDate>Sat, 12 Dec 2015 00:00:00 -0800</pubDate>
+        <pubDate>Sat, 12 Dec 2015 00:00:00 +0800</pubDate>
         <link>http://localhost:4000//posts/Design-Pattern-Summarize</link>
         <guid isPermaLink="true">http://localhost:4000//posts/Design-Pattern-Summarize</guid>
       </item>
@@ -175,7 +330,7 @@ Attaches additional responsibilities to an object dynamically.  Decorators provi
   &lt;p&gt;Similar Problem: Still two person A and B, they take values from a given list (all positive values) in turns. The first person who make the total sum above a given target can win.&lt;/p&gt;
 &lt;/blockquote&gt;
 </description>
-        <pubDate>Sat, 14 Nov 2015 00:00:00 -0800</pubDate>
+        <pubDate>Sat, 14 Nov 2015 00:00:00 +0800</pubDate>
         <link>http://localhost:4000//posts/CodeFights-NumberGameVI</link>
         <guid isPermaLink="true">http://localhost:4000//posts/CodeFights-NumberGameVI</guid>
       </item>
@@ -277,7 +432,7 @@ Attaches additional responsibilities to an object dynamically.  Decorators provi
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 </description>
-        <pubDate>Fri, 13 Nov 2015 00:00:00 -0800</pubDate>
+        <pubDate>Fri, 13 Nov 2015 00:00:00 +0800</pubDate>
         <link>http://localhost:4000//posts/Lintcode-Interval-Sum-II</link>
         <guid isPermaLink="true">http://localhost:4000//posts/Lintcode-Interval-Sum-II</guid>
       </item>
@@ -364,7 +519,7 @@ Attaches additional responsibilities to an object dynamically.  Decorators provi
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 </description>
-        <pubDate>Fri, 13 Nov 2015 00:00:00 -0800</pubDate>
+        <pubDate>Fri, 13 Nov 2015 00:00:00 +0800</pubDate>
         <link>http://localhost:4000//posts/Lintcode-Count-of-Smaller-Number-before-itself</link>
         <guid isPermaLink="true">http://localhost:4000//posts/Lintcode-Count-of-Smaller-Number-before-itself</guid>
       </item>
@@ -433,7 +588,7 @@ Attaches additional responsibilities to an object dynamically.  Decorators provi
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 </description>
-        <pubDate>Fri, 13 Nov 2015 00:00:00 -0800</pubDate>
+        <pubDate>Fri, 13 Nov 2015 00:00:00 +0800</pubDate>
         <link>http://localhost:4000//posts/Hackerrank-Cut-the-Tree</link>
         <guid isPermaLink="true">http://localhost:4000//posts/Hackerrank-Cut-the-Tree</guid>
       </item>
@@ -506,7 +661,7 @@ service BloomFilterService
   &lt;li&gt;Add some performance measure code.&lt;/li&gt;
 &lt;/ul&gt;
 </description>
-        <pubDate>Thu, 12 Nov 2015 00:00:00 -0800</pubDate>
+        <pubDate>Thu, 12 Nov 2015 00:00:00 +0800</pubDate>
         <link>http://localhost:4000//posts/Simple-Bloom-Filter-Implementation-Part-2</link>
         <guid isPermaLink="true">http://localhost:4000//posts/Simple-Bloom-Filter-Implementation-Part-2</guid>
       </item>
@@ -548,162 +703,9 @@ service BloomFilterService
   &lt;li&gt;Show wherein the author is uninformed/misinformed/illogical/incomplete.&lt;/li&gt;
 &lt;/ol&gt;
 </description>
-        <pubDate>Thu, 12 Nov 2015 00:00:00 -0800</pubDate>
+        <pubDate>Thu, 12 Nov 2015 00:00:00 +0800</pubDate>
         <link>http://localhost:4000//posts/How-To-Read-A-Book</link>
         <guid isPermaLink="true">http://localhost:4000//posts/How-To-Read-A-Book</guid>
-      </item>
-    
-      <item>
-        <title>Simple Bloom Filter Implementation Part I</title>
-        <description>&lt;p&gt;Recently, I’m studying some basic concepts in distributed system. The materials I’m using is &lt;a href=&quot;http://www.amazon.com/Distributed-Systems-Concepts-Design-5th/dp/0132143011/ref=sr_1_3?ie=UTF8&amp;amp;qid=1446522616&amp;amp;sr=8-3&amp;amp;keywords=distributed+system&quot;&gt;Distributed Systems Concepts&lt;/a&gt;. I know that simply reading the book is far not enough: the concepts are abstract, but we need to handle partical problem. So I decided to do some simple projects, using some existing technoloy, to better understand these concepts and how to apply them to real world. These projects can be very very simple, and I’m definitely sure that there are better production available, but building something by your own hands can give you a feeling of achievement, no matter it is perfect or not, and this would be the biggest impluse for you to move on.&lt;/p&gt;
-
-&lt;h3 id=&quot;introduction&quot;&gt;Introduction&lt;/h3&gt;
-&lt;p&gt;The first project is to implement a simple &lt;a href=&quot;https://en.wikipedia.org/wiki/Bloom_filter&quot;&gt;bloom filter&lt;/a&gt;. Bloom filter is an advanced data structure mainly used for membership test (check if a given element is in or not). The advantage of adopting bloom filter is lower collision and lower space consumption. The traditional implementation of bloom filter is to use a bit vector. When we try to add a new element, we apply several different hash function on the element to generate several keys and use these keys as indexes to set the corresponding position in the bit vector to &lt;code class=&quot;highlighter-rouge&quot;&gt;true&lt;/code&gt;. When we try to check if a given element is in it or not, we apply the same hash functions to generate a set of keys and we check if each position in the bit vector is &lt;code class=&quot;highlighter-rouge&quot;&gt;true&lt;/code&gt; or not: only when all positions are marked as true, this element is considered to be in the set. The problem with bloom filter is that it can have false positive, but this kinds of error is relatively small. Typacilly, I support two kinds of operations: &lt;code class=&quot;highlighter-rouge&quot;&gt;add&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;contain&lt;/code&gt;. &lt;code class=&quot;highlighter-rouge&quot;&gt;add&lt;/code&gt; is used for adding an element and &lt;code class=&quot;highlighter-rouge&quot;&gt;contain&lt;/code&gt; is used for checking existence.&lt;/p&gt;
-
-&lt;p&gt;Currently, there is still nothing related to &lt;strong&gt;distributed system&lt;/strong&gt;. What it happens is here: I make this bloom filter a distributed service. We can run a bloom filter service on a machine, and call the functions &lt;code class=&quot;highlighter-rouge&quot;&gt;add&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;contain&lt;/code&gt; from another machine, or we can run the service in one process and call the functions from another process within the same machine. In both side, the caller could not directly access the content in bloom filter, and thus the functions have to be remotely invoked. I use &lt;strong&gt;Thrift&lt;/strong&gt; to implement this part. Thrift is a set of software stack that help implement cross language PRC (remote procedure call): it contains IDL (interface definition language) to help define data structure to be used and the interface of the service; it can also generate necessary code such as mapping data type to a specific language’s supported data type accroding to your configuration file.&lt;/p&gt;
-
-&lt;h3 id=&quot;implementation-details&quot;&gt;Implementation details&lt;/h3&gt;
-&lt;p&gt;The project can be found &lt;a href=&quot;https://github.com/pyemma/BloomFilter&quot;&gt;here&lt;/a&gt;. Now, I will explain some details of the implementation.&lt;/p&gt;
-
-&lt;p&gt;The most impotant thing in &lt;code class=&quot;highlighter-rouge&quot;&gt;BloomFilter&amp;lt;T&amp;gt;&lt;/code&gt; class is that I use a list of &lt;code class=&quot;highlighter-rouge&quot;&gt;Hashable&amp;lt;T&amp;gt;&lt;/code&gt; object to represent the hash functions. &lt;code class=&quot;highlighter-rouge&quot;&gt;Hashable&amp;lt;T&amp;gt;&lt;/code&gt; is an interface with only one function &lt;code class=&quot;highlighter-rouge&quot;&gt;hash(T t)&lt;/code&gt;, which takes one type of element as input and return an integer. We can design different kinds of concert class to support different kinds of hash function for different types, e.g. I create a StringHash class which can hash a string data. We can add different kinds of &lt;code class=&quot;highlighter-rouge&quot;&gt;Hashable&lt;/code&gt; on the same type &lt;code class=&quot;highlighter-rouge&quot;&gt;T&lt;/code&gt; to this list. This kinds of design is called &lt;strong&gt;Strategy Pattern&lt;/strong&gt;. It utilizes composition to reduce the cohesion of the code.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;BloomFilter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Hashable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hashFunctions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Hashable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// return a integer by applying some method on the object&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;The definition of the service is quite simple, it is only some simple Thrift statement.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;service BloomFilterService 
-{
-    void add(1: string str);
-    bool contain(1: string str);
-}&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;The following part is modified from the online tutorial &lt;a href=&quot;http://thrift-tutorial.readthedocs.org/en/latest/usage-example.html&quot;&gt;here&lt;/a&gt;.
-After run thrift with command &lt;code class=&quot;highlighter-rouge&quot;&gt;thrift -r -gen java bloomfilterservice.thrift&lt;/code&gt;, it will create a class called BloomFilterService.class in a folder called gen-java. It contains all necessary code for implementing RPC. The things we need to do is:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;Implement the core logical to actually provide the service&lt;/li&gt;
-  &lt;li&gt;Implement server code to run the service&lt;/li&gt;
-  &lt;li&gt;Implement client code to call the service&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;I create a class called BloomFilterHandler.java to handle the actual logic of bloom filter service. In this handler, it contains a &lt;code class=&quot;highlighter-rouge&quot;&gt;BloomFilter&lt;/code&gt; object as its data member and it implements an interface provided in BloomFilterService.java, called &lt;code class=&quot;highlighter-rouge&quot;&gt;BloomFilterService.Iface&lt;/code&gt;. This interface contains the provided to API can be called by clients. An instance would be passed to a processor introduced later to provide the service logic.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt; 
-&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;BloomFilterHandler&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BloomFilterService&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;Iface&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BloomFilter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BloomFilterHandler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;bf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BloomFilter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BloomFilterHandler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Hashable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;functions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;bf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BloomFilter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;functions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;throws&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TException&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Operation: add &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;bf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;contain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;throws&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TException&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Operation: contain &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;contain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;The next thing is the server code. In the server code, I create a list of &lt;code class=&quot;highlighter-rouge&quot;&gt;Hashable&lt;/code&gt; object to be passed into the bloom filter in the &lt;code class=&quot;highlighter-rouge&quot;&gt;BloomFilterHandler&lt;/code&gt;. Then we create a &lt;code class=&quot;highlighter-rouge&quot;&gt;processor&lt;/code&gt; also defined in &lt;code class=&quot;highlighter-rouge&quot;&gt;BloomFilterService&lt;/code&gt; and use the &lt;code class=&quot;highlighter-rouge&quot;&gt;handler&lt;/code&gt; we created to initialize it. The rule or &lt;code class=&quot;highlighter-rouge&quot;&gt;processor&lt;/code&gt; is to read in the parameters, call the &lt;code class=&quot;highlighter-rouge&quot;&gt;handler&lt;/code&gt; provided and then return the output. We create a &lt;code class=&quot;highlighter-rouge&quot;&gt;server&lt;/code&gt; provided by Thrift and use a &lt;code class=&quot;highlighter-rouge&quot;&gt;transport&lt;/code&gt; object to initialize the server. The &lt;code class=&quot;highlighter-rouge&quot;&gt;server&lt;/code&gt; would response for dispatch the call to corresponding function and the &lt;code class=&quot;highlighter-rouge&quot;&gt;transport&lt;/code&gt; object would response for read and write to wire.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;BloomFilterServer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BloomFilterService&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;Processor&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;processor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Hashable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;functions&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ArrayList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Hashable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;();&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;functions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StringHash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;17&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;functions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StringHash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;23&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;functions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StringHash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;31&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;BloomFilterHandler&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;handler&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BloomFilterHandler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;functions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;processor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BloomFilterService&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;Processor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;handler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-
-            &lt;span class=&quot;n&quot;&gt;Runnable&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;simple&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Runnable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                    &lt;span class=&quot;n&quot;&gt;simple&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;processor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-                &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;};&lt;/span&gt;
-
-            &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Thread&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;simple&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;printStackTrace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;simple&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BloomFilterService&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;Processor&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;processor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;TServerTransport&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;serverTransport&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TServerSocket&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9090&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-              &lt;span class=&quot;n&quot;&gt;TServer&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;server&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TSimpleServer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;serverTransport&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;processor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;processor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-
-              &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Starting the simple server...&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-              &lt;span class=&quot;n&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;serve&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;printStackTrace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;    
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;The client code is relative simple. We also use an object provided in the &lt;code class=&quot;highlighter-rouge&quot;&gt;BloomFilterService&lt;/code&gt; called &lt;code class=&quot;highlighter-rouge&quot;&gt;BloomFilterService.Client&lt;/code&gt;. We create a such object by providing a &lt;code class=&quot;highlighter-rouge&quot;&gt;transport&lt;/code&gt; object, determining how data would be written onto wire, and a &lt;code class=&quot;highlighter-rouge&quot;&gt;protocol&lt;/code&gt; object, determining how data would be serialized and deserialzied. Then use the &lt;code class=&quot;highlighter-rouge&quot;&gt;client&lt;/code&gt; object, we can call the API provided by the service.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;BloomFilterClient&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;TTransport&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;transport&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-           
-            &lt;span class=&quot;n&quot;&gt;transport&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TSocket&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;localhost&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;9090&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;transport&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;open&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-
-            &lt;span class=&quot;n&quot;&gt;TProtocol&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;protocol&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TBinaryProtocol&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;transport&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;BloomFilterService&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;Client&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BloomFilterService&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;Client&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;protocol&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-
-            &lt;span class=&quot;n&quot;&gt;perform&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-
-            &lt;span class=&quot;n&quot;&gt;transport&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;close&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-          &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;printStackTrace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; 
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;perform&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BloomFilterService&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;Client&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;throws&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TException&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;apple&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;banana&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Is apple there? &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;contain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;apple&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Is pineapple there? &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;contain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;pineapple&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;notes&quot;&gt;Notes&lt;/h3&gt;
-&lt;p&gt;There are typically five components in RPC: client stub procedure, communication module, dispatcher, server stub procedure and service procedure. The mapping of Thrift components to these five components can be viewed as:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;client stub procedure =&amp;gt; BloomFilterService.Client&lt;/li&gt;
-  &lt;li&gt;communication module =&amp;gt; server and transport object&lt;/li&gt;
-  &lt;li&gt;dispatcher =&amp;gt; server object&lt;/li&gt;
-  &lt;li&gt;server stub procedure =&amp;gt; BloomFilterService.Processor&lt;/li&gt;
-  &lt;li&gt;service procedure =&amp;gt; BloomFilterHandler&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&quot;next-step&quot;&gt;Next step&lt;/h3&gt;
-&lt;p&gt;The current version bloom filter only use a very simple data type &lt;code class=&quot;highlighter-rouge&quot;&gt;String&lt;/code&gt;. The next is to use a more complex data type to test if it works or&lt;/p&gt;
-</description>
-        <pubDate>Mon, 02 Nov 2015 00:00:00 -0800</pubDate>
-        <link>http://localhost:4000//posts/Simple-Bloom-Filter-Implementation-Part-I</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Simple-Bloom-Filter-Implementation-Part-I</guid>
       </item>
     
   </channel>
