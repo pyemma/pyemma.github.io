@@ -56,7 +56,7 @@ P_{n1} &amp; ... &amp; P_{nn}
 
 &lt;p&gt;An example of MP:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://localhost:4000/assets/mdp.png&quot; alt=&quot;Markov Process&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/mdp.png&quot; alt=&quot;Markov Process&quot; /&gt;&lt;/p&gt;
 
 &lt;h4 id=&quot;markov-reward-process&quot;&gt;Markov Reward Process&lt;/h4&gt;
 &lt;p&gt;Markov Process combined with values, then we have Markov Reward Process (MRP), defined by a tuple $&amp;lt;S, P, R, \gamma&amp;gt;$:&lt;/p&gt;

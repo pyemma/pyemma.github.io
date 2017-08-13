@@ -43,7 +43,7 @@ We can obtain a defination for MP as a tuple $<S, P>$:
 
 An example of MP:
 
-![Markov Process]({{site.url}}/assets/mdp.png)
+![Markov Process](/assets/mdp.png)
 
 #### Markov Reward Process
 Markov Process combined with values, then we have Markov Reward Process (MRP), defined by a tuple $<S, P, R, \gamma>$:
