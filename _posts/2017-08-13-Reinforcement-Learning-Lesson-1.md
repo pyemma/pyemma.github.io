@@ -1,6 +1,6 @@
 ---
 layout: post
-titile: "Reinforcement Learning Lession 1"
+title: "Reinforcement Learning Lession 1"
 ---
 This is the first post for the series reinforcement learning. The main source for the entier series is [here](http://www0.cs.ucl.ac.uk/staff/D.Silver/web/Teaching.html). The post mainly focus on summarizing the content introduced in the video and slides, as well as some of my own understanding. Any feedback is welcomed.
 
@@ -68,7 +68,7 @@ We can breakdown the state value function into two parts, immediate and long ter
 
 $$v(s) = \mathbb{E}[R_{t+1} + \gamma v(S_{t+1})|S_t=s]$$
 
-By expanding the above exception and using sum to replace exception operator, we have:
+By expanding the above expectation and using sum to replace expectation operator, we have:
 
 $$v(s) = R_s + \gamma\sum_{s^\prime\in S}P_{ss^\prime}v(s^\prime)$$
 
@@ -124,7 +124,7 @@ $$
 
 Following this policy, we can change our Bellman Exception Equation to Bellman Optimality Equation:
 
-$$v_*(s)=argmax_{a}(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^a v_*(s^\prime))$$
+$$v_*(s)=max_{a}(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^a v_*(s^\prime))$$
 
 $$q_*(s, a)=R_s^a + \gamma\sum_{s^\prime\in S} argmax_{a} P_{ss^\prime}^a v_*(s^\prime)$$
 

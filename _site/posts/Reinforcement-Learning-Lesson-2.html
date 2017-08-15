@@ -5,10 +5,10 @@
       <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Coding Monkey</title>
+        <title>Reinforcement Learning Lesson 2</title>
         <meta name="viewport" content="width=device-width">
         <meta name="description" content="A coding monkey, who is passionate in algorithm and machine learning, hoping one day to become a coding machine." />
-        <link rel="canonical" href="http://localhost:4000//" />
+        <link rel="canonical" href="http://localhost:4000/posts/Reinforcement-Learning-Lesson-2/" />
 
         <!-- Custom CSS -->
         <link rel="stylesheet" href="/css/main.css">
@@ -73,45 +73,77 @@
 
     <div class="page-content">
       <div class="wrap">
-      <div class="home">
+      <div class="post">
 
-  <h1>Posts</h1>
+  <header class="post-header">
+    <h1>Reinforcement Learning Lesson 2</h1>
+    <p class="meta">Aug 14, 2017</p>
+  </header>
 
-  <ul class="posts">
-    
-      <li><span class="post-date">Aug 14, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lesson-2">Reinforcement Learning Lesson 2</a></li>
-    
-      <li><span class="post-date">Aug 13, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lesson-1">Reinforcement Learning Lession 1</a></li>
-    
-      <li><span class="post-date">Aug 12, 2017</span> <a class="post-link" href="/posts/Math-Equation">Math Equation</a></li>
-    
-      <li><span class="post-date">Feb 7, 2016</span> <a class="post-link" href="/posts/Clean-Code-Summarize">Clean Code Summarize</a></li>
-    
-      <li><span class="post-date">Dec 12, 2015</span> <a class="post-link" href="/posts/Design-Pattern-Summarize">Design Pattern Summarization</a></li>
-    
-      <li><span class="post-date">Nov 14, 2015</span> <a class="post-link" href="/posts/CodeFights-NumberGameVI">[CodeFights] NumberGameVI</a></li>
-    
-      <li><span class="post-date">Nov 13, 2015</span> <a class="post-link" href="/posts/Lintcode-Interval-Sum-II">[Lintcode] Interval Sum II</a></li>
-    
-      <li><span class="post-date">Nov 13, 2015</span> <a class="post-link" href="/posts/Lintcode-Count-of-Smaller-Number-before-itself">[Lintcode] Count of Smaller Number before itself</a></li>
-    
-      <li><span class="post-date">Nov 13, 2015</span> <a class="post-link" href="/posts/Hackerrank-Cut-the-Tree">[Hackerrank] Cut the tree</a></li>
-    
-      <li><span class="post-date">Nov 12, 2015</span> <a class="post-link" href="/posts/Simple-Bloom-Filter-Implementation-Part-2">Simple Bloom Filter Implementation Part 2</a></li>
-    
-      <li><span class="post-date">Nov 12, 2015</span> <a class="post-link" href="/posts/How-To-Read-A-Book">How To Read A Book</a></li>
-    
-      <li><span class="post-date">Nov 2, 2015</span> <a class="post-link" href="/posts/Simple-Bloom-Filter-Implementation-Part-I">Simple Bloom Filter Implementation Part I</a></li>
-    
-      <li><span class="post-date">Nov 1, 2015</span> <a class="post-link" href="/posts/Lintcode-Triangle-Count">[Lintcode] Triangle Count</a></li>
-    
-      <li><span class="post-date">Nov 1, 2015</span> <a class="post-link" href="/posts/Ant-Cheat-Sheet">Ant Cheat Sheet</a></li>
-    
-  </ul>
+  <article class="post-content">
+  <p>In the last post, we introduced the defination of Markov Decision Process and Bellman Equation. Now, if you are given the states $S$, action $A$, transation matrix $P$, rewards $R$ and discounting ratio $\gamma$, how would you come up with a solution for this MDP? i.e. how would you calculate the value function and come up with an optimal policy for it?</p>
 
-  <p class="rss-subscribe">subscribe <a href="/feed.xml">via RSS</a></p>
+<h4 id="value-iteration">Value Iteration</h4>
+<p>This first method is to apply the Bellman Optimality Equation repeatedly. The idea is that we continue update the best estimation for each state value function, and once all $s^\prime$ reachable from $s$ achieve its optimal value function, then $v(s)$ can also achieve the optimal value. The algorithm is as follow:</p>
+<ul>
+  <li>Initiate $v(s)$ to 0 for all $s\in S$</li>
+  <li>Apply
+<script type="math/tex">v(s) = max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av(s))</script>
+to update each state value function to a better estimation</li>
+</ul>
+
+<p>Why this algorithm guarantee to find the optimal state value funtion (thus optimal policy)? Its because the Bellman Optimality Equation can be regarded as a contraction. We can image in a value function space, where its dimension is $|S|$, each point in this space determine a value state function. A contraction is an operation that can make two points in this space closer.</p>
+<blockquote>
+  <p>(Contraction Mapping Theory) For any metric space that is complete under an operator that is a contraction, the operator will converge to a unique fixed point.</p>
+</blockquote>
+
+<p>According to the defination of optimal value function, we know that $Tv^\ast=v^\ast$, here $T$ is the Bellman Optimality Operator(Equation) and $v^\ast$ is the optimal value function, and thus $v^\ast$ is the unique fixed point for the value function space. Because if an optimal value function could be further reduce to another value function, it means that it’s not the optimal one, and hence causing contradiction. By applying the operator repeatedly, we are bringing our estimated value function closer and closer to the fixed point, thus we are achieving the optimal value function gradually.</p>
+
+<p>To prove Bellman Optimality Operator is a contraction, we can have:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align}
+|Tv_1(s) - Tv_2(s)|
+& = |max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
+& \le max_a|(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - (R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
+& = max_a|\gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s) - \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s)| \\
+& \le \gamma max_s|v_1(s) - v_2(s)|\\
+\end{align} %]]></script>
+
+<h4 id="policy-iteration">Policy Iteration</h4>
+<p>Compared with value iteration which focuse on computing the optimal value function. Policay iteration evaluate a policy and improve the policy gradually, and finally converge to the optimal policy, the algorithm is as follow:</p>
+<ul>
+  <li>Initialize a random policy $\pi$</li>
+  <li>Apply Bellman Expectation Equation to all state $s$ to get the current value function $v^\pi$</li>
+  <li>Improve the current policy greedily by:</li>
+</ul>
+
+<script type="math/tex; mode=display">\pi^\prime = argmax_a (R_s^a + \gamma \sum_{s^\prime\in S}P_{ss^\prime}^av^\pi(s))</script>
+
+<ul>
+  <li>Repeat until the policy does not change</li>
+</ul>
+
+<p>Why policy iteration guarantee to converge to optimal policy? First, we can also proof that the Bellman Expectation Operator(Equation) is also a contraction. Thus given a policy $\pi$, we know that the value function will converge to $v^\pi$. Then, we only need to prove the policy can be improved by our greedy selection.</p>
+
+<p>Suppose a deterministic policy $a = \pi(s)$. We can improve it by acting greedily by</p>
+
+<script type="math/tex; mode=display">\pi^\prime(s) = argmax_aq_\pi(s, a)</script>
+
+<p>according to the current action value function(remember the relationship between action value function and state value fuction, they can be transfromed each other). It can improve the value function for any state</p>
+
+<script type="math/tex; mode=display">q_\pi(s, \pi^\prime(s)) = argmax_a q_\pi(s, a) \ge q_\pi(s, \pi(s)) = v_\pi(s)</script>
+
+<p>And thus we can improves the value function $v_{\pi^\prime}(s) \ge v_\pi(s)$ (this can be proved by expanding the return and recursively subsititue the above function).</p>
+
+<p>Policy iteratoin is pretty similar to Expectation Maximization (EM). In EM, we first evaluate the data using the current parameters, and then update the parameters to maximize the quantity.</p>
+
+<p>More detailed proof is available <a href="http://www.cs.cmu.edu/afs/cs/academic/class/15780-s16/www/slides/mdps.pdf">here</a></p>
+
+  </article>
 
 </div>
+
       </div>
     </div>
 

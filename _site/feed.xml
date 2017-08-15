@@ -7,7 +7,73 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
-        <title>Reinforcement Learning Lesson 1</title>
+        <title>Reinforcement Learning Lesson 2</title>
+        <description>&lt;p&gt;In the last post, we introduced the defination of Markov Decision Process and Bellman Equation. Now, if you are given the states $S$, action $A$, transation matrix $P$, rewards $R$ and discounting ratio $\gamma$, how would you come up with a solution for this MDP? i.e. how would you calculate the value function and come up with an optimal policy for it?&lt;/p&gt;
+
+&lt;h4 id=&quot;value-iteration&quot;&gt;Value Iteration&lt;/h4&gt;
+&lt;p&gt;This first method is to apply the Bellman Optimality Equation repeatedly. The idea is that we continue update the best estimation for each state value function, and once all $s^\prime$ reachable from $s$ achieve its optimal value function, then $v(s)$ can also achieve the optimal value. The algorithm is as follow:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initiate $v(s)$ to 0 for all $s\in S$&lt;/li&gt;
+  &lt;li&gt;Apply
+&lt;script type=&quot;math/tex&quot;&gt;v(s) = max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av(s))&lt;/script&gt;
+to update each state value function to a better estimation&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Why this algorithm guarantee to find the optimal state value funtion (thus optimal policy)? Its because the Bellman Optimality Equation can be regarded as a contraction. We can image in a value function space, where its dimension is $|S|$, each point in this space determine a value state function. A contraction is an operation that can make two points in this space closer.&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;(Contraction Mapping Theory) For any metric space that is complete under an operator that is a contraction, the operator will converge to a unique fixed point.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;According to the defination of optimal value function, we know that $Tv^\ast=v^\ast$, here $T$ is the Bellman Optimality Operator(Equation) and $v^\ast$ is the optimal value function, and thus $v^\ast$ is the unique fixed point for the value function space. Because if an optimal value function could be further reduce to another value function, it means that it’s not the optimal one, and hence causing contradiction. By applying the operator repeatedly, we are bringing our estimated value function closer and closer to the fixed point, thus we are achieving the optimal value function gradually.&lt;/p&gt;
+
+&lt;p&gt;To prove Bellman Optimality Operator is a contraction, we can have:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align}
+|Tv_1(s) - Tv_2(s)|
+&amp; = |max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
+&amp; \le max_a|(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - (R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
+&amp; = max_a|\gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s) - \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s)| \\
+&amp; \le \gamma max_s|v_1(s) - v_2(s)|\\
+\end{align} %]]&gt;&lt;/script&gt;
+
+&lt;h4 id=&quot;policy-iteration&quot;&gt;Policy Iteration&lt;/h4&gt;
+&lt;p&gt;Compared with value iteration which focuse on computing the optimal value function. Policay iteration evaluate a policy and improve the policy gradually, and finally converge to the optimal policy, the algorithm is as follow:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initialize a random policy $\pi$&lt;/li&gt;
+  &lt;li&gt;Apply Bellman Expectation Equation to all state $s$ to get the current value function $v^\pi$&lt;/li&gt;
+  &lt;li&gt;Improve the current policy greedily by:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\pi^\prime = argmax_a (R_s^a + \gamma \sum_{s^\prime\in S}P_{ss^\prime}^av^\pi(s))&lt;/script&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Repeat until the policy does not change&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Why policy iteration guarantee to converge to optimal policy? First, we can also proof that the Bellman Expectation Operator(Equation) is also a contraction. Thus given a policy $\pi$, we know that the value function will converge to $v^\pi$. Then, we only need to prove the policy can be improved by our greedy selection.&lt;/p&gt;
+
+&lt;p&gt;Suppose a deterministic policy $a = \pi(s)$. We can improve it by acting greedily by&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\pi^\prime(s) = argmax_aq_\pi(s, a)&lt;/script&gt;
+
+&lt;p&gt;according to the current action value function(remember the relationship between action value function and state value fuction, they can be transfromed each other). It can improve the value function for any state&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_\pi(s, \pi^\prime(s)) = argmax_a q_\pi(s, a) \ge q_\pi(s, \pi(s)) = v_\pi(s)&lt;/script&gt;
+
+&lt;p&gt;And thus we can improves the value function $v_{\pi^\prime}(s) \ge v_\pi(s)$ (this can be proved by expanding the return and recursively subsititue the above function).&lt;/p&gt;
+
+&lt;p&gt;Policy iteratoin is pretty similar to Expectation Maximization (EM). In EM, we first evaluate the data using the current parameters, and then update the parameters to maximize the quantity.&lt;/p&gt;
+
+&lt;p&gt;More detailed proof is available &lt;a href=&quot;http://www.cs.cmu.edu/afs/cs/academic/class/15780-s16/www/slides/mdps.pdf&quot;&gt;here&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 14 Aug 2017 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000//posts/Reinforcement-Learning-Lesson-2</link>
+        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lesson-2</guid>
+      </item>
+    
+      <item>
+        <title>Reinforcement Learning Lession 1</title>
         <description>&lt;p&gt;This is the first post for the series reinforcement learning. The main source for the entier series is &lt;a href=&quot;http://www0.cs.ucl.ac.uk/staff/D.Silver/web/Teaching.html&quot;&gt;here&lt;/a&gt;. The post mainly focus on summarizing the content introduced in the video and slides, as well as some of my own understanding. Any feedback is welcomed.&lt;/p&gt;
 
 &lt;p&gt;In this post, we will talk about Markov Decision Process (MDP), which is a pretty fundmental model in many reinforcement learning cases.&lt;/p&gt;
@@ -85,7 +151,7 @@ P_{n1} &amp; ... &amp; P_{nn}
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;v(s) = \mathbb{E}[R_{t+1} + \gamma v(S_{t+1})|S_t=s]&lt;/script&gt;
 
-&lt;p&gt;By expanding the above exception and using sum to replace exception operator, we have:&lt;/p&gt;
+&lt;p&gt;By expanding the above expectation and using sum to replace expectation operator, we have:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;v(s) = R_s + \gamma\sum_{s^\prime\in S}P_{ss^\prime}v(s^\prime)&lt;/script&gt;
 
@@ -144,7 +210,7 @@ P_{n1} &amp; ... &amp; P_{nn}
 
 &lt;p&gt;Following this policy, we can change our Bellman Exception Equation to Bellman Optimality Equation:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_*(s)=argmax_{a}(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^a v_*(s^\prime))&lt;/script&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_*(s)=max_{a}(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^a v_*(s^\prime))&lt;/script&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;q_*(s, a)=R_s^a + \gamma\sum_{s^\prime\in S} argmax_{a} P_{ss^\prime}^a v_*(s^\prime)&lt;/script&gt;
 
@@ -664,48 +730,6 @@ service BloomFilterService
         <pubDate>Thu, 12 Nov 2015 00:00:00 +0800</pubDate>
         <link>http://localhost:4000//posts/Simple-Bloom-Filter-Implementation-Part-2</link>
         <guid isPermaLink="true">http://localhost:4000//posts/Simple-Bloom-Filter-Implementation-Part-2</guid>
-      </item>
-    
-      <item>
-        <title>How To Read A Book</title>
-        <description>&lt;p&gt;This is the key part I read from the book &lt;em&gt;«How To Read A Book»&lt;/em&gt;, how to do analytical reading.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Figure out what a book is about&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Classify the book according to kind and subject matter. (Is it a theory book or a practical book?)&lt;/li&gt;
-  &lt;li&gt;State what the whole book is about with the utmost brevity.&lt;/li&gt;
-  &lt;li&gt;Enumerate its major part in their order and relation, and outline these parts as you have outlined the whole. (The structure of the book.)&lt;/li&gt;
-  &lt;li&gt;Define the problem or problems the author is trying to solve.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Finding what a book says&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Come to terms with the author by interpreting his key words. (Those words that you are not comfortable with are usually keywords.)&lt;/li&gt;
-  &lt;li&gt;Grasp the author’s leading proposition by dealing with his most important sentences. (Interpreting the key sentences in your own words or use your own examples to illustrate the meaning of those sentences.)&lt;/li&gt;
-  &lt;li&gt;Know the author’s arguments, by finding them in, or constructing them out of, sequences of sentences.&lt;/li&gt;
-  &lt;li&gt;Determine which of his problems the author has solved, and which he has not; and as to the latter, decide which the author knew he had failed to solve.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Criticizing a book as a communication of knowledge&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Do not begin criticism until you have completed your outline and your interpretation of the book. (Do not say you agree, disagree, or suspend judgment, until you can say “I understand.”)&lt;/li&gt;
-  &lt;li&gt;Do not disagree disputatiously or contentiously.&lt;/li&gt;
-  &lt;li&gt;Demonstrate that you recognize the difference between knowledge and mere personal opinion by presenting good reasons for any critical judgment you make.&lt;/li&gt;
-  &lt;li&gt;Show wherein the author is uninformed/misinformed/illogical/incomplete.&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-        <pubDate>Thu, 12 Nov 2015 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000//posts/How-To-Read-A-Book</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/How-To-Read-A-Book</guid>
       </item>
     
   </channel>
