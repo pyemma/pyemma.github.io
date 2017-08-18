@@ -7,6 +7,86 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Reinforcement Learning Lesson 3</title>
+        <description>&lt;p&gt;In this lesson, we will learn about what to do when we have no knowledge about the MDP. In the last lesson, we learnt about how to solve a MDP when we have full information about it (e.g. $P$, $R$). When we don’t have enough information, the Bellman Equation won’t work. The only way is to learn from experience, where we run the process once, and obtain a $S_1, R_1, …, S_T$ sequence and improve our value function with it. This is called model free. In this lesson, we learn about when given a policy $\pi$, how do we calculate the state value function (which is called model free predicting). And in the next one, we will learn how to come up with the policy (which is called model free control).&lt;/p&gt;
+
+&lt;h4 id=&quot;monte-carlo-reinforcement-learning&quot;&gt;Monte-Carlo Reinforcement Learning&lt;/h4&gt;
+&lt;p&gt;The first method is called Mento-Carlo Reinforcement Learning. The idea behind this method is to use empirical mean to measure the value. The algorithm is as follow:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initialize $N(s)$ to all zero, copying the value function from last one&lt;/li&gt;
+  &lt;li&gt;Given an episode $S_1, R_1, …, S_T$&lt;/li&gt;
+  &lt;li&gt;For each $S_t$ with return $G_t$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;N(S_t) = N(S_t) + 1&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;V(S_t) = V(S_t) + \frac{1}{N(S_t)}(G_t - V(S_t))&lt;/script&gt;
+
+&lt;p&gt;Here $N(S_t)$ counts the number of our visit to $S_t$. The update function is using running mean to update the value of the current state, by moving it towards the return in this episode (G_t) a little bit. Here we can replace $\frac{1}{N(S_t)}$ to a small number $\alpha$, this is functioning as a learning rate to control how quick we update our value function. When we increase the counter, we can increase it either by first visit within the episode or every visit within the episode.&lt;/p&gt;
+
+&lt;p&gt;Mento-Carlo Reinforcement Learning can only works with episode experience, which means the MDP must has a terminate state and the epxerience must be complete.&lt;/p&gt;
+
+&lt;p&gt;In this method, we are &lt;strong&gt;sampling&lt;/strong&gt; from the policy distribution because for each state, we are only considering one possible successor state. The learning method in last lesson is using dynamic programming, and it is not based on sampling, it acutally takes all possible successor states into consideration.&lt;/p&gt;
+
+&lt;h4 id=&quot;td0-learning&quot;&gt;TD(0) Learning&lt;/h4&gt;
+&lt;p&gt;The second method is called Temporal Difference Learning. As its naming suggested, in this method we are not using the actual return in the episode but using an temporal estimation to update the value function. The algorithm is:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;For each $S_t$ within the episode&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;V(S_t) = V(S_t) + \alpha(R_{t+1} + \gamma V(S_{t+1}) - V(S_t))&lt;/script&gt;
+
+&lt;p&gt;Here, $R_{t+1} + \gamma V(S_{t+1})$ is called TD target, and $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$ is called the TD error. The main logic here is bootstrapping, which means we are not directly making each value function to the most accurate value it should be given this episode. We are making it slightly better based on our current estimate on the successor state. The benefit of the doing so is that we can learn from incomplete experience, and MDP without a terminal state.&lt;/p&gt;
+
+&lt;p&gt;In this method, we are also &lt;strong&gt;sampling&lt;/strong&gt; from the policy distribution, as well as bootstrapping. Dynamic programming also uses bootstrapping similar to TD(0) leanring (recall the Bellman Equation).&lt;/p&gt;
+
+&lt;h4 id=&quot;tdlambda-learning&quot;&gt;TD($\lambda$) Learning&lt;/h4&gt;
+&lt;p&gt;In both MC and TD(0) Learning, we are looking forward to the future rewards. In MC, we are looking until we reach the end, while in TD(0) we only look at next step. Instead of looking forward, we can also looking backward. However, this involves how to assign the current timestamp rewards to pervious states. This is called credit assignment problem. And the method we overcome it is to use &lt;strong&gt;Eligibility Traces&lt;/strong&gt;, which fusion both assigning credit to the most recent state and most frequent states. Here we introduce the TD($\lambda$) algorithm (backview version):&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initialize Eligibility Traces $E_0(s) = 0$&lt;/li&gt;
+  &lt;li&gt;Given an experience, for each state $s$:&lt;/li&gt;
+  &lt;li&gt;Update the Eligibility Traces by: $E_t(s) = \gamma \lambda E_{t-1}(s) + 1(S_t = s)$&lt;/li&gt;
+  &lt;li&gt;Calculate the update step by: $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$&lt;/li&gt;
+  &lt;li&gt;Update &lt;strong&gt;each&lt;/strong&gt; state by: $V(s) = V(s) + \alpha \delta_t E_t(s)$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If we use $\lambda = 0$, then the Eligibility Traces will fall to $1(S_t = s)$ and replace it in the update function, we will see that its the exact same update function as TD(0). If we choose $\lambda = 1$, then it is actually equals to every visit MC. We can prove it as follow:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Suppose in our experence, $s$ is visited at timestamp $k$, then the $E_t(s)$ will be like&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+E_t(s) = \begin{cases}
+0, &amp; \text{if $t &lt; k$} \\
+\gamma^{t - k}, &amp; \text{if $t \ge k$} \\
+\end{cases} %]]&gt;&lt;/script&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The accumulated online update for $s$ is&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align}
+\sum_{t=1}^{T-1}\alpha\delta_t E_t(s) &amp; = \sum_{t=k}^{T-1}\gamma^{t-k}\delta_t \\
+&amp; = \delta_k + \gamma\delta_{k+1} + ... + \gamma^{T-1-k}\delta_{T-1} \\
+&amp; = R_{k+1} + \gamma V(S_{k+1}) - V(S_k) + \gamma R_{k+2} + \gamma^2 V(S_{k+2}) - \gamma V(S_{k+1}) + ... \\
+&amp; + \gamma^{T-1-k} R_{T-1} + \gamma^{T-k} V(S_T) - \gamma^{T-1-k} V(S_{T-1}) \\
+&amp; = R_{k+1} + \gamma R_{k+2} + \gamma^2 R_{k+3} + ... + \gamma^{T-1-k} R_{T-1} - V(S_k) \\
+&amp; = G_k - V(S_k)
+\end{align} %]]&gt;&lt;/script&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Thus the update function for TD(1) is the same as the one in every visit MC (where we use $\alpha$ as a learning rate instead of the original one).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The good thing for TD($lambda$) is that it can learn with incomplete experience. And the update is perfomred &lt;em&gt;online&lt;/em&gt;, &lt;em&gt;step by step&lt;/em&gt; within the episode. MC is updated via offline, cause it needs to wait until the end and calculate the update for each state and update them in batch.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 17 Aug 2017 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000//posts/Reinforcement-Learning-Lession-3</link>
+        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lession-3</guid>
+      </item>
+    
+      <item>
         <title>Reinforcement Learning Lesson 2</title>
         <description>&lt;p&gt;In the last post, we introduced the defination of Markov Decision Process and Bellman Equation. Now, if you are given the states $S$, action $A$, transation matrix $P$, rewards $R$ and discounting ratio $\gamma$, how would you come up with a solution for this MDP? i.e. how would you calculate the value function and come up with an optimal policy for it?&lt;/p&gt;
 
@@ -657,79 +737,6 @@ Attaches additional responsibilities to an object dynamically.  Decorators provi
         <pubDate>Fri, 13 Nov 2015 00:00:00 +0800</pubDate>
         <link>http://localhost:4000//posts/Hackerrank-Cut-the-Tree</link>
         <guid isPermaLink="true">http://localhost:4000//posts/Hackerrank-Cut-the-Tree</guid>
-      </item>
-    
-      <item>
-        <title>Simple Bloom Filter Implementation Part 2</title>
-        <description>&lt;h3 id=&quot;introduction&quot;&gt;Introduction&lt;/h3&gt;
-&lt;p&gt;In the last &lt;a href=&quot;http://pyemma.github.io/notes/Simple-Bloom-Filter-Implementation-Part-I/&quot;&gt;blog&lt;/a&gt;, we introduced the initial version of bloom filter. In the first implementation, we only tested our bloom filter on built in type &lt;code class=&quot;highlighter-rouge&quot;&gt;String&lt;/code&gt;. This time, we tested in against a custom class &lt;code class=&quot;highlighter-rouge&quot;&gt;Person&lt;/code&gt;. The idea is simple: we use thrift to define our custom data structure. Thrift will help us create a corresponding &lt;code class=&quot;highlighter-rouge&quot;&gt;Person&lt;/code&gt; class. Then we define our own &lt;code class=&quot;highlighter-rouge&quot;&gt;Hashable&amp;lt;Person&amp;gt;&lt;/code&gt; to be passed into our bloom filter.&lt;/p&gt;
-
-&lt;h3 id=&quot;implementation-details&quot;&gt;Implementation details&lt;/h3&gt;
-&lt;p&gt;Here is our new thrift file. Notice that we need to assign identifier to each data field, since they would be used for serialize de deserialize data instead of the actual variable name(space consideration).&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;struct Person
-{
-    1: string firstName,
-    2: string lastName,
-    3: i32 age,
-    4: string email
-}
-
-service BloomFilterService
-{
-    // void add(1: string str);
-    // bool contain(1: string str);
-    void add(1: Person person);
-    bool contain(1: Person person);
-}&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;If we run the command &lt;code class=&quot;highlighter-rouge&quot;&gt;thrift -r -gen java bloomfilterservice.thrift&lt;/code&gt;, the content in &lt;code class=&quot;highlighter-rouge&quot;&gt;gen-java&lt;/code&gt; would also contain a generated &lt;code class=&quot;highlighter-rouge&quot;&gt;Person&lt;/code&gt; class. We need to implement a &lt;code class=&quot;highlighter-rouge&quot;&gt;Hashable&amp;lt;Person&amp;gt;&lt;/code&gt; type to hash a &lt;code class=&quot;highlighter-rouge&quot;&gt;Person&lt;/code&gt; object into several integers. Here, the method I used is very simple, it still take a prime and the result would be a combination of all data fields.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;PersonHash&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Hashable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Person&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-
-    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;prime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PersonHash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;prime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;prime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;prime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Person&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;person&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;firstName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;person&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;firstName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;firstName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;prime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;firstName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;charAt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;person&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;lastName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;prime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;charAt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;email&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;person&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;email&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;email&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;prime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;email&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;charAt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;prime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;prime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;prime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;person&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;age&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;The remaining is all every simple, we passed in a list of &lt;code class=&quot;highlighter-rouge&quot;&gt;PersonHash&lt;/code&gt; object into handler and replace &lt;code class=&quot;highlighter-rouge&quot;&gt;String&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;Person&lt;/code&gt; at correct places. Then all is done.&lt;/p&gt;
-
-&lt;h3 id=&quot;notes&quot;&gt;Notes&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;When I was trying to implement this part, I was planed to create a &lt;em&gt;general&lt;/em&gt; bloom filter, that is utilize Java’s template feature. However, I failed. Since I don’t know how to define an API with template type in thrift.&lt;/li&gt;
-  &lt;li&gt;The package in Java is quite important and I have always ignore it before. During the implementation, I initially put &lt;code class=&quot;highlighter-rouge&quot;&gt;PersonHash&lt;/code&gt; under &lt;code class=&quot;highlighter-rouge&quot;&gt;bloomfilter&lt;/code&gt; package. This class need to access &lt;code class=&quot;highlighter-rouge&quot;&gt;Person&lt;/code&gt; class generated by thrift, however, &lt;code class=&quot;highlighter-rouge&quot;&gt;Person&lt;/code&gt; class is under the root package and &lt;code class=&quot;highlighter-rouge&quot;&gt;PersonHash&lt;/code&gt; could not access it. I was confused by this problem for a long time.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;next-step&quot;&gt;Next step&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;Try if thrift support function overload. Have function for &lt;code class=&quot;highlighter-rouge&quot;&gt;String&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Person&lt;/code&gt; at the same time to see if it still works.&lt;/li&gt;
-  &lt;li&gt;Currently, I only tried it with toy data. I decided to move on to some real data to test the performance of bloom filter.&lt;/li&gt;
-  &lt;li&gt;Add some performance measure code.&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Thu, 12 Nov 2015 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000//posts/Simple-Bloom-Filter-Implementation-Part-2</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Simple-Bloom-Filter-Implementation-Part-2</guid>
       </item>
     
   </channel>
