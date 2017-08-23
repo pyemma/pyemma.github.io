@@ -97,7 +97,11 @@ to update each state value function to a better estimation</li>
   <p>(Contraction Mapping Theory) For any metric space that is complete under an operator that is a contraction, the operator will converge to a unique fixed point.</p>
 </blockquote>
 
-<p>According to the defination of optimal value function, we know that $Tv^\ast=v^\ast$, here $T$ is the Bellman Optimality Operator(Equation) and $v^\ast$ is the optimal value function, and thus $v^\ast$ is the unique fixed point for the value function space. Because if an optimal value function could be further reduce to another value function, it means that it’s not the optimal one, and hence causing contradiction. By applying the operator repeatedly, we are bringing our estimated value function closer and closer to the fixed point, thus we are achieving the optimal value function gradually.</p>
+<p>According to the Contraction Mapping Theory, we know that $v^\ast=Tv^\ast$ has a unique solution. And based on value iteration converge, we know that $v_{t}=Tv_{t-1}$. Then we could have</p>
+
+<script type="math/tex; mode=display">||v_t - v\ast||_\infty = ||Tv_{t-1} - Tv\ast||_\infty \le \gamma ||v_{t-1} - v\ast||_\infty</script>
+
+<p>By applying the operator repeatedly, we are bringing our estimated value function closer and closer to the fixed point, thus we are achieving the optimal value function gradually.</p>
 
 <p>To prove Bellman Optimality Operator is a contraction, we can have:</p>
 
