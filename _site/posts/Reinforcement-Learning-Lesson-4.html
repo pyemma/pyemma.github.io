@@ -81,14 +81,14 @@
   </header>
 
   <article class="post-content">
-  <p>In this lecture, we learn how to solve an unknonw MDP. In the last lecture, we introduced how to calculate the value function given a policy. In this one, we will try to find the optimize policy by ourselves.</p>
+  <p>In this lecture, we learn how to solve an unknown MDP. In the last lecture, we introduced how to calculate the value function given a policy. In this one, we will try to find the optimize policy by ourselves.</p>
 
 <h4 id="mento-calro-policy-iteration">Mento Calro Policy Iteration</h4>
-<p>In the <a href="http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-2">Lesson 2</a>, we mentioned how to solve a MDP when we have full information about the MDP. One method is called <strong>Policy Iteration</strong>. It can be divided into two components: <em>policy iterative evaluation</em> and <em>policy improvement</em>. For the evaluation part, we can use the methods in <a href="http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-3">last lesson</a>, namingly MC and TD. However, we could not directly use the state value function, cause in the policy improvement step (e.g. greedy), we need to know the $R$ and $P$ to find the best action (recall the <a href="http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-1">Bellman Optimiality Function</a>). However, action value function does not need the model of the MDP while in greedy policy improvment:</p>
+<p>In the <a href="http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-2">Lesson 2</a>, we mentioned how to solve a MDP when we have full information about the MDP. One method is called <strong>Policy Iteration</strong>. It can be divided into two components: <em>policy iterative evaluation</em> and <em>policy improvement</em>. For the evaluation part, we can use the methods in <a href="http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-3">last lesson</a>, nominally MC and TD. However, we could not directly use the state value function, cause in the policy improvement step (e.g. greedy), we need to know the $R$ and $P$ to find the best action (recall the <a href="http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-1">Bellman Optimality Function</a>). However, action value function does not need the model of the MDP while in greedy policy improvement:</p>
 
 <script type="math/tex; mode=display">v_*(s) = argmax_a q(s, a)</script>
 
-<p>For the policy improvement part. If we stick to the greedy method, it will not be good for us to explore all possible states. So we use another method which is called $\epsilon$-greedy. We will have $1-\epsilon$ probabiity to perform greedily (choose the current best action), and have $\epsilon$ probability to random choose an action:</p>
+<p>For the policy improvement part. If we stick to the greedy method, it will not be good for us to explore all possible states. So we use another method which is called $\epsilon$-greedy. We will have $1-\epsilon$ probability to perform greedily (choose the current best action), and have $\epsilon$ probability to random choose an action:</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 \pi(s|a) = \begin{cases}
@@ -98,8 +98,8 @@
 
 <p>We have the final Mento Calro Policy Iteration as:</p>
 <ul>
-  <li>Sample the kth epsiode $S_1, A_1, …, S_T$ from policy $\pi$</li>
-  <li>For each state $S_t$ and $A_t$ in the epsiode</li>
+  <li>Sample the kth episode $S_1, A_1, …, S_T$ from policy $\pi$</li>
+  <li>For each state $S_t$ and $A_t$ in the episode</li>
 </ul>
 
 <script type="math/tex; mode=display">N(S_t, A_t) = N(S_t, A_t) + 1 \\
@@ -115,11 +115,11 @@ Q(S_t, A_t) = Q(S_t, A_t) + \frac{1}{N(S_t, A_t)}((G_t - Q(S_t, A_t))) \\</scrip
 <h4 id="sarsa-algorithm">Sarsa Algorithm</h4>
 <p>If we use the logic in TD for the evaluation part, then we would have the sarsa algorithm. The main difference is that, in original TD, we use the value state function of the successor state, however, we need the action value function right now. We can obtain that by run our current policy again (remember, TD does not need the complete sequence of experience, we can generate the state and action along the way). Following is the algorithm:</p>
 <ul>
-  <li>Initialize $Q$ for each state and action pair arbitrarilty, set $Q(terminate, *)$ to 0</li>
-  <li>Repeat for each epsiode
+  <li>Initialize $Q$ for each state and action pair arbitrarily, set $Q(terminate, *)$ to 0</li>
+  <li>Repeat for each episode
     <ul>
       <li>Initialize $S$, choose $A$ from the current policy derived from $Q$</li>
-      <li>Repeat for each step in the epsiode until we hit terminal
+      <li>Repeat for each step in the episode until we hit terminal
         <ul>
           <li>Take action $A$, observe $R$ and $S^\prime$</li>
           <li>Choose $A^\prime$ from $S^\prime$ from the current policy derived from $Q$</li>
@@ -135,10 +135,10 @@ Q(S_t, A_t) = Q(S_t, A_t) + \frac{1}{N(S_t, A_t)}((G_t - Q(S_t, A_t))) \\</scrip
 <ul>
   <li>Initialize $Q$ for each state and action pair arbitrarily, set $Q(terminate, *)$ to 0
     <ul>
-      <li>Repeat for each epsiode</li>
+      <li>Repeat for each episode</li>
       <li>Initialize $E$ for each $s, a$ pair to 0</li>
       <li>Initialize $S$, choose $A$ from the current policy derived from Q</li>
-      <li>Repeat for each step in the epsiode until we hit terminal
+      <li>Repeat for each step in the episode until we hit terminal
         <ul>
           <li>Take action $A$, observe $R$ and $S^\prime$</li>
           <li>Choose $A^\prime$ from $S^\prime$ from the current policy derived from Q</li>
@@ -159,13 +159,13 @@ E(s, a) = \gamma\lambda E(s, a)</script>
 </ul>
 
 <h4 id="q-learning">Q Learning</h4>
-<p>Both MC policy iteration and sarsa algorithm are <strong>online learning</strong> method, which means that they are observing there own policy, learning along the process. There is another category which is called <strong>offline learning</strong>, in which we learn from other policy, not the policy we are trying to improving. Example is that a robots learns walking by observing humman. Q learning falls in this category. It is pertty similar to the sarsa algorithm, the only difference is that when we get the action for successor state, we replace the $\epsilon$-greedy to greedy policy. The Q learning method is as follow:</p>
+<p>Both MC policy iteration and sarsa algorithm are <strong>online learning</strong> method, which means that they are observing there own policy, learning along the process. There is another category which is called <strong>offline learning</strong>, in which we learn from other policy, not the policy we are trying to improving. Example is that a robots learns walking by observing human. Q learning falls in this category. It is pretty similar to the sarsa algorithm, the only difference is that when we get the action for successor state, we replace the $\epsilon$-greedy to greedy policy. The Q learning method is as follow:</p>
 <ul>
-  <li>Initialize Q for each state and action pair arbitrarilty, set Q(terminate, *) to 0</li>
-  <li>Repeat for each epsiode
+  <li>Initialize Q for each state and action pair arbitrarily, set Q(terminate, *) to 0</li>
+  <li>Repeat for each episode
     <ul>
       <li>Initialize $S$, choose $A$ from the current policy derived from Q</li>
-      <li>Repeat for each step in the epsiode until we hit terminal
+      <li>Repeat for each step in the episode until we hit terminal
         <ul>
           <li>Take action $A$, observe $R$ and $S^\prime$</li>
           <li>Update <script type="math/tex">Q(S, A) = Q(S, A) + \alpha(R + \gamma max_a Q(S^\prime, a) - Q(S, A))</script></li>

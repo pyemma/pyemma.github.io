@@ -1,24 +1,24 @@
 ---
 layout: post
-title: "Reinforcement Learning Lession 1"
+title: "Reinforcement Learning Lesson 1"
 ---
-This is the first post for the series reinforcement learning. The main source for the entier series is [here](http://www0.cs.ucl.ac.uk/staff/D.Silver/web/Teaching.html). The post mainly focus on summarizing the content introduced in the video and slides, as well as some of my own understanding. Any feedback is welcomed.
+This is the first post for the series reinforcement learning. The main source for the entire series is [here](http://www0.cs.ucl.ac.uk/staff/D.Silver/web/Teaching.html). The post mainly focus on summarizing the content introduced in the video and slides, as well as some of my own understanding. Any feedback is welcomed.
 
-In this post, we will talk about Markov Decision Process (MDP), which is a pretty fundmental model in many reinforcement learning cases.
-> Allmost all RL problems can be formalized as MDP
+In this post, we will talk about Markov Decision Process (MDP), which is a pretty fundamental model in many reinforcement learning cases.
+> Almost all RL problems can be formalized as MDP
 
 #### Markov Process
 In order to learn about MDP, we need to first know what is Markov Process (MP). This introduces the following two concept:
 * Markov Property
 * State Transition Matrix
 
-In the most simple word, **Markov Property** means that the future state is independent on the history given the current state. It can be formulized using following statement:
+In the most simple word, **Markov Property** means that the future state is independent on the history given the current state. It can be formalized using following statement:
 
 $$\mathbb{P}[S_{t+1}|S_{t}] = \mathbb{P}[S_{t+1}|S_1, ..., S_t]$$
 
 This means that the current state contains all they necessary information for the future, and we can discard all history information.
 
-**State Transition Matrix** contains the probability we go from on state to another one. Given a state $s$ and its succssor state $s^\prime$, the probability from $s$ goes to $s^\prime$ is given by
+**State Transition Matrix** contains the probability we go from on state to another one. Given a state $s$ and its successor state $s^\prime$, the probability from $s$ goes to $s^\prime$ is given by
 
 $$P_{ss\prime} = \mathbb{P}[S_{t+1}=s\prime|S_{t}=s]$$
 
@@ -35,11 +35,11 @@ $$
 
 From the above two concept, we can notice two things and these are also the constraint for MDP:
 * The state is finite (otherwise the definition of State Transition Matrix is problematic)
-* The enviornment is fully observable, no hidden state exists
+* The environment is fully observable, no hidden state exists
 
-We can obtain a defination for MP as a tuple $<S, P>$:
+We can obtain a definition for MP as a tuple $<S, P>$:
 * $S$ is a finite state set
-* $P$ is a state tranitition matrix
+* $P$ is a state transition matrix
 
 An example of MP:
 

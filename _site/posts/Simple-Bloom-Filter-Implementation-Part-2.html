@@ -109,11 +109,11 @@ service BloomFilterService
 
     <span class="kd">private</span> <span class="kt">int</span> <span class="n">prime</span><span class="o">;</span>
 
-    <span class="kd">public</span> <span class="n">PersonHash</span><span class="o">(</span><span class="kt">int</span> <span class="n">prime</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nf">PersonHash</span><span class="o">(</span><span class="kt">int</span> <span class="n">prime</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="na">prime</span> <span class="o">=</span> <span class="n">prime</span><span class="o">;</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="kt">int</span> <span class="n">hash</span><span class="o">(</span><span class="n">Person</span> <span class="n">person</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">hash</span><span class="o">(</span><span class="n">Person</span> <span class="n">person</span><span class="o">)</span> <span class="o">{</span>
         <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
         <span class="n">String</span> <span class="n">firstName</span> <span class="o">=</span> <span class="n">person</span><span class="o">.</span><span class="na">firstName</span><span class="o">;</span>
         <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">firstName</span><span class="o">.</span><span class="na">length</span><span class="o">();</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>

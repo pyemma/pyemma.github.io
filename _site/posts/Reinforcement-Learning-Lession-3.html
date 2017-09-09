@@ -97,9 +97,9 @@
 
 <p>Here $N(S_t)$ counts the number of our visit to $S_t$. The update function is using running mean to update the value of the current state, by moving it towards the return in this episode (G_t) a little bit. Here we can replace $\frac{1}{N(S_t)}$ to a small number $\alpha$, this is functioning as a learning rate to control how quick we update our value function. When we increase the counter, we can increase it either by first visit within the episode or every visit within the episode.</p>
 
-<p>Mento-Carlo Reinforcement Learning can only works with episode experience, which means the MDP must has a terminate state and the epxerience must be complete.</p>
+<p>Mento-Carlo Reinforcement Learning can only works with episode experience, which means the MDP must has a terminate state and the experience must be complete.</p>
 
-<p>In this method, we are <strong>sampling</strong> from the policy distribution because for each state, we are only considering one possible successor state. The learning method in last lesson is using dynamic programming, and it is not based on sampling, it acutally takes all possible successor states into consideration.</p>
+<p>In this method, we are <strong>sampling</strong> from the policy distribution because for each state, we are only considering one possible successor state. The learning method in last lesson is using dynamic programming, and it is not based on sampling, it actually takes all possible successor states into consideration.</p>
 
 <h4 id="td0-learning">TD(0) Learning</h4>
 <p>The second method is called Temporal Difference Learning. As its naming suggested, in this method we are not using the actual return in the episode but using an temporal estimation to update the value function. The algorithm is:</p>
@@ -111,10 +111,10 @@
 
 <p>Here, $R_{t+1} + \gamma V(S_{t+1})$ is called TD target, and $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$ is called the TD error. The main logic here is bootstrapping, which means we are not directly making each value function to the most accurate value it should be given this episode. We are making it slightly better based on our current estimate on the successor state. The benefit of the doing so is that we can learn from incomplete experience, and MDP without a terminal state.</p>
 
-<p>In this method, we are also <strong>sampling</strong> from the policy distribution, as well as bootstrapping. Dynamic programming also uses bootstrapping similar to TD(0) leanring (recall the Bellman Equation).</p>
+<p>In this method, we are also <strong>sampling</strong> from the policy distribution, as well as bootstrapping. Dynamic programming also uses bootstrapping similar to TD(0) learning (recall the Bellman Equation).</p>
 
 <h4 id="tdlambda-learning">TD($\lambda$) Learning</h4>
-<p>In both MC and TD(0) Learning, we are looking forward to the future rewards. In MC, we are looking until we reach the end, while in TD(0) we only look at next step. Instead of looking forward, we can also looking backward. However, this involves how to assign the current timestamp rewards to pervious states. This is called credit assignment problem. And the method we overcome it is to use <strong>Eligibility Traces</strong>, which fusion both assigning credit to the most recent state and most frequent states. Here we introduce the TD($\lambda$) algorithm (backview version):</p>
+<p>In both MC and TD(0) Learning, we are looking forward to the future rewards. In MC, we are looking until we reach the end, while in TD(0) we only look at next step. Instead of looking forward, we can also looking backward. However, this involves how to assign the current timestamp rewards to pervious states. This is called credit assignment problem. And the method we overcome it is to use <strong>Eligibility Traces</strong>, which fusion both assigning credit to the most recent state and most frequent states. Here we introduce the TD($\lambda$) algorithm (back view version):</p>
 <ul>
   <li>Initialize Eligibility Traces $E_0(s) = 0$</li>
   <li>Given an experience, for each state $s$:</li>
@@ -125,7 +125,7 @@
 
 <p>If we use $\lambda = 0$, then the Eligibility Traces will fall to $1(S_t = s)$ and replace it in the update function, we will see that its the exact same update function as TD(0). If we choose $\lambda = 1$, then it is actually equals to every visit MC. We can prove it as follow:</p>
 <ul>
-  <li>Suppose in our experence, $s$ is visited at timestamp $k$, then the $E_t(s)$ will be like</li>
+  <li>Suppose in our experience, $s$ is visited at timestamp $k$, then the $E_t(s)$ will be like</li>
 </ul>
 
 <script type="math/tex; mode=display">% <![CDATA[
@@ -152,7 +152,7 @@ E_t(s) = \begin{cases}
   <li>Thus the update function for TD(1) is the same as the one in every visit MC (where we use $\alpha$ as a learning rate instead of the original one).</li>
 </ul>
 
-<p>The good thing for TD($lambda$) is that it can learn with incomplete experience. And the update is perfomred <em>online</em>, <em>step by step</em> within the episode. MC is updated via offline, cause it needs to wait until the end and calculate the update for each state and update them in batch.</p>
+<p>The good thing for TD($lambda$) is that it can learn with incomplete experience. And the update is performed <em>online</em>, <em>step by step</em> within the episode. MC is updated via offline, cause it needs to wait until the end and calculate the update for each state and update them in batch.</p>
 
   </article>
 

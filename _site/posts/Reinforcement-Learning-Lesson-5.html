@@ -5,10 +5,10 @@
       <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Reinforcement Learning Lesson 2</title>
+        <title>Reinforcement Learning Lesson 5</title>
         <meta name="viewport" content="width=device-width">
         <meta name="description" content="A coding monkey, who is passionate in algorithm and machine learning, hoping one day to become a coding machine." />
-        <link rel="canonical" href="http://localhost:4000/posts/Reinforcement-Learning-Lesson-2/" />
+        <link rel="canonical" href="http://localhost:4000/posts/Reinforcement-Learning-Lesson-5/" />
 
         <!-- Custom CSS -->
         <link rel="stylesheet" href="/css/main.css">
@@ -76,73 +76,44 @@
       <div class="post">
 
   <header class="post-header">
-    <h1>Reinforcement Learning Lesson 2</h1>
-    <p class="meta">Aug 14, 2017</p>
+    <h1>Reinforcement Learning Lesson 5</h1>
+    <p class="meta">Sep 8, 2017</p>
   </header>
 
   <article class="post-content">
-  <p>In the last post, we introduced the definition of Markov Decision Process and Bellman Equation. Now, if you are given the states $S$, action $A$, transition matrix $P$, rewards $R$ and discounting ratio $\gamma$, how would you come up with a solution for this MDP? i.e. how would you calculate the value function and come up with an optimal policy for it?</p>
-
-<h4 id="value-iteration">Value Iteration</h4>
-<p>This first method is to apply the Bellman Optimality Equation repeatedly. The idea is that we continue update the best estimation for each state value function, and once all $s^\prime$ reachable from $s$ achieve its optimal value function, then $v(s)$ can also achieve the optimal value. The algorithm is as follow:</p>
+  <p>In this post, we are going to look into how can we solve the real world problem with a practical way. Think of the state value function $v(s)$ or the action value function $q(s, a)$ we mentioned before. If the problem has a really large state space, then it would take a lot of memory to store each value function. Instead of recording each value function, we can actually use a model to approximate the actual value function, which means given the current state, we want to predict the value of the state. There are three types of value function approximation:</p>
 <ul>
-  <li>Initiate $v(s)$ to 0 for all $s\in S$</li>
-  <li>Apply
-<script type="math/tex">v(s) = max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av(s))</script>
-to update each state value function to a better estimation</li>
+  <li>Input current state, output the state value</li>
+  <li>Input current state and an action, out put the action value</li>
+  <li>Input current state, output all possible action’s action value</li>
 </ul>
 
-<p>Why this algorithm guarantee to find the optimal state value function (thus optimal policy)? Its because the Bellman Optimality Equation can be regarded as a contraction. We can image in a value function space, where its dimension is $|S|$, each point in this space determine a value state function. A contraction is an operation that can make two points in this space closer.</p>
-<blockquote>
-  <p>(Contraction Mapping Theory) For any metric space that is complete under an operator that is a contraction, the operator will converge to a unique fixed point.</p>
-</blockquote>
+<p>This can be reviewed as a classical supervised learning problem if we <strong>know the actual value function</strong>, and more accurately speaking, its a regression problem. In the regression problem, we are trying to fit a model which will output some real number that matches the our input label as much as possible. In the regression problem, the loss is defined using mean-square error. In order to get a model, we need first to do some feature engineering and represent each state using the <strong>feature vector</strong> $x(S)$, this is going to be the input into our model. And then we try to minimize</p>
 
-<p>According to the Contraction Mapping Theory, we know that $v^\ast=Tv^\ast$ has a unique solution. And based on value iteration converge, we know that $v_{t}=Tv_{t-1}$. Then we could have</p>
+<script type="math/tex; mode=display">L(w) = E_{\pi}[(v_{\pi}(S) - v(S, w))^2]</script>
 
-<script type="math/tex; mode=display">||v_t - v\ast||_\infty = ||Tv_{t-1} - Tv\ast||_\infty \le \gamma ||v_{t-1} - v\ast||_\infty</script>
+<p>Here $w$ is our model’s parameter and is what we are going to improve. $v_{\pi}(S)$ is the actual value (label) and $v(S, w)$ is the output from our model (predict). In order to minimize this loss, we use stochastic gradient decrease to update $w$, which we have:</p>
 
-<p>By applying the operator repeatedly, we are bringing our estimated value function closer and closer to the fixed point, thus we are achieving the optimal value function gradually.</p>
+<script type="math/tex; mode=display">\Delta w = \alpha (v_{\pi}(S) - v(S, w)) \nabla_w v(S, w)</script>
 
-<p>To prove Bellman Optimality Operator is a contraction, we can have:</p>
+<p>Here $\alpha$ is a learning rate controlling how fast we improve $w$, and $\nabla_w v(S, w)$ is the derivate of our model toward the parameter, for example, if we choose a linear model, where $v(S, w) = x(S)^T * w$, then we would have</p>
 
-<script type="math/tex; mode=display">% <![CDATA[
-\begin{align}
-|Tv_1(s) - Tv_2(s)|
-& = |max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
-& \le max_a|(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - (R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
-& = max_a|\gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s) - \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s)| \\
-& \le \gamma max_s|v_1(s) - v_2(s)|\\
-\end{align} %]]></script>
+<script type="math/tex; mode=display">\Delta w = \alpha (v_{\pi}(S) - v(S, w))x(S)</script>
 
-<h4 id="policy-iteration">Policy Iteration</h4>
-<p>Compared with value iteration which focus on computing the optimal value function. Policy iteration evaluate a policy and improve the policy gradually, and finally converge to the optimal policy, the algorithm is as follow:</p>
+<p>However, we could only obtain this update when we really <strong>know the actual value function</strong>, which is the case of supervised learning. However, in reinforcement learning, we are lack of such information. So we have to use some target to replacement them. We can actually combining it with the algorithm we have introduced before. For example the MC algorithm, In each episode, we will get a series of the state and corresponding return $&lt;S_t, G_t&gt;$, we can actually use this return as our target and train our model on it. The process would be like use our model to compute the state value, and use some policy to go through the process, then we would have $&lt;S_1, G_1&gt;, &lt;S_2, G_2&gt;, …, &lt;S_T, G_T&gt;$. Then use these as our training data and update our model. This training is <strong>on-policy</strong> (because we are learning as well as behaving) and <strong>incremental</strong> (episode by episode). Similar things can be applied to TD(0) and TD($\lambda$), where we use TD target and $G_t^\lambda$. Good news to use TD target is that is needs less steps for model to converge (since TD target is less variance), but it might not converge in some cases, for example, if we choose Neural Network as our model, then the model will blow up.</p>
+
+<p>Besides the incremental method, there is also <strong>batch</strong> method, which we record all experience of the agent in $D$, and sample from it to get the training sample, then we update our model parameter using the same method above. <strong>Batch</strong> method is more sample efficient and tries to find the best fit of all value functions available. While in the <strong>incremental</strong> one, we are generate training sample one by one which is not very efficient, and we only use it once after update the parameter. A more detailed example is Deep Q-Networks (DQN), you can think of it as using NN model along with Q learning method. The algorithm is as follow:</p>
 <ul>
-  <li>Initialize a random policy $\pi$</li>
-  <li>Apply Bellman Expectation Equation to all state $s$ to get the current value function $v^\pi$</li>
-  <li>Improve the current policy greedily by:</li>
+  <li>Take action $a_t$ according to $\epsilon$-greedy policy</li>
+  <li>Store transition $(s_t, a_t, r_{t+1}, s_{t+1})$ in replay memory $D$</li>
+  <li>Sample random mini-batch of transitions $(s, a, r, s^,)$ from $D$</li>
+  <li>Compute Q learning target with an old, fixed parameter $w^-$</li>
+  <li>Optimize MSE between Q target and Q learning Network</li>
 </ul>
 
-<script type="math/tex; mode=display">\pi^\prime = argmax_a (R_s^a + \gamma \sum_{s^\prime\in S}P_{ss^\prime}^av^\pi(s))</script>
+<script type="math/tex; mode=display">L_i(w_i) = E_{s,a,r,s^, ~ D}[(r + \gamma max_{a^,}Q(s^,,a^,; w^-) - Q(s, a; w_i))^2]</script>
 
-<ul>
-  <li>Repeat until the policy does not change</li>
-</ul>
-
-<p>Why policy iteration guarantee to converge to optimal policy? First, we can also proof that the Bellman Expectation Operator(Equation) is also a contraction. Thus given a policy $\pi$, we know that the value function will converge to $v^\pi$. Then, we only need to prove the policy can be improved by our greedy selection.</p>
-
-<p>Suppose a deterministic policy $a = \pi(s)$. We can improve it by acting greedily by</p>
-
-<script type="math/tex; mode=display">\pi^\prime(s) = argmax_aq_\pi(s, a)</script>
-
-<p>according to the current action value function(remember the relationship between action value function and state value function, they can be transformed each other). It can improve the value function for any state</p>
-
-<script type="math/tex; mode=display">q_\pi(s, \pi^\prime(s)) = argmax_a q_\pi(s, a) \ge q_\pi(s, \pi(s)) = v_\pi(s)</script>
-
-<p>And thus we can improves the value function $v_{\pi^\prime}(s) \ge v_\pi(s)$ (this can be proved by expanding the return and recursively substitute the above function).</p>
-
-<p>Policy iteration is pretty similar to Expectation Maximization (EM). In EM, we first evaluate the data using the current parameters, and then update the parameters to maximize the quantity.</p>
-
-<p>More detailed proof is available <a href="http://www.cs.cmu.edu/afs/cs/academic/class/15780-s16/www/slides/mdps.pdf">here</a></p>
+<p>The key method that stabilize the model is experience reply and Q target. For the experience reply, it helps decouple the relationship between each step since we are randomly sampling. For the Q target, we are using the model several steps ago, not the model we just updated. You can think of this as avoid oscillation.</p>
 
   </article>
 

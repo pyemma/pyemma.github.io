@@ -8,7 +8,7 @@
         <title>[Hackerrank] Cut the tree</title>
         <meta name="viewport" content="width=device-width">
         <meta name="description" content="A coding monkey, who is passionate in algorithm and machine learning, hoping one day to become a coding machine." />
-        <link rel="canonical" href="http://localhost:4000/posts/Hackerrank-Cut-the-Tree/" />
+        <link rel="canonical" href="http://localhost:4000/posts/Hackerrank-Cut-the-tree/" />
 
         <!-- Custom CSS -->
         <link rel="stylesheet" href="/css/main.css">
@@ -88,7 +88,7 @@
     <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">GraphNode</span> <span class="o">{</span>
         <span class="kt">int</span> <span class="n">id</span><span class="o">,</span> <span class="n">val</span><span class="o">;</span>
         <span class="n">List</span><span class="o">&lt;</span><span class="n">GraphNode</span><span class="o">&gt;</span> <span class="n">neighbors</span><span class="o">;</span>
-        <span class="kd">public</span> <span class="n">GraphNode</span><span class="o">(</span><span class="kt">int</span> <span class="n">id</span><span class="o">,</span> <span class="kt">int</span> <span class="n">val</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">public</span> <span class="nf">GraphNode</span><span class="o">(</span><span class="kt">int</span> <span class="n">id</span><span class="o">,</span> <span class="kt">int</span> <span class="n">val</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">id</span><span class="o">;</span>
             <span class="k">this</span><span class="o">.</span><span class="na">val</span> <span class="o">=</span> <span class="n">val</span><span class="o">;</span>
             <span class="n">neighbors</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">GraphNode</span><span class="o">&gt;();</span>
@@ -97,7 +97,7 @@
 
     <span class="kd">static</span> <span class="kt">int</span> <span class="n">result</span> <span class="o">=</span> <span class="n">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">;</span>
 
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">dfs</span><span class="o">(</span><span class="n">GraphNode</span> <span class="n">root</span><span class="o">,</span> <span class="kt">int</span> <span class="n">sum</span><span class="o">,</span> <span class="n">HashSet</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">visited</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">dfs</span><span class="o">(</span><span class="n">GraphNode</span> <span class="n">root</span><span class="o">,</span> <span class="kt">int</span> <span class="n">sum</span><span class="o">,</span> <span class="n">HashSet</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">visited</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="n">root</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="mi">0</span><span class="o">;</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
@@ -115,7 +115,7 @@
         <span class="o">}</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="n">Scanner</span> <span class="n">scan</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Scanner</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">in</span><span class="o">);</span>
         <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">scan</span><span class="o">.</span><span class="na">nextInt</span><span class="o">();</span>

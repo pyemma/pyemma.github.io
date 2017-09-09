@@ -99,7 +99,7 @@
 
 <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Hashable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
     <span class="c1">// return a integer by applying some method on the object</span>
-    <span class="kd">public</span> <span class="kt">int</span> <span class="n">hash</span><span class="o">(</span><span class="n">T</span> <span class="n">t</span><span class="o">);</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">hash</span><span class="o">(</span><span class="n">T</span> <span class="n">t</span><span class="o">);</span>
 <span class="o">}</span></code></pre></figure>
 
 <p>The definition of the service is quite simple, it is only some simple Thrift statement.</p>
@@ -125,20 +125,20 @@ After run thrift with command <code class="highlighter-rouge">thrift -r -gen jav
 
     <span class="kd">private</span> <span class="n">BloomFilter</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">bf</span><span class="o">;</span>
 
-    <span class="kd">public</span> <span class="n">BloomFilterHandler</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nf">BloomFilterHandler</span><span class="o">()</span> <span class="o">{</span>
         <span class="n">bf</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BloomFilter</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;(</span><span class="mi">1000</span><span class="o">);</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="n">BloomFilterHandler</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Hashable</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span> <span class="n">functions</span><span class="o">,</span> <span class="kt">int</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nf">BloomFilterHandler</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Hashable</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span> <span class="n">functions</span><span class="o">,</span> <span class="kt">int</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
         <span class="n">bf</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BloomFilter</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;(</span><span class="n">functions</span><span class="o">,</span> <span class="n">size</span><span class="o">);</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="kt">void</span> <span class="n">add</span><span class="o">(</span><span class="n">String</span> <span class="n">str</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">TException</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">add</span><span class="o">(</span><span class="n">String</span> <span class="n">str</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">TException</span> <span class="o">{</span>
         <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Operation: add "</span> <span class="o">+</span> <span class="n">str</span><span class="o">);</span>
         <span class="n">bf</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">str</span><span class="o">);</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="kt">boolean</span> <span class="n">contain</span><span class="o">(</span><span class="n">String</span> <span class="n">str</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">TException</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">contain</span><span class="o">(</span><span class="n">String</span> <span class="n">str</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">TException</span> <span class="o">{</span>
         <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Operation: contain "</span> <span class="o">+</span> <span class="n">str</span><span class="o">);</span>
         <span class="k">return</span> <span class="n">bf</span><span class="o">.</span><span class="na">contain</span><span class="o">(</span><span class="n">str</span><span class="o">);</span>
     <span class="o">}</span>
@@ -150,7 +150,7 @@ After run thrift with command <code class="highlighter-rouge">thrift -r -gen jav
 
     <span class="kd">public</span> <span class="kd">static</span> <span class="n">BloomFilterService</span><span class="o">.</span><span class="na">Processor</span> <span class="n">processor</span><span class="o">;</span>
 
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">try</span> <span class="o">{</span>
             <span class="n">List</span><span class="o">&lt;</span><span class="n">Hashable</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span> <span class="n">functions</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Hashable</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;();</span>
             <span class="n">functions</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">StringHash</span><span class="o">(</span><span class="mi">17</span><span class="o">));</span>
@@ -160,19 +160,19 @@ After run thrift with command <code class="highlighter-rouge">thrift -r -gen jav
             <span class="n">processor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BloomFilterService</span><span class="o">.</span><span class="na">Processor</span><span class="o">(</span><span class="n">handler</span><span class="o">);</span>
 
             <span class="n">Runnable</span> <span class="n">simple</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Runnable</span><span class="o">()</span> <span class="o">{</span>
-                <span class="kd">public</span> <span class="kt">void</span> <span class="n">run</span><span class="o">()</span> <span class="o">{</span>
+                <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
                     <span class="n">simple</span><span class="o">(</span><span class="n">processor</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">};</span>
 
-            <span class="k">new</span> <span class="n">Thread</span><span class="o">(</span><span class="n">simple</span><span class="o">).</span><span class="na">start</span><span class="o">();</span>
+            <span class="k">new</span> <span class="nf">Thread</span><span class="o">(</span><span class="n">simple</span><span class="o">).</span><span class="na">start</span><span class="o">();</span>
 
         <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">x</span><span class="o">)</span> <span class="o">{</span>
             <span class="n">x</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
         <span class="o">}</span>
     <span class="o">}</span>
 
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">simple</span><span class="o">(</span><span class="n">BloomFilterService</span><span class="o">.</span><span class="na">Processor</span> <span class="n">processor</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">simple</span><span class="o">(</span><span class="n">BloomFilterService</span><span class="o">.</span><span class="na">Processor</span> <span class="n">processor</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">try</span> <span class="o">{</span>
             <span class="n">TServerTransport</span> <span class="n">serverTransport</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TServerSocket</span><span class="o">(</span><span class="mi">9090</span><span class="o">);</span>
               <span class="n">TServer</span> <span class="n">server</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TSimpleServer</span><span class="o">(</span><span class="k">new</span> <span class="n">Args</span><span class="o">(</span><span class="n">serverTransport</span><span class="o">).</span><span class="na">processor</span><span class="o">(</span><span class="n">processor</span><span class="o">));</span>
@@ -188,7 +188,7 @@ After run thrift with command <code class="highlighter-rouge">thrift -r -gen jav
 <p>The client code is relative simple. We also use an object provided in the <code class="highlighter-rouge">BloomFilterService</code> called <code class="highlighter-rouge">BloomFilterService.Client</code>. We create a such object by providing a <code class="highlighter-rouge">transport</code> object, determining how data would be written onto wire, and a <code class="highlighter-rouge">protocol</code> object, determining how data would be serialized and deserialzied. Then use the <code class="highlighter-rouge">client</code> object, we can call the API provided by the service.</p>
 
 <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BloomFilterClient</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span> <span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span> <span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">try</span> <span class="o">{</span>
             <span class="n">TTransport</span> <span class="n">transport</span><span class="o">;</span>
            
@@ -206,7 +206,7 @@ After run thrift with command <code class="highlighter-rouge">thrift -r -gen jav
         <span class="o">}</span> 
     <span class="o">}</span>
 
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">perform</span><span class="o">(</span><span class="n">BloomFilterService</span><span class="o">.</span><span class="na">Client</span> <span class="n">client</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">TException</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">perform</span><span class="o">(</span><span class="n">BloomFilterService</span><span class="o">.</span><span class="na">Client</span> <span class="n">client</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">TException</span> <span class="o">{</span>
         <span class="n">client</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">"apple"</span><span class="o">);</span>
         <span class="n">client</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">"banana"</span><span class="o">);</span>
         <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Is apple there? "</span> <span class="o">+</span> <span class="n">client</span><span class="o">.</span><span class="na">contain</span><span class="o">(</span><span class="s">"apple"</span><span class="o">));</span>
