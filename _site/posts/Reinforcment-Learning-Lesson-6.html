@@ -5,10 +5,10 @@
       <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Coding Monkey</title>
+        <title>Reinforcement Learning Lesson 6</title>
         <meta name="viewport" content="width=device-width">
         <meta name="description" content="A coding monkey, who is passionate in algorithm and machine learning, hoping one day to become a coding machine." />
-        <link rel="canonical" href="http://localhost:4000//" />
+        <link rel="canonical" href="http://localhost:4000/posts/Reinforcment-Learning-Lesson-6/" />
 
         <!-- Custom CSS -->
         <link rel="stylesheet" href="/css/main.css">
@@ -73,53 +73,113 @@
 
     <div class="page-content">
       <div class="wrap">
-      <div class="home">
+      <div class="post">
 
-  <h1>Posts</h1>
+  <header class="post-header">
+    <h1>Reinforcement Learning Lesson 6</h1>
+    <p class="meta">Sep 10, 2017</p>
+  </header>
 
-  <ul class="posts">
-    
-      <li><span class="post-date">Sep 10, 2017</span> <a class="post-link" href="/posts/Reinforcment-Learning-Lesson-6">Reinforcement Learning Lesson 6</a></li>
-    
-      <li><span class="post-date">Sep 8, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lesson-5">Reinforcement Learning Lesson 5</a></li>
-    
-      <li><span class="post-date">Aug 19, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lesson-4">Reinforcement Learning Lesson 4</a></li>
-    
-      <li><span class="post-date">Aug 17, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lession-3">Reinforcement Learning Lesson 3</a></li>
-    
-      <li><span class="post-date">Aug 14, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lesson-2">Reinforcement Learning Lesson 2</a></li>
-    
-      <li><span class="post-date">Aug 13, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lesson-1">Reinforcement Learning Lesson 1</a></li>
-    
-      <li><span class="post-date">Aug 12, 2017</span> <a class="post-link" href="/posts/Math-Equation">Math Equation</a></li>
-    
-      <li><span class="post-date">Feb 7, 2016</span> <a class="post-link" href="/posts/Clean-Code-Summarize">Clean Code Summarize</a></li>
-    
-      <li><span class="post-date">Dec 12, 2015</span> <a class="post-link" href="/posts/Design-Pattern-Summarize">Design Pattern Summarization</a></li>
-    
-      <li><span class="post-date">Nov 14, 2015</span> <a class="post-link" href="/posts/CodeFights-NumberGameVI">[CodeFights] NumberGameVI</a></li>
-    
-      <li><span class="post-date">Nov 13, 2015</span> <a class="post-link" href="/posts/Lintcode-Interval-Sum-II">[Lintcode] Interval Sum II</a></li>
-    
-      <li><span class="post-date">Nov 13, 2015</span> <a class="post-link" href="/posts/Lintcode-Count-of-Smaller-Number-before-itself">[Lintcode] Count of Smaller Number before itself</a></li>
-    
-      <li><span class="post-date">Nov 13, 2015</span> <a class="post-link" href="/posts/Hackerrank-Cut-the-tree">[Hackerrank] Cut the tree</a></li>
-    
-      <li><span class="post-date">Nov 12, 2015</span> <a class="post-link" href="/posts/Simple-Bloom-Filter-Implementation-Part-2">Simple Bloom Filter Implementation Part 2</a></li>
-    
-      <li><span class="post-date">Nov 12, 2015</span> <a class="post-link" href="/posts/How-To-Read-A-Book">How To Read A Book</a></li>
-    
-      <li><span class="post-date">Nov 2, 2015</span> <a class="post-link" href="/posts/Simple-Bloom-Filter-Implementation-Part-I">Simple Bloom Filter Implementation Part I</a></li>
-    
-      <li><span class="post-date">Nov 1, 2015</span> <a class="post-link" href="/posts/Lintcode-Triangle-Count">[Lintcode] Triangle Count</a></li>
-    
-      <li><span class="post-date">Nov 1, 2015</span> <a class="post-link" href="/posts/Ant-Cheat-Sheet">Ant Cheat Sheet</a></li>
-    
-  </ul>
+  <article class="post-content">
+  <p>In the pervious we use a model to approximate the state value/action value function. In this post, we are going to learn how to directly parameterize a policy, which means we would directly get the probability of each action given a state:</p>
 
-  <p class="rss-subscribe">subscribe <a href="/feed.xml">via RSS</a></p>
+<script type="math/tex; mode=display">\pi_{\theta}(s ,a) = P[a|s, \theta]</script>
+
+<p>In this case, we are not going to have any value function. A slight variance of this method is called <strong>Actor-Critic</strong>, in which both value function and policy are modeled and learnt.</p>
+
+<p>The advantage of <strong>Policy based RL</strong> is:</p>
+<ul>
+  <li>Better convergence properties</li>
+  <li>Effective in high-dimensional or continuous action spaces</li>
+  <li>Can learn stochastic policies</li>
+</ul>
+
+<h4 id="policy-objective-functions">Policy Objective Functions</h4>
+<p>Since we are going to learn $\pi_\theta (s, a)$ and find the best $\theta$, we need to first find a way to measure the quality of our policy. These are called <strong>policy objective function</strong> and some we can use are:</p>
+<ul>
+  <li>In episode environment we can use the start value</li>
+</ul>
+
+<script type="math/tex; mode=display">J_1(\theta) = V^{\pi_\theta}(s_1) = E_{\pi_\theta}[v_1]</script>
+
+<ul>
+  <li>In continuous environment we can use average value or average reward pre time-step</li>
+</ul>
+
+<script type="math/tex; mode=display">J_{avV}(\theta) = \sum_{s}d^{\pi_\theta}(s)V^{\pi_\theta}(s) \\
+J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a</script>
+
+<p>where $d^{\pi_\theta}(s)$ is stationary distribution of Markov chain for $\pi_\theta$.</p>
+
+<p>After we have the measurement of the policy quality, we are going to find the best parameter which gives us the best quality and this becomes an optimization problem. Actually, similar to the last post, we can also use stochastic gradient to help use here. Since we are trying to find the maximum value, we are going to use what is called gradient ascent to find the steepest direction to update our parameter (very similar to gradient decrease).</p>
+
+<h4 id="score-function">Score Function</h4>
+<p>In order to compute the policy gradient analytically, we introduced the <strong>score function</strong>. Assume policy $\pi_{\theta}$ is differentiable whenever it is non-zero and we know the gradient $\nabla_\theta \pi_\theta (s, a)$. Then using some tricky we have:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align}
+\nabla_\theta \pi_\theta (s, a) & = \pi_\theta (s, a) \frac{\nabla_\theta \pi_\theta (s, a) }{\pi_\theta (s, a)} \\
+& = \pi_\theta (s, a) \nabla_\theta log \pi_\theta (s, a)
+\end{align} %]]></script>
+
+<p>Here, $\nabla_\theta log \pi_\theta (s, a)$ is the <strong>score function</strong>.</p>
+
+<h4 id="policy-gradient-theorem">Policy Gradient Theorem</h4>
+<blockquote>
+  <p>For any differentiable policy $\pi_\theta (s, a)$, for any of the policy objective functions $J_1, J_{avV}, J_{avR}$, the policy gradient is</p>
+</blockquote>
+
+<script type="math/tex; mode=display">\nabla_\theta J(\theta) = E_{\pi_\theta}[\nabla_\theta log \pi_\theta (s, a) Q^{\pi_\theta} (s, a)]</script>
+
+<h4 id="monte-carlo-policy-gradient">Monte-Carlo Policy Gradient</h4>
+<p>Use return as an unbiased sample of $Q^{\pi_\theta} (s, a)$, the algorithm is as follow:</p>
+<ul>
+  <li>Initialize $\theta$ arbitrarily
+    <ul>
+      <li>for each episode ${s_1, a_1, r_2, …, s_{T-1}, a_{T-1}, r_T} ~ \pi_\theta$ do
+        <ul>
+          <li>for $t = 1$ to $T - 1$ do
+            <ul>
+              <li>$\theta = \theta + \alpha \nabla_\theta log \pi_\theta (s, a) v_t$</li>
+            </ul>
+          </li>
+          <li>end for</li>
+        </ul>
+      </li>
+      <li>end for</li>
+    </ul>
+  </li>
+  <li>return $\theta$</li>
+</ul>
+
+<h4 id="actor-critic-policy-gradient">Actor Critic Policy Gradient</h4>
+<p>The problem with Monte-Carlo Policy Gradient is that is has a very high variance. In order to reduce the variance, we can use a <strong>critic</strong> to estimate the action value function. Thus in <strong>Actor Critic Policy Gradient</strong>, we have two components:</p>
+<ul>
+  <li><em>Critic</em> updates action value function parameters $w$</li>
+  <li><em>Actor</em> updates policy parameters $\theta$, in direction suggested by critic</li>
+</ul>
+
+<p>Here is an example when we use linear value function approximation for the critic:</p>
+<ul>
+  <li>Initialize $s$, $\theta$</li>
+  <li>Sample $a ~ \pi_\theta$</li>
+  <li>for each step do
+    <ul>
+      <li>Sample reward $r$, sample next state $s’$</li>
+      <li>Sample action $a’ ~ \pi_\theta (s’, a’)$</li>
+      <li>$\delta = r + \gamma Q_w(s’, a’) - Q_w(s, a)$ (This is the TD error)</li>
+      <li>$\theta = \theta + \alpha \nabla_\theta log \pi_\theta (s, a) Q_w(s, a)$ (We replace with the approximation)</li>
+      <li>$w = w + \beta \delta \phi(s, a)$ (Update value function approximation model parameter)</li>
+      <li>$a = a’$, $s = s’$</li>
+    </ul>
+  </li>
+  <li>end for</li>
+</ul>
+
+  </article>
 
 </div>
+
       </div>
     </div>
 
