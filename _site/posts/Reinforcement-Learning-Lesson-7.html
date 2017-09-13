@@ -5,10 +5,10 @@
       <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Coding Monkey</title>
+        <title>Reinforcement Learning Lesson 7</title>
         <meta name="viewport" content="width=device-width">
         <meta name="description" content="A coding monkey, who is passionate in algorithm and machine learning, hoping one day to become a coding machine." />
-        <link rel="canonical" href="http://localhost:4000//" />
+        <link rel="canonical" href="http://localhost:4000/posts/Reinforcement-Learning-Lesson-7/" />
 
         <!-- Custom CSS -->
         <link rel="stylesheet" href="/css/main.css">
@@ -73,55 +73,90 @@
 
     <div class="page-content">
       <div class="wrap">
-      <div class="home">
+      <div class="post">
 
-  <h1>Posts</h1>
+  <header class="post-header">
+    <h1>Reinforcement Learning Lesson 7</h1>
+    <p class="meta">Sep 11, 2017</p>
+  </header>
 
-  <ul class="posts">
-    
-      <li><span class="post-date">Sep 11, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lesson-7">Reinforcement Learning Lesson 7</a></li>
-    
-      <li><span class="post-date">Sep 10, 2017</span> <a class="post-link" href="/posts/Reinforcment-Learning-Lesson-6">Reinforcement Learning Lesson 6</a></li>
-    
-      <li><span class="post-date">Sep 8, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lesson-5">Reinforcement Learning Lesson 5</a></li>
-    
-      <li><span class="post-date">Aug 19, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lesson-4">Reinforcement Learning Lesson 4</a></li>
-    
-      <li><span class="post-date">Aug 17, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lession-3">Reinforcement Learning Lesson 3</a></li>
-    
-      <li><span class="post-date">Aug 14, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lesson-2">Reinforcement Learning Lesson 2</a></li>
-    
-      <li><span class="post-date">Aug 13, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lesson-1">Reinforcement Learning Lesson 1</a></li>
-    
-      <li><span class="post-date">Aug 12, 2017</span> <a class="post-link" href="/posts/Math-Equation">Math Equation</a></li>
-    
-      <li><span class="post-date">Feb 7, 2016</span> <a class="post-link" href="/posts/Clean-Code-Summarize">Clean Code Summarize</a></li>
-    
-      <li><span class="post-date">Dec 12, 2015</span> <a class="post-link" href="/posts/Design-Pattern-Summarize">Design Pattern Summarization</a></li>
-    
-      <li><span class="post-date">Nov 14, 2015</span> <a class="post-link" href="/posts/CodeFights-NumberGameVI">[CodeFights] NumberGameVI</a></li>
-    
-      <li><span class="post-date">Nov 13, 2015</span> <a class="post-link" href="/posts/Lintcode-Interval-Sum-II">[Lintcode] Interval Sum II</a></li>
-    
-      <li><span class="post-date">Nov 13, 2015</span> <a class="post-link" href="/posts/Lintcode-Count-of-Smaller-Number-before-itself">[Lintcode] Count of Smaller Number before itself</a></li>
-    
-      <li><span class="post-date">Nov 13, 2015</span> <a class="post-link" href="/posts/Hackerrank-Cut-the-tree">[Hackerrank] Cut the tree</a></li>
-    
-      <li><span class="post-date">Nov 12, 2015</span> <a class="post-link" href="/posts/Simple-Bloom-Filter-Implementation-Part-2">Simple Bloom Filter Implementation Part 2</a></li>
-    
-      <li><span class="post-date">Nov 12, 2015</span> <a class="post-link" href="/posts/How-To-Read-A-Book">How To Read A Book</a></li>
-    
-      <li><span class="post-date">Nov 2, 2015</span> <a class="post-link" href="/posts/Simple-Bloom-Filter-Implementation-Part-I">Simple Bloom Filter Implementation Part I</a></li>
-    
-      <li><span class="post-date">Nov 1, 2015</span> <a class="post-link" href="/posts/Lintcode-Triangle-Count">[Lintcode] Triangle Count</a></li>
-    
-      <li><span class="post-date">Nov 1, 2015</span> <a class="post-link" href="/posts/Ant-Cheat-Sheet">Ant Cheat Sheet</a></li>
-    
-  </ul>
+  <article class="post-content">
+  <p>In the pervious notes, we are all using <strong>model-free</strong> reinforcement learning method to find the solution for the problem. Today we are going to introduce method that directly learns from the experience and tries to understand the underlaying world.</p>
 
-  <p class="rss-subscribe">subscribe <a href="/feed.xml">via RSS</a></p>
+<p>From <a href="http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-1">Lesson 1</a> we know that a MDP can be represent by $&lt;S, A, P, R&gt;$, and our model is going to understand and simulate this. We will only introduce the simple version here, in which we assume that the $S$ and $A$ is known, and thus we only need to model $P$ and $R$. We can formulate it as:</p>
+
+<script type="math/tex; mode=display">S_{t+1} ~ P_\eta(S_{t+1}|S_t, A_t) \\
+R_{t+1} = R_\eta(R_{t+1}|S_t, A_t)</script>
+
+<p>where the prediction of next state is a density estimation problem and the reward is a regression problem.</p>
+
+<h4 id="integrated-architecture">Integrated Architecture</h4>
+<p>In this architecture, we are going to consider two types of experience. <strong>Real experience</strong> which is sampled from the environment, and <strong>Simulated experience</strong> which is sampled from our model. In the past, we only use the real experience to learn value function/policy. Now, we are going to learn our model from real experience, then plan and learn value function/policy from both real and simulated experience. This is thus called integrated architecture (integration of real and fake), the <strong>Dyna Architecture</strong>. Here is an picture to illustrate what the logic flow of Dyna is like.</p>
+
+<p><img src="/assets/dyna.png" alt="Dyna Architecture" /></p>
+
+<p>According to the Dyna architecture, we can design many algorithm, here is an example of <strong>Dyna-Q Algorithm</strong>:</p>
+<ul>
+  <li>Initialize $Q(s, a)$ and $Model(s, a)$ for all $s$ and $a$</li>
+  <li>Do forever:
+    <ul>
+      <li>$S =$ current (nonterminal) state</li>
+      <li>$A = \epsilon - \text{greedy}(S, Q)$</li>
+      <li>Execute action $A$; observe result reward $R$, and state $S’$</li>
+      <li>$Q(S, A) = Q(S, A) + \alpha[R + \gamma max_a Q(S’, a) - Q(S, A)]$ (This is using real experience)</li>
+      <li>Update $Model(S, A)$ using $R, S’$</li>
+      <li>Repeat $n$ times: (This is using simulated experience to learn value function)
+        <ul>
+          <li>$S =$ random previously observed state</li>
+          <li>$A =$ random action previously taken in $S$</li>
+          <li>Sample $R, S’$ from $Model(S, A)$</li>
+          <li>$Q(S, A) = Q(S, A) + \alpha[R + \gamma max_a Q(S’, a) - Q(S, A)]$</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="monte-carlo-tree-search">Monte-Carlo Tree Search</h4>
+<p><strong>Monte-Carlo Tree Search</strong> is a very efficient algorithm to plan once we have a model.</p>
+<ul>
+  <li>Given a model $M_v$</li>
+  <li>Simulate $K$ episodes from current state $s_t$ using current simulation policy $\pi$</li>
+</ul>
+
+<script type="math/tex; mode=display">{s_t, A_t^k, R_{t+1}^k, S_{t+1}^k, ..., S_T^k} ~ M_v, \pi</script>
+
+<ul>
+  <li>Build a search tree containing visited states and actions</li>
+  <li>Evaluate state $Q(s, a)$ by mean return of episodes from $s, a$</li>
+  <li>After search is finished, select current (real) action with maximum value in search tree</li>
+</ul>
+
+<p>In MCMT, the simulation policy $\pi$ improves. Each simulation consists of two phases (in-tree, out-of-tree):</p>
+<ul>
+  <li>Tree policy (improves): pick action to maximize $Q(S, A)$</li>
+  <li>Default policy (fixed): pick action randomly</li>
+</ul>
+
+<p>Repeat (each simulation):</p>
+<ul>
+  <li>Evaluate states $Q(S, A)$ by Mento-Carlo evaluation</li>
+  <li>Improve tree policy, e.g. by $\epsilon-\text{greedy}(Q)$</li>
+</ul>
+
+<p>There are several advantages of MCMT:</p>
+<ul>
+  <li>Highly selective best-first search</li>
+  <li>Evaluates states dynamically</li>
+  <li>Uses sampling to break curse of dimensionality</li>
+  <li>Works for “black-box” models (only requires samples)</li>
+  <li>Computationally efficient, anytime</li>
+</ul>
+
+  </article>
 
 </div>
+
       </div>
     </div>
 

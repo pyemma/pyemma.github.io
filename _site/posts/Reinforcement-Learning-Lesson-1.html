@@ -149,9 +149,9 @@ P_{n1} & ... & P_{nn}
 
 <p>Note that the return is accumulated with discounting. This is important is:</p>
 <ul>
-  <li>Avoid infity loop that might exist in MDP (e.g. self loop)</li>
-  <li>Model the uncertenity about the future</li>
-  <li>From common sense, humman prefer immediate reward than long term ones</li>
+  <li>Avoid infinity loop that might exist in MDP (e.g. self loop)</li>
+  <li>Model the uncertainty about the future</li>
+  <li>From common sense, human prefer immediate reward than long term ones</li>
 </ul>
 
 <p>We can breakdown the state value function into two parts, immediate and long term. Using recurse, we have the Bellman Equation for MRP:</p>
@@ -163,7 +163,7 @@ P_{n1} & ... & P_{nn}
 <script type="math/tex; mode=display">v(s) = R_s + \gamma\sum_{s^\prime\in S}P_{ss^\prime}v(s^\prime)</script>
 
 <h4 id="markov-decision-process">Markov Decision Process</h4>
-<p>Adding the actions we can make among the state, we finally have the defination for MDP, which is $&lt;S, A, P, R, \gamma&gt;$$:</p>
+<p>Adding the actions we can make among the state, we finally have the definition for MDP, which is $&lt;S, A, P, R, \gamma&gt;$$:</p>
 <ul>
   <li>$S$ is a finite state set</li>
   <li>$A$ is a finite action set</li>
@@ -176,11 +176,11 @@ P_{n1} & ... & P_{nn}
 
 <p>Notice the change on the state transition matrix, before we only have a single matrix, and now we have one for each action $a$ (we can think of in the pervious case, we have only single action). Under different action $a$, the transition probability can be different between the two state. We can now regard the new state transition matrix as a tensor with three dimension.</p>
 
-<p>As we have actions to now, we need to make decsion how to take actions. A <strong>policy</strong> is a distribution over actions given a state:</p>
+<p>As we have actions to now, we need to make decision how to take actions. A <strong>policy</strong> is a distribution over actions given a state:</p>
 
 <script type="math/tex; mode=display">\pi(a|s) = \mathbb{P}[A_t=a|S_t=s]</script>
 
-<p>A policy fully determines how an agent would act, and it does not depend on the history. Similar to MRP, we have state value function for MDP as the expected return statring from $s$, following the policy $\pi$:</p>
+<p>A policy fully determines how an agent would act, and it does not depend on the history. Similar to MRP, we have state value function for MDP as the expected return starting from $s$, following the policy $\pi$:</p>
 
 <script type="math/tex; mode=display">v_{\pi}(s) = \mathbb{E}_{\pi}[G_t|S_t=s]</script>
 
@@ -188,15 +188,15 @@ P_{n1} & ... & P_{nn}
 
 <script type="math/tex; mode=display">q_{\pi}(s, a) = \mathbb{E}_{\pi}[G_t|S_t=s, A_t=a]</script>
 
-<p>These two functions have relationship and can be transfromed to each other easily, to get state value function, we can summation over all the action value function for the action that state we could get, weight by the policy:</p>
+<p>These two functions have relationship and can be transformed to each other easily, to get state value function, we can summation over all the action value function for the action that state we could get, weight by the policy:</p>
 
 <script type="math/tex; mode=display">v_\pi(s) = \sum_{a\in A}\pi(a|s)q_{\pi}(s, a)</script>
 
-<p>And the action value function can be obtained by summation overall all state we can transation to, weighted by the state transition matrix:</p>
+<p>And the action value function can be obtained by summation overall all state we can transition to, weighted by the state transition matrix:</p>
 
 <script type="math/tex; mode=display">q_\pi(s, a) = R_s^a + \gamma\sum_{s^\prime}P_{ss^\prime}^a v(s^\prime)</script>
 
-<p>Comebine the above equations, we can obtain the Bellman Exception Equation as:</p>
+<p>Combine the above equations, we can obtain the Bellman Exception Equation as:</p>
 
 <script type="math/tex; mode=display">v_\pi(s) = \sum_{a\in A}\pi(a|s)(R_s^a + \gamma\sum_{s^\prime}P_{ss^\prime}^a v(s^\prime))</script>
 

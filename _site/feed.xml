@@ -7,6 +7,85 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Reinforcement Learning Lesson 7</title>
+        <description>&lt;p&gt;In the pervious notes, we are all using &lt;strong&gt;model-free&lt;/strong&gt; reinforcement learning method to find the solution for the problem. Today we are going to introduce method that directly learns from the experience and tries to understand the underlaying world.&lt;/p&gt;
+
+&lt;p&gt;From &lt;a href=&quot;http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-1&quot;&gt;Lesson 1&lt;/a&gt; we know that a MDP can be represent by $&amp;lt;S, A, P, R&amp;gt;$, and our model is going to understand and simulate this. We will only introduce the simple version here, in which we assume that the $S$ and $A$ is known, and thus we only need to model $P$ and $R$. We can formulate it as:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;S_{t+1} ~ P_\eta(S_{t+1}|S_t, A_t) \\
+R_{t+1} = R_\eta(R_{t+1}|S_t, A_t)&lt;/script&gt;
+
+&lt;p&gt;where the prediction of next state is a density estimation problem and the reward is a regression problem.&lt;/p&gt;
+
+&lt;h4 id=&quot;integrated-architecture&quot;&gt;Integrated Architecture&lt;/h4&gt;
+&lt;p&gt;In this architecture, we are going to consider two types of experience. &lt;strong&gt;Real experience&lt;/strong&gt; which is sampled from the environment, and &lt;strong&gt;Simulated experience&lt;/strong&gt; which is sampled from our model. In the past, we only use the real experience to learn value function/policy. Now, we are going to learn our model from real experience, then plan and learn value function/policy from both real and simulated experience. This is thus called integrated architecture (integration of real and fake), the &lt;strong&gt;Dyna Architecture&lt;/strong&gt;. Here is an picture to illustrate what the logic flow of Dyna is like.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/dyna.png&quot; alt=&quot;Dyna Architecture&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;According to the Dyna architecture, we can design many algorithm, here is an example of &lt;strong&gt;Dyna-Q Algorithm&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initialize $Q(s, a)$ and $Model(s, a)$ for all $s$ and $a$&lt;/li&gt;
+  &lt;li&gt;Do forever:
+    &lt;ul&gt;
+      &lt;li&gt;$S =$ current (nonterminal) state&lt;/li&gt;
+      &lt;li&gt;$A = \epsilon - \text{greedy}(S, Q)$&lt;/li&gt;
+      &lt;li&gt;Execute action $A$; observe result reward $R$, and state $S’$&lt;/li&gt;
+      &lt;li&gt;$Q(S, A) = Q(S, A) + \alpha[R + \gamma max_a Q(S’, a) - Q(S, A)]$ (This is using real experience)&lt;/li&gt;
+      &lt;li&gt;Update $Model(S, A)$ using $R, S’$&lt;/li&gt;
+      &lt;li&gt;Repeat $n$ times: (This is using simulated experience to learn value function)
+        &lt;ul&gt;
+          &lt;li&gt;$S =$ random previously observed state&lt;/li&gt;
+          &lt;li&gt;$A =$ random action previously taken in $S$&lt;/li&gt;
+          &lt;li&gt;Sample $R, S’$ from $Model(S, A)$&lt;/li&gt;
+          &lt;li&gt;$Q(S, A) = Q(S, A) + \alpha[R + \gamma max_a Q(S’, a) - Q(S, A)]$&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;monte-carlo-tree-search&quot;&gt;Monte-Carlo Tree Search&lt;/h4&gt;
+&lt;p&gt;&lt;strong&gt;Monte-Carlo Tree Search&lt;/strong&gt; is a very efficient algorithm to plan once we have a model.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Given a model $M_v$&lt;/li&gt;
+  &lt;li&gt;Simulate $K$ episodes from current state $s_t$ using current simulation policy $\pi$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;{s_t, A_t^k, R_{t+1}^k, S_{t+1}^k, ..., S_T^k} ~ M_v, \pi&lt;/script&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Build a search tree containing visited states and actions&lt;/li&gt;
+  &lt;li&gt;Evaluate state $Q(s, a)$ by mean return of episodes from $s, a$&lt;/li&gt;
+  &lt;li&gt;After search is finished, select current (real) action with maximum value in search tree&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In MCMT, the simulation policy $\pi$ improves. Each simulation consists of two phases (in-tree, out-of-tree):&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Tree policy (improves): pick action to maximize $Q(S, A)$&lt;/li&gt;
+  &lt;li&gt;Default policy (fixed): pick action randomly&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Repeat (each simulation):&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Evaluate states $Q(S, A)$ by Mento-Carlo evaluation&lt;/li&gt;
+  &lt;li&gt;Improve tree policy, e.g. by $\epsilon-\text{greedy}(Q)$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;There are several advantages of MCMT:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Highly selective best-first search&lt;/li&gt;
+  &lt;li&gt;Evaluates states dynamically&lt;/li&gt;
+  &lt;li&gt;Uses sampling to break curse of dimensionality&lt;/li&gt;
+  &lt;li&gt;Works for “black-box” models (only requires samples)&lt;/li&gt;
+  &lt;li&gt;Computationally efficient, anytime&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Mon, 11 Sep 2017 00:00:00 -0700</pubDate>
+        <link>http://localhost:4000//posts/Reinforcement-Learning-Lesson-7</link>
+        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lesson-7</guid>
+      </item>
+    
+      <item>
         <title>Reinforcement Learning Lesson 6</title>
         <description>&lt;p&gt;In the pervious we use a model to approximate the state value/action value function. In this post, we are going to learn how to directly parameterize a policy, which means we would directly get the probability of each action given a state:&lt;/p&gt;
 
@@ -471,9 +550,9 @@ P_{n1} &amp; ... &amp; P_{nn}
 
 &lt;p&gt;Note that the return is accumulated with discounting. This is important is:&lt;/p&gt;
 &lt;ul&gt;
-  &lt;li&gt;Avoid infity loop that might exist in MDP (e.g. self loop)&lt;/li&gt;
-  &lt;li&gt;Model the uncertenity about the future&lt;/li&gt;
-  &lt;li&gt;From common sense, humman prefer immediate reward than long term ones&lt;/li&gt;
+  &lt;li&gt;Avoid infinity loop that might exist in MDP (e.g. self loop)&lt;/li&gt;
+  &lt;li&gt;Model the uncertainty about the future&lt;/li&gt;
+  &lt;li&gt;From common sense, human prefer immediate reward than long term ones&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;We can breakdown the state value function into two parts, immediate and long term. Using recurse, we have the Bellman Equation for MRP:&lt;/p&gt;
@@ -485,7 +564,7 @@ P_{n1} &amp; ... &amp; P_{nn}
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;v(s) = R_s + \gamma\sum_{s^\prime\in S}P_{ss^\prime}v(s^\prime)&lt;/script&gt;
 
 &lt;h4 id=&quot;markov-decision-process&quot;&gt;Markov Decision Process&lt;/h4&gt;
-&lt;p&gt;Adding the actions we can make among the state, we finally have the defination for MDP, which is $&amp;lt;S, A, P, R, \gamma&amp;gt;$$:&lt;/p&gt;
+&lt;p&gt;Adding the actions we can make among the state, we finally have the definition for MDP, which is $&amp;lt;S, A, P, R, \gamma&amp;gt;$$:&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;$S$ is a finite state set&lt;/li&gt;
   &lt;li&gt;$A$ is a finite action set&lt;/li&gt;
@@ -498,11 +577,11 @@ P_{n1} &amp; ... &amp; P_{nn}
 
 &lt;p&gt;Notice the change on the state transition matrix, before we only have a single matrix, and now we have one for each action $a$ (we can think of in the pervious case, we have only single action). Under different action $a$, the transition probability can be different between the two state. We can now regard the new state transition matrix as a tensor with three dimension.&lt;/p&gt;
 
-&lt;p&gt;As we have actions to now, we need to make decsion how to take actions. A &lt;strong&gt;policy&lt;/strong&gt; is a distribution over actions given a state:&lt;/p&gt;
+&lt;p&gt;As we have actions to now, we need to make decision how to take actions. A &lt;strong&gt;policy&lt;/strong&gt; is a distribution over actions given a state:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;\pi(a|s) = \mathbb{P}[A_t=a|S_t=s]&lt;/script&gt;
 
-&lt;p&gt;A policy fully determines how an agent would act, and it does not depend on the history. Similar to MRP, we have state value function for MDP as the expected return statring from $s$, following the policy $\pi$:&lt;/p&gt;
+&lt;p&gt;A policy fully determines how an agent would act, and it does not depend on the history. Similar to MRP, we have state value function for MDP as the expected return starting from $s$, following the policy $\pi$:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;v_{\pi}(s) = \mathbb{E}_{\pi}[G_t|S_t=s]&lt;/script&gt;
 
@@ -510,15 +589,15 @@ P_{n1} &amp; ... &amp; P_{nn}
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;q_{\pi}(s, a) = \mathbb{E}_{\pi}[G_t|S_t=s, A_t=a]&lt;/script&gt;
 
-&lt;p&gt;These two functions have relationship and can be transfromed to each other easily, to get state value function, we can summation over all the action value function for the action that state we could get, weight by the policy:&lt;/p&gt;
+&lt;p&gt;These two functions have relationship and can be transformed to each other easily, to get state value function, we can summation over all the action value function for the action that state we could get, weight by the policy:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;v_\pi(s) = \sum_{a\in A}\pi(a|s)q_{\pi}(s, a)&lt;/script&gt;
 
-&lt;p&gt;And the action value function can be obtained by summation overall all state we can transation to, weighted by the state transition matrix:&lt;/p&gt;
+&lt;p&gt;And the action value function can be obtained by summation overall all state we can transition to, weighted by the state transition matrix:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;q_\pi(s, a) = R_s^a + \gamma\sum_{s^\prime}P_{ss^\prime}^a v(s^\prime)&lt;/script&gt;
 
-&lt;p&gt;Comebine the above equations, we can obtain the Bellman Exception Equation as:&lt;/p&gt;
+&lt;p&gt;Combine the above equations, we can obtain the Bellman Exception Equation as:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;v_\pi(s) = \sum_{a\in A}\pi(a|s)(R_s^a + \gamma\sum_{s^\prime}P_{ss^\prime}^a v(s^\prime))&lt;/script&gt;
 
@@ -689,45 +768,6 @@ Attaches additional responsibilities to an object dynamically.  Decorators provi
         <pubDate>Sat, 12 Dec 2015 00:00:00 -0800</pubDate>
         <link>http://localhost:4000//posts/Design-Pattern-Summarize</link>
         <guid isPermaLink="true">http://localhost:4000//posts/Design-Pattern-Summarize</guid>
-      </item>
-    
-      <item>
-        <title>[CodeFights] NumberGameVI</title>
-        <description>&lt;p&gt;The problem is available &lt;a href=&quot;https://codefights.com/challenge/2HDYBD5D7btqPZqqb&quot;&gt;here&lt;/a&gt;. A relatively straight forward game problem. If the current person want to win, the only requirement is that there exist a move can make B lose. And if there is no move can make B lose, then A will lose. Translate this into recursion and then we can have a working code. We can use a record table to hold whether we can win or not from the current state, using this memory to reduce the required recursion.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;n&quot;&gt;HashMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;record&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;HashMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;();&lt;/span&gt;
-
-&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;NumberGameVI&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;str&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot; &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot; &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot; &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;record&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;containsKey&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;record&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;num&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;num&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;num&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;num&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;win&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;num&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;win&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NumberGameVI&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;num&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;num&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;win&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NumberGameVI&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;win&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NumberGameVI&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;record&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;put&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-                &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;record&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;put&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Similar Problem: Still two person A and B, they take values from a given list (all positive values) in turns. The first person who make the total sum above a given target can win.&lt;/p&gt;
-&lt;/blockquote&gt;
-</description>
-        <pubDate>Sat, 14 Nov 2015 00:00:00 -0800</pubDate>
-        <link>http://localhost:4000//posts/CodeFights-NumberGameVI</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/CodeFights-NumberGameVI</guid>
       </item>
     
   </channel>
