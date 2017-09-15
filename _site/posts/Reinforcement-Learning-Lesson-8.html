@@ -5,10 +5,10 @@
       <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Coding Monkey</title>
+        <title>Reinforcement Learning Lesson 8</title>
         <meta name="viewport" content="width=device-width">
         <meta name="description" content="A coding monkey, who is passionate in algorithm and machine learning, hoping one day to become a coding machine." />
-        <link rel="canonical" href="http://localhost:4000//" />
+        <link rel="canonical" href="http://localhost:4000/posts/Reinforcement-Learning-Lesson-8/" />
 
         <!-- Custom CSS -->
         <link rel="stylesheet" href="/css/main.css">
@@ -73,57 +73,64 @@
 
     <div class="page-content">
       <div class="wrap">
-      <div class="home">
+      <div class="post">
 
-  <h1>Posts</h1>
+  <header class="post-header">
+    <h1>Reinforcement Learning Lesson 8</h1>
+    <p class="meta">Sep 13, 2017</p>
+  </header>
 
-  <ul class="posts">
-    
-      <li><span class="post-date">Sep 13, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lesson-8">Reinforcement Learning Lesson 8</a></li>
-    
-      <li><span class="post-date">Sep 11, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lesson-7">Reinforcement Learning Lesson 7</a></li>
-    
-      <li><span class="post-date">Sep 10, 2017</span> <a class="post-link" href="/posts/Reinforcment-Learning-Lesson-6">Reinforcement Learning Lesson 6</a></li>
-    
-      <li><span class="post-date">Sep 8, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lesson-5">Reinforcement Learning Lesson 5</a></li>
-    
-      <li><span class="post-date">Aug 19, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lesson-4">Reinforcement Learning Lesson 4</a></li>
-    
-      <li><span class="post-date">Aug 17, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lession-3">Reinforcement Learning Lesson 3</a></li>
-    
-      <li><span class="post-date">Aug 14, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lesson-2">Reinforcement Learning Lesson 2</a></li>
-    
-      <li><span class="post-date">Aug 13, 2017</span> <a class="post-link" href="/posts/Reinforcement-Learning-Lesson-1">Reinforcement Learning Lesson 1</a></li>
-    
-      <li><span class="post-date">Aug 12, 2017</span> <a class="post-link" href="/posts/Math-Equation">Math Equation</a></li>
-    
-      <li><span class="post-date">Feb 7, 2016</span> <a class="post-link" href="/posts/Clean-Code-Summarize">Clean Code Summarize</a></li>
-    
-      <li><span class="post-date">Dec 12, 2015</span> <a class="post-link" href="/posts/Design-Pattern-Summarize">Design Pattern Summarization</a></li>
-    
-      <li><span class="post-date">Nov 14, 2015</span> <a class="post-link" href="/posts/CodeFights-NumberGameVI">[CodeFights] NumberGameVI</a></li>
-    
-      <li><span class="post-date">Nov 13, 2015</span> <a class="post-link" href="/posts/Lintcode-Interval-Sum-II">[Lintcode] Interval Sum II</a></li>
-    
-      <li><span class="post-date">Nov 13, 2015</span> <a class="post-link" href="/posts/Lintcode-Count-of-Smaller-Number-before-itself">[Lintcode] Count of Smaller Number before itself</a></li>
-    
-      <li><span class="post-date">Nov 13, 2015</span> <a class="post-link" href="/posts/Hackerrank-Cut-the-tree">[Hackerrank] Cut the tree</a></li>
-    
-      <li><span class="post-date">Nov 12, 2015</span> <a class="post-link" href="/posts/Simple-Bloom-Filter-Implementation-Part-2">Simple Bloom Filter Implementation Part 2</a></li>
-    
-      <li><span class="post-date">Nov 12, 2015</span> <a class="post-link" href="/posts/How-To-Read-A-Book">How To Read A Book</a></li>
-    
-      <li><span class="post-date">Nov 2, 2015</span> <a class="post-link" href="/posts/Simple-Bloom-Filter-Implementation-Part-I">Simple Bloom Filter Implementation Part I</a></li>
-    
-      <li><span class="post-date">Nov 1, 2015</span> <a class="post-link" href="/posts/Lintcode-Triangle-Count">[Lintcode] Triangle Count</a></li>
-    
-      <li><span class="post-date">Nov 1, 2015</span> <a class="post-link" href="/posts/Ant-Cheat-Sheet">Ant Cheat Sheet</a></li>
-    
-  </ul>
+  <article class="post-content">
+  <p>This is the last lesson for the entire reinforcement learning, and in this lesson we will learn something related to exploit and explore. In machine learning service, like recommendation service, there is always a trade off between exploit and explore. Exploit means we are always choosing the best given the current information we have, while explore means try something new we haven’t tried yet. An example is if you go to restaurant, you can always go to the one you enjoy most(exploit), while you can also try a new one(explore).</p>
 
-  <p class="rss-subscribe">subscribe <a href="/feed.xml">via RSS</a></p>
+<p>This problem is usually formularized as multi bandit problem, which can be represented as $&lt;A, R&gt;$. Here $A$ is a set of action we can take, and $R^a(r) = P[R=r, A=a]$ is an <strong>unknown</strong> probability distribution over rewards. At each time, our agent is going to pick an action, and the environment will generate a reward. The goal is to maximize the cumulative reward.</p>
+
+<h4 id="regret">Regret</h4>
+<p>We can measure the goodness of our action use <strong>regret</strong>. Suppose the action value is the mean reward for an action $a$</p>
+
+<script type="math/tex; mode=display">Q(a) = E[r|a]</script>
+
+<p>and the optimal value $V^\star$ is the max mean reward we can get</p>
+
+<script type="math/tex; mode=display">V^\star = Q(a^\star) = max_{a\in A}Q(a)</script>
+
+<p>Then maximize the cumulative reward is equivalent to minimize the total regret, which is</p>
+
+<script type="math/tex; mode=display">L_t = E[\sum_{i=1}^t (V^\star - Q(a_i))]</script>
+
+<h4 id="upper-confidence-bound">Upper Confidence Bound</h4>
+<p>We can try to solve this problem in the face of uncertainty. The best action we should try is the one that would on one hand has a high mean reward, and on the other hand have a high uncertainty. We might get a higher reward, which is good. While we can also get a worse reward, but that does not matter, since we can reduce our uncertainty about that action, and prefer other action which might have higher reward. A more formal description is as follow:</p>
+<ul>
+  <li>Estimate an upper confidence $\hat{U_t}(a)$ for each action value, which depends on the number of times $a$ has been selected, the larger the times, the smaller the upper confidence</li>
+  <li>Such that $Q(a) \le \hat{Q_t}(a) + \hat{U_t}(a)$ with high probability</li>
+  <li>Select action maximize Upper Confidence Bound (UCB)</li>
+</ul>
+
+<script type="math/tex; mode=display">a_t = argmax_{a\in A} \hat{Q_t}(a) + \hat{U_t}(a)</script>
+
+<p>We need to come up with some method to calculate the upper bound. Here, we bring <em>Hoeffding’s Inequality</em> for help</p>
+<blockquote>
+  <p>Let $X_1,…, X_t$ be i.i.d. random variables in $[0, 1]$, and let $\bar{X_t} = \frac{1}{i} \sum_{i=1}^t X_i$ be the sample mean. Then</p>
+</blockquote>
+
+<script type="math/tex; mode=display">P[E[X] > \bar{X}_t + u] \le e^{-2tu^2}</script>
+
+<p>With this we can have</p>
+
+<script type="math/tex; mode=display">P[Q(a) > \hat{Q_t}(a) + \hat{U_t}] \le e^{-2N_t(a)U_t(a)^2}</script>
+
+<p>where $N_t(a)$ is the expected number of $a$ is selected. We then can pick a probability $p$ that true value exceeds UCB, and reduce $p$ as we observer more rewards, e.g. $p = t^{-4}$. Then we could obtain the upper bound as:</p>
+
+<script type="math/tex; mode=display">U_t(a) = \sqrt{\frac{2logt}{N_t(a)}}</script>
+
+<p>And finally we have the UCB1 algorithm</p>
+
+<script type="math/tex; mode=display">a_t = argmax_{a\in A} (Q(a) + \sqrt{\frac{2logt}{N_t(a)}})</script>
+
+  </article>
 
 </div>
+
       </div>
     </div>
 

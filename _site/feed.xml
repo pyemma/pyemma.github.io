@@ -7,6 +7,59 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Reinforcement Learning Lesson 8</title>
+        <description>&lt;p&gt;This is the last lesson for the entire reinforcement learning, and in this lesson we will learn something related to exploit and explore. In machine learning service, like recommendation service, there is always a trade off between exploit and explore. Exploit means we are always choosing the best given the current information we have, while explore means try something new we haven’t tried yet. An example is if you go to restaurant, you can always go to the one you enjoy most(exploit), while you can also try a new one(explore).&lt;/p&gt;
+
+&lt;p&gt;This problem is usually formularized as multi bandit problem, which can be represented as $&amp;lt;A, R&amp;gt;$. Here $A$ is a set of action we can take, and $R^a(r) = P[R=r, A=a]$ is an &lt;strong&gt;unknown&lt;/strong&gt; probability distribution over rewards. At each time, our agent is going to pick an action, and the environment will generate a reward. The goal is to maximize the cumulative reward.&lt;/p&gt;
+
+&lt;h4 id=&quot;regret&quot;&gt;Regret&lt;/h4&gt;
+&lt;p&gt;We can measure the goodness of our action use &lt;strong&gt;regret&lt;/strong&gt;. Suppose the action value is the mean reward for an action $a$&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;Q(a) = E[r|a]&lt;/script&gt;
+
+&lt;p&gt;and the optimal value $V^\star$ is the max mean reward we can get&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;V^\star = Q(a^\star) = max_{a\in A}Q(a)&lt;/script&gt;
+
+&lt;p&gt;Then maximize the cumulative reward is equivalent to minimize the total regret, which is&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;L_t = E[\sum_{i=1}^t (V^\star - Q(a_i))]&lt;/script&gt;
+
+&lt;h4 id=&quot;upper-confidence-bound&quot;&gt;Upper Confidence Bound&lt;/h4&gt;
+&lt;p&gt;We can try to solve this problem in the face of uncertainty. The best action we should try is the one that would on one hand has a high mean reward, and on the other hand have a high uncertainty. We might get a higher reward, which is good. While we can also get a worse reward, but that does not matter, since we can reduce our uncertainty about that action, and prefer other action which might have higher reward. A more formal description is as follow:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Estimate an upper confidence $\hat{U_t}(a)$ for each action value, which depends on the number of times $a$ has been selected, the larger the times, the smaller the upper confidence&lt;/li&gt;
+  &lt;li&gt;Such that $Q(a) \le \hat{Q_t}(a) + \hat{U_t}(a)$ with high probability&lt;/li&gt;
+  &lt;li&gt;Select action maximize Upper Confidence Bound (UCB)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;a_t = argmax_{a\in A} \hat{Q_t}(a) + \hat{U_t}(a)&lt;/script&gt;
+
+&lt;p&gt;We need to come up with some method to calculate the upper bound. Here, we bring &lt;em&gt;Hoeffding’s Inequality&lt;/em&gt; for help&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Let $X_1,…, X_t$ be i.i.d. random variables in $[0, 1]$, and let $\bar{X_t} = \frac{1}{i} \sum_{i=1}^t X_i$ be the sample mean. Then&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;P[E[X] &gt; \bar{X}_t + u] \le e^{-2tu^2}&lt;/script&gt;
+
+&lt;p&gt;With this we can have&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;P[Q(a) &gt; \hat{Q_t}(a) + \hat{U_t}] \le e^{-2N_t(a)U_t(a)^2}&lt;/script&gt;
+
+&lt;p&gt;where $N_t(a)$ is the expected number of $a$ is selected. We then can pick a probability $p$ that true value exceeds UCB, and reduce $p$ as we observer more rewards, e.g. $p = t^{-4}$. Then we could obtain the upper bound as:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;U_t(a) = \sqrt{\frac{2logt}{N_t(a)}}&lt;/script&gt;
+
+&lt;p&gt;And finally we have the UCB1 algorithm&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;a_t = argmax_{a\in A} (Q(a) + \sqrt{\frac{2logt}{N_t(a)}})&lt;/script&gt;
+</description>
+        <pubDate>Wed, 13 Sep 2017 00:00:00 -0700</pubDate>
+        <link>http://localhost:4000//posts/Reinforcement-Learning-Lesson-8</link>
+        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lesson-8</guid>
+      </item>
+    
+      <item>
         <title>Reinforcement Learning Lesson 7</title>
         <description>&lt;p&gt;In the pervious notes, we are all using &lt;strong&gt;model-free&lt;/strong&gt; reinforcement learning method to find the solution for the problem. Today we are going to introduce method that directly learns from the experience and tries to understand the underlaying world.&lt;/p&gt;
 
@@ -740,34 +793,6 @@ I have no experience in terms of writing concurrency code. I think I will learn 
         <pubDate>Sun, 07 Feb 2016 00:00:00 -0800</pubDate>
         <link>http://localhost:4000//posts/Clean-Code-Summarize</link>
         <guid isPermaLink="true">http://localhost:4000//posts/Clean-Code-Summarize</guid>
-      </item>
-    
-      <item>
-        <title>Design Pattern Summarization</title>
-        <description>&lt;h1 id=&quot;design-pattern-summarization&quot;&gt;Design Pattern Summarization&lt;/h1&gt;
-
-&lt;p&gt;&lt;strong&gt;Strategy Pattern&lt;/strong&gt;
-Defines a family of algorithms, encapsulate each one, and makes them interchangeable. Strategy lets the algorithm vary independently from clients that use it.
-[Image: file:///-/blob/eDDAAAJA4tZ/2DMfZKq387ZdSBlQHdKHXg]Use composition instead of inheritance to separate the detailed actions from the clients code. The detailed actions can be determined or changed in run time instead of before compile. In this way, when we want to change or add some behaviors, we only need to change the detailed class that response for this kind of behavior instead of modifying the client code. Besides, the class response for different actions are also reusable since they are only responsible for behavior, which is a kind of abstract concept. Several client codes might share same behavior.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Observer Pattern&lt;/strong&gt;
-Defines a one-to-many dependency between objects so that when one object changes state, all of its dependents are notified and updated automatically.
-[Image: file:///-/blob/eDDAAAJA4tZ/e5yAyO3CQ1Zy4FAFFPAWeg]The subjects interface defines a observable (which can be observed), it defines how to add/remove/notify observers. Observer interface only defines an update() method. The subject object will hold a list of observer object, and when something changed, it will call each observer objects’ update() function. The update() function is override by the concrete observer object.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Observers are loosely coupled with observable since observable knows nothing about them. The only thing observable knows is that it can call update function to inform observers.&lt;/li&gt;
-  &lt;li&gt;Observers can push or pull data from observables.&lt;/li&gt;
-  &lt;li&gt;Don’t depend on the order of the notification.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;strong&gt;Decorator Pattern&lt;/strong&gt;
-Attaches additional responsibilities to an object dynamically.  Decorators provides a flexible alternative to subclassing for extending functionality.
-[Image: file:///-/blob/eDDAAAJA4tZ/CZDVKsQpkr5esaaJQoFwgg]Java I/O use decorator pattern to add additional functionality.
-[Image: file:///-/blob/eDDAAAJA4tZ/SIGPLcv8wUOvYcMxmfma8Q]&lt;/p&gt;
-</description>
-        <pubDate>Sat, 12 Dec 2015 00:00:00 -0800</pubDate>
-        <link>http://localhost:4000//posts/Design-Pattern-Summarize</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Design-Pattern-Summarize</guid>
       </item>
     
   </channel>
