@@ -3,8 +3,8 @@
   <channel>
     <title>Coding Monkey</title>
     <description>A coding monkey, who is passionate in algorithm and machine learning, hoping one day to become a coding machine.</description>
-    <link>http://localhost:4000</link>
-    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
+    <link>pyemma.github.io</link>
+    <atom:link href="pyemma.github.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
         <title>2017 年终终结</title>
@@ -54,8 +54,8 @@
 &lt;p&gt;不管2017年怎么样，都已经成为过去，不必太纠结于这一整年的失落和痛苦，让那些成为以后酒桌上的笑谈。昂首挺胸，迎接崭新的一年！&lt;/p&gt;
 </description>
         <pubDate>Fri, 29 Dec 2017 00:00:00 -0800</pubDate>
-        <link>http://localhost:4000//posts/2017-%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/2017-%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93</guid>
+        <link>pyemma.github.io//posts/2017-%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93</link>
+        <guid isPermaLink="true">pyemma.github.io//posts/2017-%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93</guid>
       </item>
     
       <item>
@@ -107,8 +107,8 @@
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;a_t = argmax_{a\in A} (Q(a) + \sqrt{\frac{2logt}{N_t(a)}})&lt;/script&gt;
 </description>
         <pubDate>Wed, 13 Sep 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//posts/Reinforcement-Learning-Lesson-8</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lesson-8</guid>
+        <link>pyemma.github.io//posts/Reinforcement-Learning-Lesson-8</link>
+        <guid isPermaLink="true">pyemma.github.io//posts/Reinforcement-Learning-Lesson-8</guid>
       </item>
     
       <item>
@@ -186,8 +186,8 @@ R_{t+1} = R_\eta(R_{t+1}|S_t, A_t)&lt;/script&gt;
 &lt;/ul&gt;
 </description>
         <pubDate>Mon, 11 Sep 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//posts/Reinforcement-Learning-Lesson-7</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lesson-7</guid>
+        <link>pyemma.github.io//posts/Reinforcement-Learning-Lesson-7</link>
+        <guid isPermaLink="true">pyemma.github.io//posts/Reinforcement-Learning-Lesson-7</guid>
       </item>
     
       <item>
@@ -288,8 +288,8 @@ J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a&lt;/scr
 &lt;/ul&gt;
 </description>
         <pubDate>Sun, 10 Sep 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//posts/Reinforcment-Learning-Lesson-6</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcment-Learning-Lesson-6</guid>
+        <link>pyemma.github.io//posts/Reinforcment-Learning-Lesson-6</link>
+        <guid isPermaLink="true">pyemma.github.io//posts/Reinforcment-Learning-Lesson-6</guid>
       </item>
     
       <item>
@@ -329,8 +329,8 @@ J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a&lt;/scr
 &lt;p&gt;The key method that stabilize the model is experience reply and Q target. For the experience reply, it helps decouple the relationship between each step since we are randomly sampling. For the Q target, we are using the model several steps ago, not the model we just updated. You can think of this as avoid oscillation.&lt;/p&gt;
 </description>
         <pubDate>Fri, 08 Sep 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//posts/Reinforcement-Learning-Lesson-5</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lesson-5</guid>
+        <link>pyemma.github.io//posts/Reinforcement-Learning-Lesson-5</link>
+        <guid isPermaLink="true">pyemma.github.io//posts/Reinforcement-Learning-Lesson-5</guid>
       </item>
     
       <item>
@@ -431,8 +431,8 @@ E(s, a) = \gamma\lambda E(s, a)&lt;/script&gt;
 &lt;/ul&gt;
 </description>
         <pubDate>Sat, 19 Aug 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//posts/Reinforcement-Learning-Lesson-4</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lesson-4</guid>
+        <link>pyemma.github.io//posts/Reinforcement-Learning-Lesson-4</link>
+        <guid isPermaLink="true">pyemma.github.io//posts/Reinforcement-Learning-Lesson-4</guid>
       </item>
     
       <item>
@@ -511,8 +511,8 @@ E_t(s) = \begin{cases}
 &lt;p&gt;The good thing for TD($lambda$) is that it can learn with incomplete experience. And the update is performed &lt;em&gt;online&lt;/em&gt;, &lt;em&gt;step by step&lt;/em&gt; within the episode. MC is updated via offline, cause it needs to wait until the end and calculate the update for each state and update them in batch.&lt;/p&gt;
 </description>
         <pubDate>Thu, 17 Aug 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//posts/Reinforcement-Learning-Lession-3</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lession-3</guid>
+        <link>pyemma.github.io//posts/Reinforcement-Learning-Lession-3</link>
+        <guid isPermaLink="true">pyemma.github.io//posts/Reinforcement-Learning-Lession-3</guid>
       </item>
     
       <item>
@@ -581,8 +581,8 @@ to update each state value function to a better estimation&lt;/li&gt;
 &lt;p&gt;More detailed proof is available &lt;a href=&quot;http://www.cs.cmu.edu/afs/cs/academic/class/15780-s16/www/slides/mdps.pdf&quot;&gt;here&lt;/a&gt;&lt;/p&gt;
 </description>
         <pubDate>Mon, 14 Aug 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//posts/Reinforcement-Learning-Lesson-2</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lesson-2</guid>
+        <link>pyemma.github.io//posts/Reinforcement-Learning-Lesson-2</link>
+        <guid isPermaLink="true">pyemma.github.io//posts/Reinforcement-Learning-Lesson-2</guid>
       </item>
     
       <item>
@@ -736,8 +736,8 @@ P_{n1} &amp; ... &amp; P_{nn}
 &lt;/ul&gt;
 </description>
         <pubDate>Sun, 13 Aug 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//posts/Reinforcement-Learning-Lesson-1</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lesson-1</guid>
+        <link>pyemma.github.io//posts/Reinforcement-Learning-Lesson-1</link>
+        <guid isPermaLink="true">pyemma.github.io//posts/Reinforcement-Learning-Lesson-1</guid>
       </item>
     
       <item>
@@ -777,8 +777,8 @@ n/2,  &amp; \text{if $n$ is even} \\
 \end{cases} %]]&gt;&lt;/script&gt;
 </description>
         <pubDate>Sat, 12 Aug 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//posts/Math-Equation</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Math-Equation</guid>
+        <link>pyemma.github.io//posts/Math-Equation</link>
+        <guid isPermaLink="true">pyemma.github.io//posts/Math-Equation</guid>
       </item>
     
   </channel>
