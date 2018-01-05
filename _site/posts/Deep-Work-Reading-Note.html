@@ -5,10 +5,10 @@
       <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Reinforcement Learning Lesson 2</title>
+        <title>Deep Work Reading Note</title>
         <meta name="viewport" content="width=device-width">
         <meta name="description" content="A coding monkey, who is passionate in algorithm and machine learning, hoping one day to become a coding machine." />
-        <link rel="canonical" href="http://localhost:4000/posts/Reinforcement-Learning-Lesson-2/" />
+        <link rel="canonical" href="http://localhost:4000/posts/Deep-Work-Reading-Note/" />
 
         <!-- Custom CSS -->
         <link rel="stylesheet" href="/css/main.css">
@@ -76,73 +76,49 @@
       <div class="post">
 
   <header class="post-header">
-    <h1>Reinforcement Learning Lesson 2</h1>
-    <p class="meta">Aug 14, 2017</p>
+    <h1>Deep Work Reading Note</h1>
+    <p class="meta">Jan 4, 2018</p>
   </header>
 
   <article class="post-content">
-  <p>In the last post, we introduced the definition of Markov Decision Process and Bellman Equation. Now, if you are given the states $S$, action $A$, transition matrix $P$, rewards $R$ and discounting ratio $\gamma$, how would you come up with a solution for this MDP? i.e. how would you calculate the value function and come up with an optimal policy for it?</p>
+  <p>“Deep Work” is the first book I read this year. I was pretty impressed by the idea and methods the author purposed to help you gain the ability to do “deep work”, which means how to be concentrate on the work that can really generate value. In this note, I would like to summarize the main points of author, together with my personal experience.</p>
 
-<h4 id="value-iteration">Value Iteration</h4>
-<p>This first method is to apply the Bellman Optimality Equation repeatedly. The idea is that we continue update the best estimation for each state value function, and once all $s^\prime$ reachable from $s$ achieve its optimal value function, then $v(s)$ can also achieve the optimal value. The algorithm is as follow:</p>
+<p>Deep work is the work which can really generate value, compared with shallow work, which is more like some routines that don’t need to think about too much to finish. Only by doing deep work, can we really improve ourselves, broaden our vision and shape our skills. As my personal experience, learning a new machine learning algorithm, or build a new APP counts to deep work, but repeatedly doing some interview algorithm exercise is shallow work.</p>
+
+<p>There are mainly 4 different strategies for deep work:</p>
 <ul>
-  <li>Initiate $v(s)$ to 0 for all $s\in S$</li>
-  <li>Apply
-<script type="math/tex">v(s) = max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av(s))</script>
-to update each state value function to a better estimation</li>
+  <li>Monastic: This is the most crucial strategies, which means that you are going to disconnected with all around and only focusing on the work you are doing all the time. This strategy does not apply to me, as I have work to do everyday and could not totally block others.</li>
+  <li>Bimodal: This is less crucial then the above one. For this one, you are not going to disconnected with the world all the time, but periodically. For example, for each year, you might choose two or three month to disconnect; or for each month, you choose one week to disconnect. This also does not apply for me, if I’m absent for too long, my manager would go crazy about me.</li>
+  <li>Rhythmic: This maybe the most common way to do deep work, which is to schedule some time each day dedicatedly. For example, every morning from 7:00 am to 9:00 am do deep work. This is the most suitable strategy for me, as well as for most of us. Although the “deepness” is not as powerful as the above two, but it still works pretty well. My plan is to change my schedule, and leave some time before go to work and go to bed, do some deep work.</li>
+  <li>Journalistic: This is the most flexible version, which is just to do deep work occasionally across the day, whenever you have some time. But this really need have strong deep work ability, so that you can switch to deep work easily. Because the switch will consume lots of power-will, which is limited resource.</li>
 </ul>
 
-<p>Why this algorithm guarantee to find the optimal state value function (thus optimal policy)? Its because the Bellman Optimality Equation can be regarded as a contraction. We can image in a value function space, where its dimension is $|S|$, each point in this space determine a value state function. A contraction is an operation that can make two points in this space closer.</p>
-<blockquote>
-  <p>(Contraction Mapping Theory) For any metric space that is complete under an operator that is a contraction, the operator will converge to a unique fixed point.</p>
-</blockquote>
-
-<p>According to the Contraction Mapping Theory, we know that $v^\ast=Tv^\ast$ has a unique solution. And based on value iteration converge, we know that $v_{t}=Tv_{t-1}$. Then we could have</p>
-
-<script type="math/tex; mode=display">||v_t - v\ast||_\infty = ||Tv_{t-1} - Tv\ast||_\infty \le \gamma ||v_{t-1} - v\ast||_\infty</script>
-
-<p>By applying the operator repeatedly, we are bringing our estimated value function closer and closer to the fixed point, thus we are achieving the optimal value function gradually.</p>
-
-<p>To prove Bellman Optimality Operator is a contraction, we can have:</p>
-
-<script type="math/tex; mode=display">% <![CDATA[
-\begin{align}
-|Tv_1(s) - Tv_2(s)|
-& = |max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
-& \le max_a|(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - (R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
-& = max_a|\gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s) - \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s)| \\
-& \le \gamma max_s|v_1(s) - v_2(s)|\\
-\end{align} %]]></script>
-
-<h4 id="policy-iteration">Policy Iteration</h4>
-<p>Compared with value iteration which focus on computing the optimal value function. Policy iteration evaluate a policy and improve the policy gradually, and finally converge to the optimal policy, the algorithm is as follow:</p>
+<p>Besides these strategies, there are also some tips to help do deep work:</p>
 <ul>
-  <li>Initialize a random policy $\pi$</li>
-  <li>Apply Bellman Expectation Equation to all state $s$ to get the current value function $v^\pi$</li>
-  <li>Improve the current policy greedily by:</li>
+  <li>Come up with some rules when you do deep work, e.g. where to work (red rock cafe?), how to work (ban internet, no wechat) and how to support you deep work (relax music and good coffee)</li>
+  <li>Go to some really really really expensive places :)</li>
+  <li>Collaboration with others to help inspire your idea, but still work alone to do deep work</li>
+  <li>Execute like a business:
+    <ul>
+      <li>Have a small number of clear ambitious. I usually fail this one, as I was always trying to do lots of thing together to maximums my parallelism.</li>
+      <li>Record to number of deep hour you spend on deep work</li>
+      <li>Keep a compelling scoreboard to track your progress</li>
+      <li>Spend sometime to introspect how well you are doing deep work, what you success and what you fail to do</li>
+    </ul>
+  </li>
+  <li>Take good rest, e.g. stop working after 8:00 pm</li>
+  <li>Divide the working hour into some large block (deep work block and shallow work block). This would be extreme helpful for me, as I was easily distracted when I was writing code. What I plan to do is to have three long (more than 1hr) deep working blocks to focusing on coding, reading/writing important document/posts. Also schedule every minutes of the work time.</li>
+  <li>Do some meditate productively. What I plan is to spend some time walking around the campus
+    <ul>
+      <li>Be wary of distraction and looping. When you start to distract from your original problem, remind yourself and come back. Also you need to avoid the looping question you have already thought about</li>
+      <li>Structure deep thinking</li>
+    </ul>
+  </li>
+  <li>Do some memory exercise to help you improve your concentration</li>
+  <li>Quit social media (no Facebook, wechat :) )</li>
+  <li>Know how to tell what is deep work and what is shallow work, and prioritize deep work.</li>
+  <li>Talk with your manager about the percentage of shallow work spend on each day.</li>
 </ul>
-
-<script type="math/tex; mode=display">\pi^\prime = argmax_a (R_s^a + \gamma \sum_{s^\prime\in S}P_{ss^\prime}^av^\pi(s))</script>
-
-<ul>
-  <li>Repeat until the policy does not change</li>
-</ul>
-
-<p>Why policy iteration guarantee to converge to optimal policy? First, we can also proof that the Bellman Expectation Operator(Equation) is also a contraction. Thus given a policy $\pi$, we know that the value function will converge to $v^\pi$. Then, we only need to prove the policy can be improved by our greedy selection.</p>
-
-<p>Suppose a deterministic policy $a = \pi(s)$. We can improve it by acting greedily by</p>
-
-<script type="math/tex; mode=display">\pi^\prime(s) = argmax_aq_\pi(s, a)</script>
-
-<p>according to the current action value function(remember the relationship between action value function and state value function, they can be transformed each other). It can improve the value function for any state</p>
-
-<script type="math/tex; mode=display">q_\pi(s, \pi^\prime(s)) = argmax_a q_\pi(s, a) \ge q_\pi(s, \pi(s)) = v_\pi(s)</script>
-
-<p>And thus we can improves the value function $v_{\pi^\prime}(s) \ge v_\pi(s)$ (this can be proved by expanding the return and recursively substitute the above function).</p>
-
-<p>Policy iteration is pretty similar to Expectation Maximization (EM). In EM, we first evaluate the data using the current parameters, and then update the parameters to maximize the quantity.</p>
-
-<p>More detailed proof is available <a href="http://www.cs.cmu.edu/afs/cs/academic/class/15780-s16/www/slides/mdps.pdf">here</a></p>
 
   </article>
 
