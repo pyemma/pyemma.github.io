@@ -7,6 +7,63 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>2018 新年计划</title>
+        <description>&lt;p&gt;&lt;em&gt;2018年的主题，就是要变得自信以及学会Deep Work!&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;工作&quot;&gt;工作&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;升职加薪
+    &lt;ul&gt;
+      &lt;li&gt;跳出自己的安逸区，接受更具有挑战的项目&lt;/li&gt;
+      &lt;li&gt;加深对C++和Python的理解&lt;/li&gt;
+      &lt;li&gt;加深机器学习领域的研究，多读post, blog, paper，每两周写一篇blog总结&lt;/li&gt;
+      &lt;li&gt;提高自己的见识，要多和高人交流，学习别人的经验&lt;/li&gt;
+      &lt;li&gt;(bonus)发表一遍学术论文，参加一次学术会议&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;学习&quot;&gt;学习&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;完成一个side project
+    &lt;ul&gt;
+      &lt;li&gt;starcraft AI?&lt;/li&gt;
+      &lt;li&gt;photo style transfer?&lt;/li&gt;
+      &lt;li&gt;chatbot?&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;参加kaggle的比赛&lt;/li&gt;
+  &lt;li&gt;一门新的语言: GO&lt;/li&gt;
+  &lt;li&gt;一门新的计算机技术&lt;/li&gt;
+  &lt;li&gt;每个月至少读一本书，每本书写一篇读后感&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;生活&quot;&gt;生活&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;胸围再大一圈，练出腹肌
+    &lt;ul&gt;
+      &lt;li&gt;每天坚持去gym，坚持每次练一组腹肌强化&lt;/li&gt;
+      &lt;li&gt;每周晨跑三次&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;日语
+    &lt;ul&gt;
+      &lt;li&gt;每周安排计划固定学习的时间&lt;/li&gt;
+      &lt;li&gt;参加N2考试&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;口琴&lt;/li&gt;
+  &lt;li&gt;出去旅游两次&lt;/li&gt;
+  &lt;li&gt;喝遍湾区的咖啡店，逛遍湾区的书店&lt;/li&gt;
+  &lt;li&gt;(bonus) 每周去尝试一家新的饭店&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Sun, 07 Jan 2018 00:00:00 -0800</pubDate>
+        <link>http://localhost:4000//posts/2018-%E6%96%B0%E5%B9%B4%E8%AE%A1%E5%88%92</link>
+        <guid isPermaLink="true">http://localhost:4000//posts/2018-%E6%96%B0%E5%B9%B4%E8%AE%A1%E5%88%92</guid>
+      </item>
+    
+      <item>
         <title>Deep Work Reading Note</title>
         <description>&lt;p&gt;“Deep Work” is the first book I read this year. I was pretty impressed by the idea and methods the author purposed to help you gain the ability to do “deep work”, which means how to be concentrate on the work that can really generate value. In this note, I would like to summarize the main points of author, together with my personal experience.&lt;/p&gt;
 
@@ -629,161 +686,6 @@ to update each state value function to a better estimation&lt;/li&gt;
         <pubDate>Mon, 14 Aug 2017 00:00:00 -0700</pubDate>
         <link>http://localhost:4000//posts/Reinforcement-Learning-Lesson-2</link>
         <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lesson-2</guid>
-      </item>
-    
-      <item>
-        <title>Reinforcement Learning Lesson 1</title>
-        <description>&lt;p&gt;This is the first post for the series reinforcement learning. The main source for the entire series is &lt;a href=&quot;http://www0.cs.ucl.ac.uk/staff/D.Silver/web/Teaching.html&quot;&gt;here&lt;/a&gt;. The post mainly focus on summarizing the content introduced in the video and slides, as well as some of my own understanding. Any feedback is welcomed.&lt;/p&gt;
-
-&lt;p&gt;In this post, we will talk about Markov Decision Process (MDP), which is a pretty fundamental model in many reinforcement learning cases.&lt;/p&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;Almost all RL problems can be formalized as MDP&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h4 id=&quot;markov-process&quot;&gt;Markov Process&lt;/h4&gt;
-&lt;p&gt;In order to learn about MDP, we need to first know what is Markov Process (MP). This introduces the following two concept:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Markov Property&lt;/li&gt;
-  &lt;li&gt;State Transition Matrix&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;In the most simple word, &lt;strong&gt;Markov Property&lt;/strong&gt; means that the future state is independent on the history given the current state. It can be formalized using following statement:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbb{P}[S_{t+1}|S_{t}] = \mathbb{P}[S_{t+1}|S_1, ..., S_t]&lt;/script&gt;
-
-&lt;p&gt;This means that the current state contains all they necessary information for the future, and we can discard all history information.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;State Transition Matrix&lt;/strong&gt; contains the probability we go from on state to another one. Given a state $s$ and its successor state $s^\prime$, the probability from $s$ goes to $s^\prime$ is given by&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;P_{ss\prime} = \mathbb{P}[S_{t+1}=s\prime|S_{t}=s]&lt;/script&gt;
-
-&lt;p&gt;And the State Transition Matrix is by&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-P =
-\begin{Bmatrix}
-P_{11} &amp; ... &amp; P_{1n} \\
-\vdots &amp; ... &amp; \vdots \\
-P_{n1} &amp; ... &amp; P_{nn}
-\end{Bmatrix} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;From the above two concept, we can notice two things and these are also the constraint for MDP:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;The state is finite (otherwise the definition of State Transition Matrix is problematic)&lt;/li&gt;
-  &lt;li&gt;The environment is fully observable, no hidden state exists&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;We can obtain a definition for MP as a tuple $&amp;lt;S, P&amp;gt;$:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;$S$ is a finite state set&lt;/li&gt;
-  &lt;li&gt;$P$ is a state transition matrix&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;An example of MP:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/assets/mdp.png&quot; alt=&quot;Markov Process&quot; /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;markov-reward-process&quot;&gt;Markov Reward Process&lt;/h4&gt;
-&lt;p&gt;Markov Process combined with values, then we have Markov Reward Process (MRP), defined by a tuple $&amp;lt;S, P, R, \gamma&amp;gt;$:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;$S$ is a finite state set&lt;/li&gt;
-  &lt;li&gt;$P$ is a state transition matrix&lt;/li&gt;
-  &lt;li&gt;$R$ is a reward function,
-&lt;script type=&quot;math/tex&quot;&gt;R_{s} = \mathbb{E}[R_{t+1}|S_{t}=s]&lt;/script&gt;&lt;/li&gt;
-  &lt;li&gt;$\gamma$ is a discounting ratio&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;As we have introduced reward, we can measure how many rewards we can get in each state. We define return $G_t$ as the discounted rewards we can get from timestamp $t$, and state value function $v(s)$ the expected return we can get starting from state $s$:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;G_t = R_{t+1} + \gamma R_{t+2} + ... = \sum_{k=1}^{\infty}\gamma^{k}R_{t+k+1}&lt;/script&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;v(s) = \mathbb{E}[G_t|S_t=s]&lt;/script&gt;
-
-&lt;p&gt;Note that the return is accumulated with discounting. This is important is:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Avoid infinity loop that might exist in MDP (e.g. self loop)&lt;/li&gt;
-  &lt;li&gt;Model the uncertainty about the future&lt;/li&gt;
-  &lt;li&gt;From common sense, human prefer immediate reward than long term ones&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;We can breakdown the state value function into two parts, immediate and long term. Using recurse, we have the Bellman Equation for MRP:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;v(s) = \mathbb{E}[R_{t+1} + \gamma v(S_{t+1})|S_t=s]&lt;/script&gt;
-
-&lt;p&gt;By expanding the above expectation and using sum to replace expectation operator, we have:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;v(s) = R_s + \gamma\sum_{s^\prime\in S}P_{ss^\prime}v(s^\prime)&lt;/script&gt;
-
-&lt;h4 id=&quot;markov-decision-process&quot;&gt;Markov Decision Process&lt;/h4&gt;
-&lt;p&gt;Adding the actions we can make among the state, we finally have the definition for MDP, which is $&amp;lt;S, A, P, R, \gamma&amp;gt;$$:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;$S$ is a finite state set&lt;/li&gt;
-  &lt;li&gt;$A$ is a finite action set&lt;/li&gt;
-  &lt;li&gt;$P$ is a state transition matrix,
-&lt;script type=&quot;math/tex&quot;&gt;P_{ss^\prime}^a = \mathbb{P}[S_{t+1}=s^\prime|S_{t}=s, A_t=a]&lt;/script&gt;&lt;/li&gt;
-  &lt;li&gt;$R$ is a reward function,
-&lt;script type=&quot;math/tex&quot;&gt;R_{s}^a = \mathbb{E}[R_{t+1}|S_{t}=s, A_t=a]&lt;/script&gt;&lt;/li&gt;
-  &lt;li&gt;$\gamma$ is a discounting ratio&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Notice the change on the state transition matrix, before we only have a single matrix, and now we have one for each action $a$ (we can think of in the pervious case, we have only single action). Under different action $a$, the transition probability can be different between the two state. We can now regard the new state transition matrix as a tensor with three dimension.&lt;/p&gt;
-
-&lt;p&gt;As we have actions to now, we need to make decision how to take actions. A &lt;strong&gt;policy&lt;/strong&gt; is a distribution over actions given a state:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\pi(a|s) = \mathbb{P}[A_t=a|S_t=s]&lt;/script&gt;
-
-&lt;p&gt;A policy fully determines how an agent would act, and it does not depend on the history. Similar to MRP, we have state value function for MDP as the expected return starting from $s$, following the policy $\pi$:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_{\pi}(s) = \mathbb{E}_{\pi}[G_t|S_t=s]&lt;/script&gt;
-
-&lt;p&gt;We can also define an action value function, which is the expected return we get starting from state $s$, taking action $a$ and following policy $\pi$:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_{\pi}(s, a) = \mathbb{E}_{\pi}[G_t|S_t=s, A_t=a]&lt;/script&gt;
-
-&lt;p&gt;These two functions have relationship and can be transformed to each other easily, to get state value function, we can summation over all the action value function for the action that state we could get, weight by the policy:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_\pi(s) = \sum_{a\in A}\pi(a|s)q_{\pi}(s, a)&lt;/script&gt;
-
-&lt;p&gt;And the action value function can be obtained by summation overall all state we can transition to, weighted by the state transition matrix:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_\pi(s, a) = R_s^a + \gamma\sum_{s^\prime}P_{ss^\prime}^a v(s^\prime)&lt;/script&gt;
-
-&lt;p&gt;Combine the above equations, we can obtain the Bellman Exception Equation as:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_\pi(s) = \sum_{a\in A}\pi(a|s)(R_s^a + \gamma\sum_{s^\prime}P_{ss^\prime}^a v(s^\prime))&lt;/script&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_\pi(s, a) = R_s^a + \gamma\sum_{s^\prime}P_{ss^\prime}^a \sum_{a\in A}\pi(a|s^\prime)q_{\pi}(s^\prime, a)&lt;/script&gt;
-
-&lt;p&gt;Given a MDP, if we want to solve it (to know what’s the best performance we can get, e.g. What’s the maximum rewards we can get in the terminate state), we need to find the optimal value function for it. As long as we have obtain the optimal value function, we can compose an optimal policy easily:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\pi_{*}(a|s) =
-\begin{cases}
-1,  &amp; \text{if $a = argmax_{a\in A} q(s, a)$} \\
-0, &amp; \text{otherwise}
-\end{cases} %]]&gt;&lt;/script&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;There exists an optimal policy $\pi_{*}$ that is better than or equal to all other policy for any MDP. All optimal policy achieve optimal state value function and optimal action value function&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Following this policy, we can change our Bellman Exception Equation to Bellman Optimality Equation:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_*(s)=max_{a}(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^a v_*(s^\prime))&lt;/script&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_*(s, a)=R_s^a + \gamma\sum_{s^\prime\in S} argmax_{a} P_{ss^\prime}^a v_*(s^\prime)&lt;/script&gt;
-
-&lt;p&gt;Bellman Optimality Equation is non-linear, there is no closed form solution for it. However, we can solve it by some iterative methods (will introduce in later lectures):&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Policy Iteration&lt;/li&gt;
-  &lt;li&gt;Value Iteration&lt;/li&gt;
-  &lt;li&gt;Q-learning&lt;/li&gt;
-  &lt;li&gt;Sarsa&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Sun, 13 Aug 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//posts/Reinforcement-Learning-Lesson-1</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lesson-1</guid>
       </item>
     
   </channel>
