@@ -157,7 +157,7 @@
     
     
       <p class="author__bio" itemprop="description">
-        I am a Coding Monkey.
+        I am a Coding Monkey
       </p>
     
   </div>
@@ -282,11 +282,21 @@
 
 <p>When compile or run java class, we sometimes need external libraries, we can use <code class="highlighter-rouge">&lt;path&gt;</code> or <code class="highlighter-rouge">&lt;classpath&gt;</code> to hold them. For example</p>
 
-<figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;path</span> <span class="na">id=</span><span class="s">"classpath"</span><span class="nt">&gt;</span><br data-jekyll-commonmark-ghpages="" />	<span class="nt">&lt;pathelement</span> <span class="na">path=</span><span class="s">"${classpath}"</span> <span class="nt">/&gt;</span><br data-jekyll-commonmark-ghpages="" />    <span class="nt">&lt;fileset</span> <span class="na">dir=</span><span class="s">"${lib.dir}"</span> <span class="na">includes=</span><span class="s">"**/*.jar"</span><span class="nt">/&gt;</span><br data-jekyll-commonmark-ghpages="" /><span class="nt">&lt;/path&gt;</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;path</span> <span class="na">id=</span><span class="s">"classpath"</span><span class="nt">&gt;</span>
+	<span class="nt">&lt;pathelement</span> <span class="na">path=</span><span class="s">"${classpath}"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;fileset</span> <span class="na">dir=</span><span class="s">"${lib.dir}"</span> <span class="na">includes=</span><span class="s">"**/*.jar"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/path&gt;</span></code></pre></figure>
 
 <p>Here we assigned an id to this <code class="highlighter-rouge">&lt;path&gt;</code> element, we can later reference this id. And there can be multiple <code class="highlighter-rouge">&lt;pathelement&gt;</code>, the <code class="highlighter-rouge">path</code> attribute is  usually used with predefined path and <code class="highlighter-rouge">location</code> specify a path relative to the base path.</p>
 
-<figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;target</span> <span class="na">name=</span><span class="s">"run"</span> <span class="na">depends=</span><span class="s">"jar"</span><span class="nt">&gt;</span><br data-jekyll-commonmark-ghpages="" />    <span class="nt">&lt;java</span> <span class="na">fork=</span><span class="s">"true"</span> <span class="na">classname=</span><span class="s">"${main-class}"</span><span class="nt">&gt;</span><br data-jekyll-commonmark-ghpages="" />        <span class="nt">&lt;classpath&gt;</span><br data-jekyll-commonmark-ghpages="" />            <span class="nt">&lt;path</span> <span class="na">refid=</span><span class="s">"classpath"</span><span class="nt">/&gt;</span><br data-jekyll-commonmark-ghpages="" />            <span class="nt">&lt;path</span> <span class="na">location=</span><span class="s">"${jar.dir}/${ant.project.name}.jar"</span><span class="nt">/&gt;</span><br data-jekyll-commonmark-ghpages="" />        <span class="nt">&lt;/classpath&gt;</span><br data-jekyll-commonmark-ghpages="" />    <span class="nt">&lt;/java&gt;</span><br data-jekyll-commonmark-ghpages="" /><span class="nt">&lt;/target&gt;</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;target</span> <span class="na">name=</span><span class="s">"run"</span> <span class="na">depends=</span><span class="s">"jar"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;java</span> <span class="na">fork=</span><span class="s">"true"</span> <span class="na">classname=</span><span class="s">"${main-class}"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;classpath&gt;</span>
+            <span class="nt">&lt;path</span> <span class="na">refid=</span><span class="s">"classpath"</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;path</span> <span class="na">location=</span><span class="s">"${jar.dir}/${ant.project.name}.jar"</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/classpath&gt;</span>
+    <span class="nt">&lt;/java&gt;</span>
+<span class="nt">&lt;/target&gt;</span></code></pre></figure>
 
 <p>We can use <code class="highlighter-rouge">&lt;echo&gt;</code> in <code class="highlighter-rouge">&lt;target&gt;</code> to output some information.</p>
 
