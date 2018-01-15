@@ -10,3 +10,5 @@ This post explains why AlphaGo Zero out-perform than it's elder brother AlphaGo,
 
 ### [Intuitive RL: Intro to Advantage-Actor-Critic (A2C)](https://medium.com/@rudygilman/intuitive-rl-intro-to-advantage-actor-critic-a2c-4ff545978752)
 A very vivid introduction of **Advantage-Actor-Critic** reinforcement learning.
+1. First we should keep in mind that **Actor-Critic** is a blend of both value estimation and policy estimation reinforcement learning method, a.k.a we will try to learn value function, as well as policy from game play (This is different from pure value function based method and policy based method).
+2. In **Actor-Critic**, the **Actor** will tries to optimize the parameter for policy and **Critic** will tries to optimize the parameter for the value function of a state. This can be done by having a single model outputting both the value of the state, as will as the probability of action.

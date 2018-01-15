@@ -18,6 +18,10 @@
 
 &lt;h3 id=&quot;intuitive-rl-intro-to-advantage-actor-critic-a2c&quot;&gt;&lt;a href=&quot;https://medium.com/@rudygilman/intuitive-rl-intro-to-advantage-actor-critic-a2c-4ff545978752&quot;&gt;Intuitive RL: Intro to Advantage-Actor-Critic (A2C)&lt;/a&gt;&lt;/h3&gt;
 &lt;p&gt;A very vivid introduction of &lt;strong&gt;Advantage-Actor-Critic&lt;/strong&gt; reinforcement learning.&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;First we should keep in mind that &lt;strong&gt;Actor-Critic&lt;/strong&gt; is a blend of both value estimation and policy estimation reinforcement learning method, a.k.a we will try to learn value function, as well as policy from game play (This is different from pure value function based method and policy based method).&lt;/li&gt;
+  &lt;li&gt;In &lt;strong&gt;Actor-Critic&lt;/strong&gt;, the &lt;strong&gt;Actor&lt;/strong&gt; will tries to optimize the parameter for policy and &lt;strong&gt;Critic&lt;/strong&gt; will tries to optimize the parameter for the value function of a state. This can be done by having a single model outputting both the value of the state, as will as the probability of action.&lt;/li&gt;
+&lt;/ol&gt;
 </description>
         <pubDate>Sun, 14 Jan 2018 00:00:00 -0800</pubDate>
         <link>http://localhost:4000//What-I-Read-This-Week-I/</link>
