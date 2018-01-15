@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: single
 title: "Reinforcement Learning Lesson 1"
 ---
 This is the first post for the series reinforcement learning. The main source for the entire series is [here](http://www0.cs.ucl.ac.uk/staff/D.Silver/web/Teaching.html). The post mainly focus on summarizing the content introduced in the video and slides, as well as some of my own understanding. Any feedback is welcomed.

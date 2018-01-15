@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: single
 title: "Simple Bloom Filter Implementation Part I"
 tags:
 - project
@@ -10,7 +10,7 @@ tags:
 Recently, I'm studying some basic concepts in distributed system. The materials I'm using is [Distributed Systems Concepts](http://www.amazon.com/Distributed-Systems-Concepts-Design-5th/dp/0132143011/ref=sr_1_3?ie=UTF8&qid=1446522616&sr=8-3&keywords=distributed+system). I know that simply reading the book is far not enough: the concepts are abstract, but we need to handle partical problem. So I decided to do some simple projects, using some existing technoloy, to better understand these concepts and how to apply them to real world. These projects can be very very simple, and I'm definitely sure that there are better production available, but building something by your own hands can give you a feeling of achievement, no matter it is perfect or not, and this would be the biggest impluse for you to move on.
 
 ### Introduction
-The first project is to implement a simple [bloom filter](https://en.wikipedia.org/wiki/Bloom_filter). Bloom filter is an advanced data structure mainly used for membership test (check if a given element is in or not). The advantage of adopting bloom filter is lower collision and lower space consumption. The traditional implementation of bloom filter is to use a bit vector. When we try to add a new element, we apply several different hash function on the element to generate several keys and use these keys as indexes to set the corresponding position in the bit vector to `true`. When we try to check if a given element is in it or not, we apply the same hash functions to generate a set of keys and we check if each position in the bit vector is `true` or not: only when all positions are marked as true, this element is considered to be in the set. The problem with bloom filter is that it can have false positive, but this kinds of error is relatively small. Typacilly, I support two kinds of operations: `add` and `contain`. `add` is used for adding an element and `contain` is used for checking existence. 
+The first project is to implement a simple [bloom filter](https://en.wikipedia.org/wiki/Bloom_filter). Bloom filter is an advanced data structure mainly used for membership test (check if a given element is in or not). The advantage of adopting bloom filter is lower collision and lower space consumption. The traditional implementation of bloom filter is to use a bit vector. When we try to add a new element, we apply several different hash function on the element to generate several keys and use these keys as indexes to set the corresponding position in the bit vector to `true`. When we try to check if a given element is in it or not, we apply the same hash functions to generate a set of keys and we check if each position in the bit vector is `true` or not: only when all positions are marked as true, this element is considered to be in the set. The problem with bloom filter is that it can have false positive, but this kinds of error is relatively small. Typacilly, I support two kinds of operations: `add` and `contain`. `add` is used for adding an element and `contain` is used for checking existence.
 
 Currently, there is still nothing related to **distributed system**. What it happens is here: I make this bloom filter a distributed service. We can run a bloom filter service on a machine, and call the functions `add` and `contain` from another machine, or we can run the service in one process and call the functions from another process within the same machine. In both side, the caller could not directly access the content in bloom filter, and thus the functions have to be remotely invoked. I use **Thrift** to implement this part. Thrift is a set of software stack that help implement cross language PRC (remote procedure call): it contains IDL (interface definition language) to help define data structure to be used and the interface of the service; it can also generate necessary code such as mapping data type to a specific language's supported data type accroding to your configuration file.
 
@@ -31,7 +31,7 @@ public interface Hashable<T> {
 
 The definition of the service is quite simple, it is only some simple Thrift statement.
 {% highlight text %}
-service BloomFilterService 
+service BloomFilterService
 {
     void add(1: string str);
     bool contain(1: string str);
@@ -45,7 +45,7 @@ After run thrift with command `thrift -r -gen java bloomfilterservice.thrift`, i
 3. Implement client code to call the service
 
 I create a class called BloomFilterHandler.java to handle the actual logic of bloom filter service. In this handler, it contains a `BloomFilter` object as its data member and it implements an interface provided in BloomFilterService.java, called `BloomFilterService.Iface`. This interface contains the provided to API can be called by clients. An instance would be passed to a processor introduced later to provide the service logic.
-{% highlight java %} 
+{% highlight java %}
 public class BloomFilterHandler implements BloomFilterService.Iface {
 
     private BloomFilter<String> bf;
@@ -118,7 +118,7 @@ public class BloomFilterClient {
     public static void main(String [] args) {
         try {
             TTransport transport;
-           
+
             transport = new TSocket("localhost", 9090);
             transport.open();
 
@@ -130,7 +130,7 @@ public class BloomFilterClient {
             transport.close();
         } catch (TException x) {
           x.printStackTrace();
-        } 
+        }
     }
 
     private static void perform(BloomFilterService.Client client) throws TException {

@@ -1,6 +1,6 @@
 ---
-layout: post
-title:  "[Lintcode] Triangle Count" 
+layout: single 
+title:  "[Lintcode] Triangle Count"
 tags:
 - algorithm
 - interview
@@ -15,7 +15,7 @@ public int triangleCount(int S[]) {
     if (n < 3)
         return 0;
     Arrays.sort(S);
-    
+
     int count = 0;
     for (int i = 0; i < n-2; ++i) {
         for (int j = i+1; j < n-1; ++j) {

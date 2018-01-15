@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: single
 ---
 Use `$$` to write math equation
 

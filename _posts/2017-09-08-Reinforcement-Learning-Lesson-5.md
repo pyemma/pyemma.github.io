@@ -1,5 +1,5 @@
 ---
-  layout: post
+  layout: single
   title: "Reinforcement Learning Lesson 5"
 ---
 In this post, we are going to look into how can we solve the real world problem with a practical way. Think of the state value function $v(s)$ or the action value function $q(s, a)$ we mentioned before. If the problem has a really large state space, then it would take a lot of memory to store each value function. Instead of recording each value function, we can actually use a model to approximate the actual value function, which means given the current state, we want to predict the value of the state. There are three types of value function approximation:

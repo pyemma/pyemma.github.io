@@ -1,0 +1,515 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.9.0 by Michael Rose
+  Copyright 2013-2018 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE.txt
+-->
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Reinforcement Learning Lesson 8 - Coding Monkey</title>
+<meta name="description" content="This is the last lesson for the entire reinforcement learning, and in this lesson we will learn something related to exploit and explore. In machine learning service, like recommendation service, there is always a trade off between exploit and explore. Exploit means we are always choosing the best given the current information we have, while explore means try something new we haven’t tried yet. An example is if you go to restaurant, you can always go to the one you enjoy most(exploit), while you can also try a new one(explore).">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Coding Monkey">
+<meta property="og:title" content="Reinforcement Learning Lesson 8">
+<meta property="og:url" content="http://localhost:4000/Reinforcement-Learning-Lesson-8/">
+
+
+  <meta property="og:description" content="This is the last lesson for the entire reinforcement learning, and in this lesson we will learn something related to exploit and explore. In machine learning service, like recommendation service, there is always a trade off between exploit and explore. Exploit means we are always choosing the best given the current information we have, while explore means try something new we haven’t tried yet. An example is if you go to restaurant, you can always go to the one you enjoy most(exploit), while you can also try a new one(explore).">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2017-09-13T00:00:00-07:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/Reinforcement-Learning-Lesson-8/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Person",
+      "name" : "Yang Pei",
+      "url" : "http://localhost:4000",
+      "sameAs" : null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="http://localhost:4000/feed.xml" type="application/atom+xml" rel="alternate" title="Coding Monkey Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="http://localhost:4000/assets/css/main.css">
+
+<!--[if lte IE 9]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use http://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    <div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        <a class="site-title" href="http://localhost:4000/">Coding Monkey</a>
+        <ul class="visible-links">
+          
+            
+            <li class="masthead__menu-item">
+              <a href="https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/" >Quick-Start Guide</a>
+            </li>
+          
+        </ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle Menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Yang Pei</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        I am a Coding Monkey.
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="http://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Mountain View</span>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Reinforcement Learning Lesson 8">
+    <meta itemprop="description" content="This is the last lesson for the entire reinforcement learning, and in this lesson we will learn something related to exploit and explore. In machine learning service, like recommendation service, there is always a trade off between exploit and explore. Exploit means we are always choosing the best given the current information we have, while explore means try something new we haven’t tried yet. An example is if you go to restaurant, you can always go to the one you enjoy most(exploit), while you can also try a new one(explore).">
+    <meta itemprop="datePublished" content="September 13, 2017">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 class="page__title" itemprop="headline">Reinforcement Learning Lesson 8
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  2 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>This is the last lesson for the entire reinforcement learning, and in this lesson we will learn something related to exploit and explore. In machine learning service, like recommendation service, there is always a trade off between exploit and explore. Exploit means we are always choosing the best given the current information we have, while explore means try something new we haven’t tried yet. An example is if you go to restaurant, you can always go to the one you enjoy most(exploit), while you can also try a new one(explore).</p>
+
+<p>This problem is usually formularized as multi bandit problem, which can be represented as \(&lt;A, R&gt; \). Here \( A \) is a set of action we can take, and \( R^a(r) = P[R=r, A=a] \) is an <strong>unknown</strong> probability distribution over rewards. At each time, our agent is going to pick an action, and the environment will generate a reward. The goal is to maximize the cumulative reward.</p>
+
+<h4 id="regret">Regret</h4>
+<p>We can measure the goodness of our action use <strong>regret</strong>. Suppose the action value is the mean reward for an action \( a \)</p>
+
+<script type="math/tex; mode=display">Q(a) = E[r|a]</script>
+
+<p>and the optimal value \( V^\star \) is the max mean reward we can get</p>
+
+<script type="math/tex; mode=display">V^\star = Q(a^\star) = max_{a\in A}Q(a)</script>
+
+<p>Then maximize the cumulative reward is equivalent to minimize the total regret, which is</p>
+
+<script type="math/tex; mode=display">L_t = E[\sum_{i=1}^t (V^\star - Q(a_i))]</script>
+
+<h4 id="upper-confidence-bound">Upper Confidence Bound</h4>
+<p>We can try to solve this problem in the face of uncertainty. The best action we should try is the one that would on one hand has a high mean reward, and on the other hand have a high uncertainty. We might get a higher reward, which is good. While we can also get a worse reward, but that does not matter, since we can reduce our uncertainty about that action, and prefer other action which might have higher reward. A more formal description is as follow:</p>
+<ul>
+  <li>Estimate an upper confidence \( \hat{U_t}(a) \) for each action value, which depends on the number of times \( a \) has been selected, the larger the times, the smaller the upper confidence</li>
+  <li>Such that \( Q(a) \le \hat{Q_t}(a) + \hat{U_t}(a) \) with high probability</li>
+  <li>Select action maximize Upper Confidence Bound (UCB)</li>
+</ul>
+
+<script type="math/tex; mode=display">a_t = argmax_{a\in A} \hat{Q_t}(a) + \hat{U_t}(a)</script>
+
+<p>We need to come up with some method to calculate the upper bound. Here, we bring <em>Hoeffding’s Inequality</em> for help</p>
+<blockquote>
+  <p>Let \( X_1,…, X_t \) be i.i.d. random variables in \( [0, 1] \), and let \( \bar{X_t} = \frac{1}{i} \sum_{i=1}^t X_i \) be the sample mean. Then</p>
+</blockquote>
+
+<script type="math/tex; mode=display">P[E[X] > \bar{X}_t + u] \le e^{-2tu^2}</script>
+
+<p>With this we can have</p>
+
+<script type="math/tex; mode=display">P[Q(a) > \hat{Q_t}(a) + \hat{U_t}] \le e^{-2N_t(a)U_t(a)^2}</script>
+
+<p>where \( N_t(a) \) is the expected number of \( a \) is selected. We then can pick a probability \( p \) that true value exceeds UCB, and reduce $p$ as we observer more rewards, e.g. \( p = t^{-4} \). Then we could obtain the upper bound as:</p>
+
+<script type="math/tex; mode=display">U_t(a) = \sqrt{\frac{2logt}{N_t(a)}}</script>
+
+<p>And finally we have the UCB1 algorithm</p>
+
+<script type="math/tex; mode=display">a_t = argmax_{a\in A} (Q(a) + \sqrt{\frac{2logt}{N_t(a)}})</script>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2017-09-13T00:00:00-07:00">September 13, 2017</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Reinforcement+Learning+Lesson+8%20http%3A%2F%2Flocalhost%3A4000%2FReinforcement-Learning-Lesson-8%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2FReinforcement-Learning-Lesson-8%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://plus.google.com/share?url=http%3A%2F%2Flocalhost%3A4000%2FReinforcement-Learning-Lesson-8%2F" class="btn btn--google-plus" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Google Plus"><i class="fab fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2FReinforcement-Learning-Lesson-8%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="http://localhost:4000/Reinforcement-Learning-Lesson-7/" class="pagination--pager" title="Reinforcement Learning Lesson 7
+">Previous</a>
+    
+    
+      <a href="http://localhost:4000/2017-%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" class="pagination--pager" title="2017 年终终结
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="http://localhost:4000/What-I-Read-This-Week-I/" rel="permalink">What I Read This Week 1
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  less than 1 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">The 3 Tricks That Made AlphaGo Zero Work
+This post explains why AlphaGo Zero out-perform than it’s elder brother AlphaGo, summarizing in 3 points that lead t...</p>
+  </article>
+</div>
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="http://localhost:4000/2018-%E6%96%B0%E5%B9%B4%E8%AE%A1%E5%88%92/" rel="permalink">2018 新年计划
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  less than 1 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">2018年的主题，就是要变得自信以及学会Deep Work!
+
+</p>
+  </article>
+</div>
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="http://localhost:4000/Deep-Work-Reading-Note/" rel="permalink">Deep Work Reading Note
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  3 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">“Deep Work” is the first book I read this year. I was pretty impressed by the idea and methods the author purposed to help you gain the ability to do “deep w...</p>
+  </article>
+</div>
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="http://localhost:4000/2017-%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" rel="permalink">2017 年终终结
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  less than 1 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">2017年一转眼就过去了，自己也从一个刚刚毕业的学生成了一个快上了两年班的上班族了。趁着年末好好回顾一下这一整年发生的事情，一方面是给自己留个纪念，另一方面也是好好总结一下这一年的得失，找到改进的方向。
+
+</p>
+  </article>
+</div>
+        
+      </div>
+    </div>
+  
+</div>
+
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+    
+    
+    
+    
+    
+    <li><a href="http://localhost:4000/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2018 Yang Pei. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="http://localhost:4000/assets/js/main.min.js"></script>
+  <script src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
+
+
+
+
+
+
+
+
+  </body>
+</html>

@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: single
 title:  "[CodeFights] NumberGameVI"
 tags:
 - algorithm

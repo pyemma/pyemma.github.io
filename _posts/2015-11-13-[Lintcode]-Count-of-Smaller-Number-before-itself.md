@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: single
 title:  "[Lintcode] Count of Smaller Number before itself"
 tags:
 - algorithm

@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: single
 title: "Simple Bloom Filter Implementation Part 2"
 tags:
 - project

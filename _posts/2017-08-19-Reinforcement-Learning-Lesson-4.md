@@ -1,5 +1,5 @@
 ---
-  layout: post
+  layout: single
   title: "Reinforcement Learning Lesson 4"
 ---
 In this lecture, we learn how to solve an unknown MDP. In the last lecture, we introduced how to calculate the value function given a policy. In this one, we will try to find the optimize policy by ourselves.

@@ -1,5 +1,5 @@
 ---
-  layout: post
+  layout: single
   title: Deep Work Reading Note
 ---
 "Deep Work" is the first book I read this year. I was pretty impressed by the idea and methods the author purposed to help you gain the ability to do "deep work", which means how to be concentrate on the work that can really generate value. In this note, I would like to summarize the main points of author, together with my personal experience.

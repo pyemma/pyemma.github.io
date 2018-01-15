@@ -1,8 +1,8 @@
 ---
-layout: post
-title:  "Ant Cheat Sheet" 
-tags: 
-- project 
+layout: single 
+title:  "Ant Cheat Sheet"
+tags:
+- project
 - tools
 ---
 This is a simple document introducing how to write the build.xml of Ant for your projects.
@@ -18,7 +18,7 @@ Each `<target>` is composed of several `task`. The `task` is in the format like 
 * **javac**: used to comple java class file
 * **java**: run java class
 * **jar**: create jar file
-* **exec**: run a executable binary file 
+* **exec**: run a executable binary file
 
 Sometimes, we need the same value multiple times in different places, like the name of dictionaries. We can use `<property>` to hold this value and use the `<property>` in other place. For example, `<property name="build.dir" value="build" />`, then we can use it like `<java srcdir="${src.dir}" dstdir="${build.dir}" />`.
 

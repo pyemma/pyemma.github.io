@@ -1,5 +1,5 @@
 ---
-  layout: post
+  layout: single
   title: "Reinforcement Learning Lesson 3"
 ---
 In this lesson, we will learn about what to do when we have no knowledge about the MDP. In the last lesson, we learnt about how to solve a MDP when we have full information about it (e.g. $P$, $R$). When we don't have enough information, the Bellman Equation won't work. The only way is to learn from experience, where we run the process once, and obtain a $S_1, R_1, ..., S_T$ sequence and improve our value function with it. This is called model free. In this lesson, we learn about when given a policy $\pi$, how do we calculate the state value function (which is called model free predicting). And in the next one, we will learn how to come up with the policy (which is called model free control).

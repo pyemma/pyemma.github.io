@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: single
 title:  "[Hackerrank] Cut the tree"
 tags:
 - algorithm

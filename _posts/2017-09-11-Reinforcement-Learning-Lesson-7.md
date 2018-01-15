@@ -1,5 +1,5 @@
 ---
-  layout: post
+  layout: single
   title: "Reinforcement Learning Lesson 7"
 ---
 In the pervious notes, we are all using **model-free** reinforcement learning method to find the solution for the problem. Today we are going to introduce method that directly learns from the experience and tries to understand the underlaying world.

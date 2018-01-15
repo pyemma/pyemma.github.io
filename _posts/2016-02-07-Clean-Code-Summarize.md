@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: single
 title: "Clean Code Summarize"
 ---
 Here is just some tips I think is most useful for guiding me to write better code from book `Clean Code: A Handbook of Agile Software Craftsmanship`.

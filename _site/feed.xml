@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Coding Monkey</title>
+    <title>Yang Pei</title>
     <description>A coding monkey, who is passionate in algorithm and machine learning, hoping one day to become a coding machine.</description>
     <link>http://localhost:4000</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
+    
+      <item>
+        <title>What I Read This Week 1</title>
+        <description>&lt;h3 id=&quot;the-3-tricks-that-made-alphago-zero-work&quot;&gt;&lt;a href=&quot;https://hackernoon.com/the-3-tricks-that-made-alphago-zero-work-f3d47b6686ef&quot;&gt;The 3 Tricks That Made AlphaGo Zero Work&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;This post explains why AlphaGo Zero out-perform than it’s elder brother AlphaGo, summarizing in 3 points that lead to the supreme result:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Use the evaluations provided by MCTS to continually improve the neural network’s evaluations of the board position, instead of using human play (This is actually the idea of using &lt;strong&gt;better training sample&lt;/strong&gt;).&lt;/li&gt;
+  &lt;li&gt;Use a single neural network to predict which &lt;strong&gt;move&lt;/strong&gt; to recommend &lt;em&gt;and&lt;/em&gt; which &lt;strong&gt;move&lt;/strong&gt; are likely to win the game (This is the idea of using &lt;a href=&quot;http://ruder.io/multi-task/index.html#introduction&quot;&gt;&lt;strong&gt;Multitask Learning&lt;/strong&gt;&lt;/a&gt;).&lt;/li&gt;
+  &lt;li&gt;Use a upgrade version of neural network (from convolutional neural network to &lt;strong&gt;residual neural network&lt;/strong&gt;).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;intuitive-rl-intro-to-advantage-actor-critic-a2c&quot;&gt;&lt;a href=&quot;https://medium.com/@rudygilman/intuitive-rl-intro-to-advantage-actor-critic-a2c-4ff545978752&quot;&gt;Intuitive RL: Intro to Advantage-Actor-Critic (A2C)&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;A very vivid introduction of &lt;strong&gt;Advantage-Actor-Critic&lt;/strong&gt; reinforcement learning.&lt;/p&gt;
+</description>
+        <pubDate>Sun, 14 Jan 2018 00:00:00 -0800</pubDate>
+        <link>http://localhost:4000//What-I-Read-This-Week-I/</link>
+        <guid isPermaLink="true">http://localhost:4000//What-I-Read-This-Week-I/</guid>
+      </item>
     
       <item>
         <title>2018 新年计划</title>
@@ -59,8 +77,8 @@
 &lt;/ul&gt;
 </description>
         <pubDate>Sun, 07 Jan 2018 00:00:00 -0800</pubDate>
-        <link>http://localhost:4000//posts/2018-%E6%96%B0%E5%B9%B4%E8%AE%A1%E5%88%92</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/2018-%E6%96%B0%E5%B9%B4%E8%AE%A1%E5%88%92</guid>
+        <link>http://localhost:4000//2018-%E6%96%B0%E5%B9%B4%E8%AE%A1%E5%88%92/</link>
+        <guid isPermaLink="true">http://localhost:4000//2018-%E6%96%B0%E5%B9%B4%E8%AE%A1%E5%88%92/</guid>
       </item>
     
       <item>
@@ -105,8 +123,8 @@
 &lt;/ul&gt;
 </description>
         <pubDate>Thu, 04 Jan 2018 00:00:00 -0800</pubDate>
-        <link>http://localhost:4000//posts/Deep-Work-Reading-Note</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Deep-Work-Reading-Note</guid>
+        <link>http://localhost:4000//Deep-Work-Reading-Note/</link>
+        <guid isPermaLink="true">http://localhost:4000//Deep-Work-Reading-Note/</guid>
       </item>
     
       <item>
@@ -157,22 +175,22 @@
 &lt;p&gt;不管2017年怎么样，都已经成为过去，不必太纠结于这一整年的失落和痛苦，让那些成为以后酒桌上的笑谈。昂首挺胸，迎接崭新的一年！&lt;/p&gt;
 </description>
         <pubDate>Fri, 29 Dec 2017 00:00:00 -0800</pubDate>
-        <link>http://localhost:4000//posts/2017-%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/2017-%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93</guid>
+        <link>http://localhost:4000//2017-%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</link>
+        <guid isPermaLink="true">http://localhost:4000//2017-%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</guid>
       </item>
     
       <item>
         <title>Reinforcement Learning Lesson 8</title>
         <description>&lt;p&gt;This is the last lesson for the entire reinforcement learning, and in this lesson we will learn something related to exploit and explore. In machine learning service, like recommendation service, there is always a trade off between exploit and explore. Exploit means we are always choosing the best given the current information we have, while explore means try something new we haven’t tried yet. An example is if you go to restaurant, you can always go to the one you enjoy most(exploit), while you can also try a new one(explore).&lt;/p&gt;
 
-&lt;p&gt;This problem is usually formularized as multi bandit problem, which can be represented as $&amp;lt;A, R&amp;gt;$. Here $A$ is a set of action we can take, and $R^a(r) = P[R=r, A=a]$ is an &lt;strong&gt;unknown&lt;/strong&gt; probability distribution over rewards. At each time, our agent is going to pick an action, and the environment will generate a reward. The goal is to maximize the cumulative reward.&lt;/p&gt;
+&lt;p&gt;This problem is usually formularized as multi bandit problem, which can be represented as \(&amp;lt;A, R&amp;gt; \). Here \( A \) is a set of action we can take, and \( R^a(r) = P[R=r, A=a] \) is an &lt;strong&gt;unknown&lt;/strong&gt; probability distribution over rewards. At each time, our agent is going to pick an action, and the environment will generate a reward. The goal is to maximize the cumulative reward.&lt;/p&gt;
 
 &lt;h4 id=&quot;regret&quot;&gt;Regret&lt;/h4&gt;
-&lt;p&gt;We can measure the goodness of our action use &lt;strong&gt;regret&lt;/strong&gt;. Suppose the action value is the mean reward for an action $a$&lt;/p&gt;
+&lt;p&gt;We can measure the goodness of our action use &lt;strong&gt;regret&lt;/strong&gt;. Suppose the action value is the mean reward for an action \( a \)&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;Q(a) = E[r|a]&lt;/script&gt;
 
-&lt;p&gt;and the optimal value $V^\star$ is the max mean reward we can get&lt;/p&gt;
+&lt;p&gt;and the optimal value \( V^\star \) is the max mean reward we can get&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;V^\star = Q(a^\star) = max_{a\in A}Q(a)&lt;/script&gt;
 
@@ -183,8 +201,8 @@
 &lt;h4 id=&quot;upper-confidence-bound&quot;&gt;Upper Confidence Bound&lt;/h4&gt;
 &lt;p&gt;We can try to solve this problem in the face of uncertainty. The best action we should try is the one that would on one hand has a high mean reward, and on the other hand have a high uncertainty. We might get a higher reward, which is good. While we can also get a worse reward, but that does not matter, since we can reduce our uncertainty about that action, and prefer other action which might have higher reward. A more formal description is as follow:&lt;/p&gt;
 &lt;ul&gt;
-  &lt;li&gt;Estimate an upper confidence $\hat{U_t}(a)$ for each action value, which depends on the number of times $a$ has been selected, the larger the times, the smaller the upper confidence&lt;/li&gt;
-  &lt;li&gt;Such that $Q(a) \le \hat{Q_t}(a) + \hat{U_t}(a)$ with high probability&lt;/li&gt;
+  &lt;li&gt;Estimate an upper confidence \( \hat{U_t}(a) \) for each action value, which depends on the number of times \( a \) has been selected, the larger the times, the smaller the upper confidence&lt;/li&gt;
+  &lt;li&gt;Such that \( Q(a) \le \hat{Q_t}(a) + \hat{U_t}(a) \) with high probability&lt;/li&gt;
   &lt;li&gt;Select action maximize Upper Confidence Bound (UCB)&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -192,7 +210,7 @@
 
 &lt;p&gt;We need to come up with some method to calculate the upper bound. Here, we bring &lt;em&gt;Hoeffding’s Inequality&lt;/em&gt; for help&lt;/p&gt;
 &lt;blockquote&gt;
-  &lt;p&gt;Let $X_1,…, X_t$ be i.i.d. random variables in $[0, 1]$, and let $\bar{X_t} = \frac{1}{i} \sum_{i=1}^t X_i$ be the sample mean. Then&lt;/p&gt;
+  &lt;p&gt;Let \( X_1,…, X_t \) be i.i.d. random variables in \( [0, 1] \), and let \( \bar{X_t} = \frac{1}{i} \sum_{i=1}^t X_i \) be the sample mean. Then&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;P[E[X] &gt; \bar{X}_t + u] \le e^{-2tu^2}&lt;/script&gt;
@@ -201,7 +219,7 @@
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;P[Q(a) &gt; \hat{Q_t}(a) + \hat{U_t}] \le e^{-2N_t(a)U_t(a)^2}&lt;/script&gt;
 
-&lt;p&gt;where $N_t(a)$ is the expected number of $a$ is selected. We then can pick a probability $p$ that true value exceeds UCB, and reduce $p$ as we observer more rewards, e.g. $p = t^{-4}$. Then we could obtain the upper bound as:&lt;/p&gt;
+&lt;p&gt;where \( N_t(a) \) is the expected number of \( a \) is selected. We then can pick a probability \( p \) that true value exceeds UCB, and reduce $p$ as we observer more rewards, e.g. \( p = t^{-4} \). Then we could obtain the upper bound as:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;U_t(a) = \sqrt{\frac{2logt}{N_t(a)}}&lt;/script&gt;
 
@@ -210,8 +228,8 @@
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;a_t = argmax_{a\in A} (Q(a) + \sqrt{\frac{2logt}{N_t(a)}})&lt;/script&gt;
 </description>
         <pubDate>Wed, 13 Sep 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//posts/Reinforcement-Learning-Lesson-8</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lesson-8</guid>
+        <link>http://localhost:4000//Reinforcement-Learning-Lesson-8/</link>
+        <guid isPermaLink="true">http://localhost:4000//Reinforcement-Learning-Lesson-8/</guid>
       </item>
     
       <item>
@@ -289,8 +307,8 @@ R_{t+1} = R_\eta(R_{t+1}|S_t, A_t)&lt;/script&gt;
 &lt;/ul&gt;
 </description>
         <pubDate>Mon, 11 Sep 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//posts/Reinforcement-Learning-Lesson-7</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lesson-7</guid>
+        <link>http://localhost:4000//Reinforcement-Learning-Lesson-7/</link>
+        <guid isPermaLink="true">http://localhost:4000//Reinforcement-Learning-Lesson-7/</guid>
       </item>
     
       <item>
@@ -391,8 +409,8 @@ J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a&lt;/scr
 &lt;/ul&gt;
 </description>
         <pubDate>Sun, 10 Sep 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//posts/Reinforcment-Learning-Lesson-6</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcment-Learning-Lesson-6</guid>
+        <link>http://localhost:4000//Reinforcment-Learning-Lesson-6/</link>
+        <guid isPermaLink="true">http://localhost:4000//Reinforcment-Learning-Lesson-6/</guid>
       </item>
     
       <item>
@@ -432,8 +450,8 @@ J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a&lt;/scr
 &lt;p&gt;The key method that stabilize the model is experience reply and Q target. For the experience reply, it helps decouple the relationship between each step since we are randomly sampling. For the Q target, we are using the model several steps ago, not the model we just updated. You can think of this as avoid oscillation.&lt;/p&gt;
 </description>
         <pubDate>Fri, 08 Sep 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//posts/Reinforcement-Learning-Lesson-5</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lesson-5</guid>
+        <link>http://localhost:4000//Reinforcement-Learning-Lesson-5/</link>
+        <guid isPermaLink="true">http://localhost:4000//Reinforcement-Learning-Lesson-5/</guid>
       </item>
     
       <item>
@@ -534,8 +552,8 @@ E(s, a) = \gamma\lambda E(s, a)&lt;/script&gt;
 &lt;/ul&gt;
 </description>
         <pubDate>Sat, 19 Aug 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//posts/Reinforcement-Learning-Lesson-4</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lesson-4</guid>
+        <link>http://localhost:4000//Reinforcement-Learning-Lesson-4/</link>
+        <guid isPermaLink="true">http://localhost:4000//Reinforcement-Learning-Lesson-4/</guid>
       </item>
     
       <item>
@@ -614,78 +632,8 @@ E_t(s) = \begin{cases}
 &lt;p&gt;The good thing for TD($lambda$) is that it can learn with incomplete experience. And the update is performed &lt;em&gt;online&lt;/em&gt;, &lt;em&gt;step by step&lt;/em&gt; within the episode. MC is updated via offline, cause it needs to wait until the end and calculate the update for each state and update them in batch.&lt;/p&gt;
 </description>
         <pubDate>Thu, 17 Aug 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//posts/Reinforcement-Learning-Lession-3</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lession-3</guid>
-      </item>
-    
-      <item>
-        <title>Reinforcement Learning Lesson 2</title>
-        <description>&lt;p&gt;In the last post, we introduced the definition of Markov Decision Process and Bellman Equation. Now, if you are given the states $S$, action $A$, transition matrix $P$, rewards $R$ and discounting ratio $\gamma$, how would you come up with a solution for this MDP? i.e. how would you calculate the value function and come up with an optimal policy for it?&lt;/p&gt;
-
-&lt;h4 id=&quot;value-iteration&quot;&gt;Value Iteration&lt;/h4&gt;
-&lt;p&gt;This first method is to apply the Bellman Optimality Equation repeatedly. The idea is that we continue update the best estimation for each state value function, and once all $s^\prime$ reachable from $s$ achieve its optimal value function, then $v(s)$ can also achieve the optimal value. The algorithm is as follow:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Initiate $v(s)$ to 0 for all $s\in S$&lt;/li&gt;
-  &lt;li&gt;Apply
-&lt;script type=&quot;math/tex&quot;&gt;v(s) = max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av(s))&lt;/script&gt;
-to update each state value function to a better estimation&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Why this algorithm guarantee to find the optimal state value function (thus optimal policy)? Its because the Bellman Optimality Equation can be regarded as a contraction. We can image in a value function space, where its dimension is $|S|$, each point in this space determine a value state function. A contraction is an operation that can make two points in this space closer.&lt;/p&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;(Contraction Mapping Theory) For any metric space that is complete under an operator that is a contraction, the operator will converge to a unique fixed point.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;According to the Contraction Mapping Theory, we know that $v^\ast=Tv^\ast$ has a unique solution. And based on value iteration converge, we know that $v_{t}=Tv_{t-1}$. Then we could have&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;||v_t - v\ast||_\infty = ||Tv_{t-1} - Tv\ast||_\infty \le \gamma ||v_{t-1} - v\ast||_\infty&lt;/script&gt;
-
-&lt;p&gt;By applying the operator repeatedly, we are bringing our estimated value function closer and closer to the fixed point, thus we are achieving the optimal value function gradually.&lt;/p&gt;
-
-&lt;p&gt;To prove Bellman Optimality Operator is a contraction, we can have:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align}
-|Tv_1(s) - Tv_2(s)|
-&amp; = |max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
-&amp; \le max_a|(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - (R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
-&amp; = max_a|\gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s) - \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s)| \\
-&amp; \le \gamma max_s|v_1(s) - v_2(s)|\\
-\end{align} %]]&gt;&lt;/script&gt;
-
-&lt;h4 id=&quot;policy-iteration&quot;&gt;Policy Iteration&lt;/h4&gt;
-&lt;p&gt;Compared with value iteration which focus on computing the optimal value function. Policy iteration evaluate a policy and improve the policy gradually, and finally converge to the optimal policy, the algorithm is as follow:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Initialize a random policy $\pi$&lt;/li&gt;
-  &lt;li&gt;Apply Bellman Expectation Equation to all state $s$ to get the current value function $v^\pi$&lt;/li&gt;
-  &lt;li&gt;Improve the current policy greedily by:&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\pi^\prime = argmax_a (R_s^a + \gamma \sum_{s^\prime\in S}P_{ss^\prime}^av^\pi(s))&lt;/script&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Repeat until the policy does not change&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Why policy iteration guarantee to converge to optimal policy? First, we can also proof that the Bellman Expectation Operator(Equation) is also a contraction. Thus given a policy $\pi$, we know that the value function will converge to $v^\pi$. Then, we only need to prove the policy can be improved by our greedy selection.&lt;/p&gt;
-
-&lt;p&gt;Suppose a deterministic policy $a = \pi(s)$. We can improve it by acting greedily by&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\pi^\prime(s) = argmax_aq_\pi(s, a)&lt;/script&gt;
-
-&lt;p&gt;according to the current action value function(remember the relationship between action value function and state value function, they can be transformed each other). It can improve the value function for any state&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_\pi(s, \pi^\prime(s)) = argmax_a q_\pi(s, a) \ge q_\pi(s, \pi(s)) = v_\pi(s)&lt;/script&gt;
-
-&lt;p&gt;And thus we can improves the value function $v_{\pi^\prime}(s) \ge v_\pi(s)$ (this can be proved by expanding the return and recursively substitute the above function).&lt;/p&gt;
-
-&lt;p&gt;Policy iteration is pretty similar to Expectation Maximization (EM). In EM, we first evaluate the data using the current parameters, and then update the parameters to maximize the quantity.&lt;/p&gt;
-
-&lt;p&gt;More detailed proof is available &lt;a href=&quot;http://www.cs.cmu.edu/afs/cs/academic/class/15780-s16/www/slides/mdps.pdf&quot;&gt;here&lt;/a&gt;&lt;/p&gt;
-</description>
-        <pubDate>Mon, 14 Aug 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//posts/Reinforcement-Learning-Lesson-2</link>
-        <guid isPermaLink="true">http://localhost:4000//posts/Reinforcement-Learning-Lesson-2</guid>
+        <link>http://localhost:4000//Reinforcement-Learning-Lession-3/</link>
+        <guid isPermaLink="true">http://localhost:4000//Reinforcement-Learning-Lession-3/</guid>
       </item>
     
   </channel>

@@ -1,0 +1,497 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.9.0 by Michael Rose
+  Copyright 2013-2018 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE.txt
+-->
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>[Hackerrank] Cut the tree - Coding Monkey</title>
+<meta name="description" content="The problem is available here. The idea is to use postorder traversal of the tree to enumerate each possible remove of edge, and return the sum of the sub-tree to its parent node. This problem represent the tree as a acyclic undirected graph, which is a quite wired representation.">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Coding Monkey">
+<meta property="og:title" content="[Hackerrank] Cut the tree">
+<meta property="og:url" content="http://localhost:4000/Hackerrank-Cut-the-tree/">
+
+
+  <meta property="og:description" content="The problem is available here. The idea is to use postorder traversal of the tree to enumerate each possible remove of edge, and return the sum of the sub-tree to its parent node. This problem represent the tree as a acyclic undirected graph, which is a quite wired representation.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2015-11-13T00:00:00-08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/Hackerrank-Cut-the-tree/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Person",
+      "name" : "Yang Pei",
+      "url" : "http://localhost:4000",
+      "sameAs" : null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="http://localhost:4000/feed.xml" type="application/atom+xml" rel="alternate" title="Coding Monkey Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="http://localhost:4000/assets/css/main.css">
+
+<!--[if lte IE 9]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use http://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    <div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        <a class="site-title" href="http://localhost:4000/">Coding Monkey</a>
+        <ul class="visible-links">
+          
+            
+            <li class="masthead__menu-item">
+              <a href="https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/" >Quick-Start Guide</a>
+            </li>
+          
+        </ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle Menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Yang Pei</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        I am a Coding Monkey.
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="http://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Mountain View</span>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+    <meta itemprop="headline" content="[Hackerrank] Cut the tree">
+    <meta itemprop="description" content="The problem is available here. The idea is to use postorder traversal of the tree to enumerate each possible remove of edge, and return the sum of the sub-tree to its parent node. This problem represent the tree as a acyclic undirected graph, which is a quite wired representation.">
+    <meta itemprop="datePublished" content="November 13, 2015">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 class="page__title" itemprop="headline">[Hackerrank] Cut the tree
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  1 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>The problem is available <a href="https://www.hackerrank.com/challenges/cut-the-tree">here</a>. The idea is to use postorder traversal of the tree to enumerate each possible remove of edge, and return the sum of the sub-tree to its parent node. This problem represent the tree as a acyclic undirected graph, which is a quite wired representation.</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Solution</span> <span class="o">{</span><br data-jekyll-commonmark-ghpages="" /><br data-jekyll-commonmark-ghpages="" />    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">GraphNode</span> <span class="o">{</span><br data-jekyll-commonmark-ghpages="" />        <span class="kt">int</span> <span class="n">id</span><span class="o">,</span> <span class="n">val</span><span class="o">;</span><br data-jekyll-commonmark-ghpages="" />        <span class="n">List</span><span class="o">&lt;</span><span class="n">GraphNode</span><span class="o">&gt;</span> <span class="n">neighbors</span><span class="o">;</span><br data-jekyll-commonmark-ghpages="" />        <span class="kd">public</span> <span class="nf">GraphNode</span><span class="o">(</span><span class="kt">int</span> <span class="n">id</span><span class="o">,</span> <span class="kt">int</span> <span class="n">val</span><span class="o">)</span> <span class="o">{</span><br data-jekyll-commonmark-ghpages="" />            <span class="k">this</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">id</span><span class="o">;</span><br data-jekyll-commonmark-ghpages="" />            <span class="k">this</span><span class="o">.</span><span class="na">val</span> <span class="o">=</span> <span class="n">val</span><span class="o">;</span><br data-jekyll-commonmark-ghpages="" />            <span class="n">neighbors</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">GraphNode</span><span class="o">&gt;();</span><br data-jekyll-commonmark-ghpages="" />        <span class="o">}</span><br data-jekyll-commonmark-ghpages="" />    <span class="o">}</span><br data-jekyll-commonmark-ghpages="" /><br data-jekyll-commonmark-ghpages="" />    <span class="kd">static</span> <span class="kt">int</span> <span class="n">result</span> <span class="o">=</span> <span class="n">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">;</span><br data-jekyll-commonmark-ghpages="" /><br data-jekyll-commonmark-ghpages="" />    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">dfs</span><span class="o">(</span><span class="n">GraphNode</span> <span class="n">root</span><span class="o">,</span> <span class="kt">int</span> <span class="n">sum</span><span class="o">,</span> <span class="n">HashSet</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">visited</span><span class="o">)</span> <span class="o">{</span><br data-jekyll-commonmark-ghpages="" />        <span class="k">if</span> <span class="o">(</span><span class="n">root</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span><br data-jekyll-commonmark-ghpages="" />            <span class="k">return</span> <span class="mi">0</span><span class="o">;</span><br data-jekyll-commonmark-ghpages="" />        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span><br data-jekyll-commonmark-ghpages="" />            <span class="kt">int</span> <span class="n">curSum</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span><br data-jekyll-commonmark-ghpages="" />            <span class="n">visited</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">root</span><span class="o">.</span><span class="na">id</span><span class="o">);</span><br data-jekyll-commonmark-ghpages="" />            <span class="k">for</span> <span class="o">(</span><span class="n">GraphNode</span> <span class="n">neighbor</span> <span class="o">:</span> <span class="n">root</span><span class="o">.</span><span class="na">neighbors</span><span class="o">)</span> <span class="o">{</span><br data-jekyll-commonmark-ghpages="" />                <span class="k">if</span> <span class="o">(</span><span class="n">visited</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">neighbor</span><span class="o">.</span><span class="na">id</span><span class="o">)</span> <span class="o">==</span> <span class="kc">false</span><span class="o">)</span> <span class="o">{</span><br data-jekyll-commonmark-ghpages="" />                    <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="n">dfs</span><span class="o">(</span><span class="n">neighbor</span><span class="o">,</span> <span class="n">sum</span><span class="o">,</span> <span class="n">visited</span><span class="o">);</span><br data-jekyll-commonmark-ghpages="" />                    <span class="c1">// System.out.println(sum + " " + res);</span><br data-jekyll-commonmark-ghpages="" />                    <span class="n">result</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">Math</span><span class="o">.</span><span class="na">abs</span><span class="o">(</span><span class="n">sum</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">res</span><span class="o">),</span> <span class="n">result</span><span class="o">);</span><br data-jekyll-commonmark-ghpages="" />                    <span class="n">curSum</span> <span class="o">+=</span> <span class="n">res</span><span class="o">;</span><br data-jekyll-commonmark-ghpages="" />                <span class="o">}</span><br data-jekyll-commonmark-ghpages="" />            <span class="o">}</span><br data-jekyll-commonmark-ghpages="" />            <span class="k">return</span> <span class="n">curSum</span> <span class="o">+</span> <span class="n">root</span><span class="o">.</span><span class="na">val</span><span class="o">;</span><br data-jekyll-commonmark-ghpages="" />        <span class="o">}</span><br data-jekyll-commonmark-ghpages="" />    <span class="o">}</span><br data-jekyll-commonmark-ghpages="" /><br data-jekyll-commonmark-ghpages="" />    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span><br data-jekyll-commonmark-ghpages="" /><br data-jekyll-commonmark-ghpages="" />        <span class="n">Scanner</span> <span class="n">scan</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Scanner</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">in</span><span class="o">);</span><br data-jekyll-commonmark-ghpages="" />        <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">scan</span><span class="o">.</span><span class="na">nextInt</span><span class="o">();</span><br data-jekyll-commonmark-ghpages="" />        <span class="n">List</span><span class="o">&lt;</span><span class="n">GraphNode</span><span class="o">&gt;</span> <span class="n">nodes</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">GraphNode</span><span class="o">&gt;();</span><br data-jekyll-commonmark-ghpages="" />        <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span><br data-jekyll-commonmark-ghpages="" />        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span><br data-jekyll-commonmark-ghpages="" />            <span class="kt">int</span> <span class="n">val</span> <span class="o">=</span> <span class="n">scan</span><span class="o">.</span><span class="na">nextInt</span><span class="o">();</span><br data-jekyll-commonmark-ghpages="" />            <span class="n">nodes</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">GraphNode</span><span class="o">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span> <span class="n">val</span><span class="o">));</span><br data-jekyll-commonmark-ghpages="" />            <span class="n">sum</span> <span class="o">+=</span> <span class="n">val</span><span class="o">;</span><br data-jekyll-commonmark-ghpages="" />        <span class="o">}</span><br data-jekyll-commonmark-ghpages="" />        <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">scan</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(),</span> <span class="n">b</span> <span class="o">=</span> <span class="n">scan</span><span class="o">.</span><span class="na">nextInt</span><span class="o">();</span><br data-jekyll-commonmark-ghpages="" />        <span class="n">GraphNode</span> <span class="n">root</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">a</span><span class="o">-</span><span class="mi">1</span><span class="o">);</span><br data-jekyll-commonmark-ghpages="" />        <span class="n">nodes</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">a</span><span class="o">-</span><span class="mi">1</span><span class="o">).</span><span class="na">neighbors</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">nodes</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">b</span><span class="o">-</span><span class="mi">1</span><span class="o">));</span><br data-jekyll-commonmark-ghpages="" />        <span class="n">nodes</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">b</span><span class="o">-</span><span class="mi">1</span><span class="o">).</span><span class="na">neighbors</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">nodes</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">a</span><span class="o">-</span><span class="mi">1</span><span class="o">));</span><br data-jekyll-commonmark-ghpages="" />        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span><br data-jekyll-commonmark-ghpages="" />            <span class="n">a</span> <span class="o">=</span> <span class="n">scan</span><span class="o">.</span><span class="na">nextInt</span><span class="o">();</span><br data-jekyll-commonmark-ghpages="" />            <span class="n">b</span> <span class="o">=</span> <span class="n">scan</span><span class="o">.</span><span class="na">nextInt</span><span class="o">();</span><br data-jekyll-commonmark-ghpages="" />            <span class="n">nodes</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">a</span><span class="o">-</span><span class="mi">1</span><span class="o">).</span><span class="na">neighbors</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">nodes</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">b</span><span class="o">-</span><span class="mi">1</span><span class="o">));</span><br data-jekyll-commonmark-ghpages="" />            <span class="n">nodes</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">b</span><span class="o">-</span><span class="mi">1</span><span class="o">).</span><span class="na">neighbors</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">nodes</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">a</span><span class="o">-</span><span class="mi">1</span><span class="o">));</span><br data-jekyll-commonmark-ghpages="" />        <span class="o">}</span><br data-jekyll-commonmark-ghpages="" />        <span class="n">HashSet</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">set</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;();</span><br data-jekyll-commonmark-ghpages="" />        <span class="n">dfs</span><span class="o">(</span><span class="n">root</span><span class="o">,</span> <span class="n">sum</span><span class="o">,</span> <span class="n">set</span><span class="o">);</span><br data-jekyll-commonmark-ghpages="" />        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">result</span><span class="o">);</span><br data-jekyll-commonmark-ghpages="" />    <span class="o">}</span><br data-jekyll-commonmark-ghpages="" /><span class="o">}</span></code></pre></figure>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="http://localhost:4000/tags/#algorithm" class="page__taxonomy-item" rel="tag">algorithm</a><span class="sep">, </span>
+    
+      
+      
+      <a href="http://localhost:4000/tags/#interview" class="page__taxonomy-item" rel="tag">interview</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2015-11-13T00:00:00-08:00">November 13, 2015</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=%5BHackerrank%5D+Cut+the+tree%20http%3A%2F%2Flocalhost%3A4000%2FHackerrank-Cut-the-tree%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2FHackerrank-Cut-the-tree%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://plus.google.com/share?url=http%3A%2F%2Flocalhost%3A4000%2FHackerrank-Cut-the-tree%2F" class="btn btn--google-plus" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Google Plus"><i class="fab fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2FHackerrank-Cut-the-tree%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="http://localhost:4000/Simple-Bloom-Filter-Implementation-Part-2/" class="pagination--pager" title="Simple Bloom Filter Implementation Part 2
+">Previous</a>
+    
+    
+      <a href="http://localhost:4000/Lintcode-Count-of-Smaller-Number-before-itself/" class="pagination--pager" title="[Lintcode] Count of Smaller Number before itself
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="http://localhost:4000/What-I-Read-This-Week-I/" rel="permalink">What I Read This Week 1
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  less than 1 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">The 3 Tricks That Made AlphaGo Zero Work
+This post explains why AlphaGo Zero out-perform than it’s elder brother AlphaGo, summarizing in 3 points that lead t...</p>
+  </article>
+</div>
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="http://localhost:4000/2018-%E6%96%B0%E5%B9%B4%E8%AE%A1%E5%88%92/" rel="permalink">2018 新年计划
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  less than 1 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">2018年的主题，就是要变得自信以及学会Deep Work!
+
+</p>
+  </article>
+</div>
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="http://localhost:4000/Deep-Work-Reading-Note/" rel="permalink">Deep Work Reading Note
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  3 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">“Deep Work” is the first book I read this year. I was pretty impressed by the idea and methods the author purposed to help you gain the ability to do “deep w...</p>
+  </article>
+</div>
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="http://localhost:4000/2017-%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" rel="permalink">2017 年终终结
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  less than 1 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">2017年一转眼就过去了，自己也从一个刚刚毕业的学生成了一个快上了两年班的上班族了。趁着年末好好回顾一下这一整年发生的事情，一方面是给自己留个纪念，另一方面也是好好总结一下这一年的得失，找到改进的方向。
+
+</p>
+  </article>
+</div>
+        
+      </div>
+    </div>
+  
+</div>
+
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+    
+    
+    
+    
+    
+    <li><a href="http://localhost:4000/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2018 Yang Pei. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="http://localhost:4000/assets/js/main.min.js"></script>
+  <script src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
+
+
+
+
+
+
+
+
+  </body>
+</html>
