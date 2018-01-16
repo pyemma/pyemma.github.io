@@ -12,3 +12,12 @@ This post explains why AlphaGo Zero out-perform than it's elder brother AlphaGo,
 A very vivid introduction of **Advantage-Actor-Critic** reinforcement learning.
 1. First we should keep in mind that **Actor-Critic** is a blend of both value estimation and policy estimation reinforcement learning method, a.k.a we will try to learn value function, as well as policy from game play (This is different from pure value function based method and policy based method).
 2. In **Actor-Critic**, the **Actor** will tries to optimize the parameter for policy and **Critic** will tries to optimize the parameter for the value function of a state. This can be done by having a single model outputting both the value of the state, as will as the probability of action.
+3. By jump into one state, taking action and get reward. We will get the training examples for our **Critic**. The estimate for each state will become more and more accurate. In this way, we don't need to wait until the end of the game to get the value of each state, which is high in variance.
+4. In stead of simply policy gradient update the policy (which tries to avoid the action that lead to a state with low value), we use **Advantage**, which is the relative improvement of the action take (e.g. current state is -100, and take action A we arrive in a state with -20, the improvement of the action is 80!). The idea behind this is that the action might be the result that result in a low value.
+
+### [AI and Deep Learning in 2017 – A Year in Review](http://www.wildml.com/2017/12/ai-and-deep-learning-in-2017-a-year-in-review/)
+A really awesome post that summarize what is going on in deep learning in 2017. Some points that I enjoy most:
+* Evolution Algorithm (e.g. Genetic Algorithm) is coming back again.
+* Lots of deep learning framework is available right now: PyTorch is pretty popular in academic, but personally I thing TensorFlow is still the bests to try out (It's also my plan to be more familiar with TensorFlow and work on some side project).
+* A good online reinforcement learning algorithm to read: [*OpenAI Baseline*](https://github.com/openai/baselines).
+* A good online courses: https://stats385.github.io/
