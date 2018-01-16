@@ -18,7 +18,7 @@ $$\mathbb{P}[S_{t+1}|S_{t}] = \mathbb{P}[S_{t+1}|S_1, ..., S_t]$$
 
 This means that the current state contains all they necessary information for the future, and we can discard all history information.
 
-**State Transition Matrix** contains the probability we go from on state to another one. Given a state $s$ and its successor state $s^\prime$, the probability from $s$ goes to $s^\prime$ is given by
+**State Transition Matrix** contains the probability we go from on state to another one. Given a state \\( s \\) and its successor state \\( s^\prime \\), the probability from \\( s \\) goes to \\( s^\prime \\) is given by
 
 $$P_{ss\prime} = \mathbb{P}[S_{t+1}=s\prime|S_{t}=s]$$
 
@@ -37,23 +37,23 @@ From the above two concept, we can notice two things and these are also the cons
 * The state is finite (otherwise the definition of State Transition Matrix is problematic)
 * The environment is fully observable, no hidden state exists
 
-We can obtain a definition for MP as a tuple $<S, P>$:
-* $S$ is a finite state set
-* $P$ is a state transition matrix
+We can obtain a definition for MP as a tuple \\( <S, P> \\):
+* \\( S \\) is a finite state set
+* \\( P \\) is a state transition matrix
 
 An example of MP:
 
 ![Markov Process](/assets/mdp.png)
 
 #### Markov Reward Process
-Markov Process combined with values, then we have Markov Reward Process (MRP), defined by a tuple $<S, P, R, \gamma>$:
-* $S$ is a finite state set
-* $P$ is a state transition matrix
-* $R$ is a reward function,
+Markov Process combined with values, then we have Markov Reward Process (MRP), defined by a tuple \\( <S, P, R, \gamma> \\):
+* \\( S \\) is a finite state set
+* \\( P \\) is a state transition matrix
+* \\( R \\) is a reward function,
 $$R_{s} = \mathbb{E}[R_{t+1}|S_{t}=s]$$
-* $\gamma$ is a discounting ratio
+* \\( \gamma \\) is a discounting ratio
 
-As we have introduced reward, we can measure how many rewards we can get in each state. We define return $G_t$ as the discounted rewards we can get from timestamp $t$, and state value function $v(s)$ the expected return we can get starting from state $s$:
+As we have introduced reward, we can measure how many rewards we can get in each state. We define return \\( G_t \\) as the discounted rewards we can get from timestamp  \\( t \\), and state value function \\( v(s) \\) the expected return we can get starting from state \\( s \\):
 
 $$G_t = R_{t+1} + \gamma R_{t+2} + ... = \sum_{k=1}^{\infty}\gamma^{k}R_{t+k+1}$$
 
@@ -73,26 +73,26 @@ By expanding the above expectation and using sum to replace expectation operator
 $$v(s) = R_s + \gamma\sum_{s^\prime\in S}P_{ss^\prime}v(s^\prime)$$
 
 #### Markov Decision Process
-Adding the actions we can make among the state, we finally have the definition for MDP, which is $<S, A, P, R, \gamma>$$:
-* $S$ is a finite state set
-* $A$ is a finite action set
-* $P$ is a state transition matrix,
+Adding the actions we can make among the state, we finally have the definition for MDP, which is \\( <S, A, P, R, \gamma> \\):
+* \\( S \\) is a finite state set
+* \\( A \\) is a finite action set
+* \\( P \\) is a state transition matrix,
 $$P_{ss^\prime}^a = \mathbb{P}[S_{t+1}=s^\prime|S_{t}=s, A_t=a]$$
-* $R$ is a reward function,
+* \\( R \\) is a reward function,
 $$R_{s}^a = \mathbb{E}[R_{t+1}|S_{t}=s, A_t=a]$$
-* $\gamma$ is a discounting ratio
+* \\( \gamma\\) is a discounting ratio
 
-Notice the change on the state transition matrix, before we only have a single matrix, and now we have one for each action $a$ (we can think of in the pervious case, we have only single action). Under different action $a$, the transition probability can be different between the two state. We can now regard the new state transition matrix as a tensor with three dimension.
+Notice the change on the state transition matrix, before we only have a single matrix, and now we have one for each action \\( a \\) we can think of in the pervious case, we have only single action). Under different action \\( a \\), the transition probability can be different between the two state. We can now regard the new state transition matrix as a tensor with three dimension.
 
 As we have actions to now, we need to make decision how to take actions. A **policy** is a distribution over actions given a state:
 
 $$\pi(a|s) = \mathbb{P}[A_t=a|S_t=s]$$
 
-A policy fully determines how an agent would act, and it does not depend on the history. Similar to MRP, we have state value function for MDP as the expected return starting from $s$, following the policy $\pi$:
+A policy fully determines how an agent would act, and it does not depend on the history. Similar to MRP, we have state value function for MDP as the expected return starting from \\( s \\), following the policy \\( \pi \\):
 
 $$v_{\pi}(s) = \mathbb{E}_{\pi}[G_t|S_t=s]$$
 
-We can also define an action value function, which is the expected return we get starting from state $s$, taking action $a$ and following policy $\pi$:
+We can also define an action value function, which is the expected return we get starting from state \\( s \\), taking action \\( a \\) and following policy \\( \pi \\):
 
 $$q_{\pi}(s, a) = \mathbb{E}_{\pi}[G_t|S_t=s, A_t=a]$$
 
@@ -120,7 +120,7 @@ $$
 \end{cases}
 $$
 
-> There exists an optimal policy $\pi_{*}$ that is better than or equal to all other policy for any MDP. All optimal policy achieve optimal state value function and optimal action value function
+> There exists an optimal policy \\( \pi_{*} \\) that is better than or equal to all other policy for any MDP. All optimal policy achieve optimal state value function and optimal action value function
 
 Following this policy, we can change our Bellman Exception Equation to Bellman Optimality Equation:
 

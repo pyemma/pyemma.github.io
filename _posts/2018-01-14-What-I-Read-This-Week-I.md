@@ -21,3 +21,23 @@ A really awesome post that summarize what is going on in deep learning in 2017. 
 * Lots of deep learning framework is available right now: PyTorch is pretty popular in academic, but personally I thing TensorFlow is still the bests to try out (It's also my plan to be more familiar with TensorFlow and work on some side project).
 * A good online reinforcement learning algorithm to read: [*OpenAI Baseline*](https://github.com/openai/baselines).
 * A good online courses: https://stats385.github.io/
+
+### Effective Modern C++
+Mainly read the chapter about lambda function, some take away is:
+* Avoid using default capture
+* In C++14, we can use init capture to move data we would like to use into the closure class, or use some expression to initialize the data member
+{% highlight C++ %}
+[pw = std::move(pw)](){ return pw->name(); };
+[pw = std::make_unique<Widget>()](){ return pw->name(); };
+{% endhighlight %}
+* Use decltype on auto&& parameters to forward them
+{% highlight C++ %}
+auto f = [](auto&& param){
+  return func(std::forward<decltype(x)>(x)); }
+{% endhighlight %}
+
+Another thing to remember is to prefer using **alias** declarations than **typedefs**, because **alias** supports templates better:
+{% highlight C++ %}
+template<typename T>
+using MyAllocList = std::list<T, MyAlloc<T>>;
+{% endhighlight %}

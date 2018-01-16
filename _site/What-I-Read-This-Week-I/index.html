@@ -253,7 +253,7 @@
 
 
 
-  1 minute read
+  2 minute read
 </p>
           
         </header>
@@ -274,7 +274,41 @@
 <ol>
   <li>First we should keep in mind that <strong>Actor-Critic</strong> is a blend of both value estimation and policy estimation reinforcement learning method, a.k.a we will try to learn value function, as well as policy from game play (This is different from pure value function based method and policy based method).</li>
   <li>In <strong>Actor-Critic</strong>, the <strong>Actor</strong> will tries to optimize the parameter for policy and <strong>Critic</strong> will tries to optimize the parameter for the value function of a state. This can be done by having a single model outputting both the value of the state, as will as the probability of action.</li>
+  <li>By jump into one state, taking action and get reward. We will get the training examples for our <strong>Critic</strong>. The estimate for each state will become more and more accurate. In this way, we don’t need to wait until the end of the game to get the value of each state, which is high in variance.</li>
+  <li>In stead of simply policy gradient update the policy (which tries to avoid the action that lead to a state with low value), we use <strong>Advantage</strong>, which is the relative improvement of the action take (e.g. current state is -100, and take action A we arrive in a state with -20, the improvement of the action is 80!). The idea behind this is that the action might be the result that result in a low value.</li>
 </ol>
+
+<h3 id="ai-and-deep-learning-in-2017--a-year-in-review"><a href="http://www.wildml.com/2017/12/ai-and-deep-learning-in-2017-a-year-in-review/">AI and Deep Learning in 2017 – A Year in Review</a></h3>
+<p>A really awesome post that summarize what is going on in deep learning in 2017. Some points that I enjoy most:</p>
+<ul>
+  <li>Evolution Algorithm (e.g. Genetic Algorithm) is coming back again.</li>
+  <li>Lots of deep learning framework is available right now: PyTorch is pretty popular in academic, but personally I thing TensorFlow is still the bests to try out (It’s also my plan to be more familiar with TensorFlow and work on some side project).</li>
+  <li>A good online reinforcement learning algorithm to read: <a href="https://github.com/openai/baselines"><em>OpenAI Baseline</em></a>.</li>
+  <li>A good online courses: https://stats385.github.io/</li>
+</ul>
+
+<h3 id="effective-modern-c">Effective Modern C++</h3>
+<p>Mainly read the chapter about lambda function, some take away is:</p>
+<ul>
+  <li>Avoid using default capture</li>
+  <li>In C++14, we can use init capture to move data we would like to use into the closure class, or use some expression to initialize the data member</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="p">[</span><span class="n">pw</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">pw</span><span class="p">)](){</span> <span class="k">return</span> <span class="n">pw</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">();</span> <span class="p">};</span>
+<span class="p">[</span><span class="n">pw</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Widget</span><span class="o">&gt;</span><span class="p">()](){</span> <span class="k">return</span> <span class="n">pw</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">();</span> <span class="p">};</span></code></pre></figure>
+
+<ul>
+  <li>Use decltype on auto&amp;&amp; parameters to forward them</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="k">auto</span> <span class="n">f</span> <span class="o">=</span> <span class="p">[](</span><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">param</span><span class="p">){</span>
+  <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">&gt;</span><span class="p">(</span><span class="n">x</span><span class="p">));</span> <span class="p">}</span></code></pre></figure>
+
+<p>Another thing to remember is to prefer using <strong>alias</strong> declarations than <strong>typedefs</strong>, because <strong>alias</strong> supports templates better:</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">using</span> <span class="n">MyAllocList</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">MyAlloc</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span><span class="p">;</span></code></pre></figure>
+
 
         
       </section>

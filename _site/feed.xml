@@ -21,7 +21,41 @@
 &lt;ol&gt;
   &lt;li&gt;First we should keep in mind that &lt;strong&gt;Actor-Critic&lt;/strong&gt; is a blend of both value estimation and policy estimation reinforcement learning method, a.k.a we will try to learn value function, as well as policy from game play (This is different from pure value function based method and policy based method).&lt;/li&gt;
   &lt;li&gt;In &lt;strong&gt;Actor-Critic&lt;/strong&gt;, the &lt;strong&gt;Actor&lt;/strong&gt; will tries to optimize the parameter for policy and &lt;strong&gt;Critic&lt;/strong&gt; will tries to optimize the parameter for the value function of a state. This can be done by having a single model outputting both the value of the state, as will as the probability of action.&lt;/li&gt;
+  &lt;li&gt;By jump into one state, taking action and get reward. We will get the training examples for our &lt;strong&gt;Critic&lt;/strong&gt;. The estimate for each state will become more and more accurate. In this way, we don’t need to wait until the end of the game to get the value of each state, which is high in variance.&lt;/li&gt;
+  &lt;li&gt;In stead of simply policy gradient update the policy (which tries to avoid the action that lead to a state with low value), we use &lt;strong&gt;Advantage&lt;/strong&gt;, which is the relative improvement of the action take (e.g. current state is -100, and take action A we arrive in a state with -20, the improvement of the action is 80!). The idea behind this is that the action might be the result that result in a low value.&lt;/li&gt;
 &lt;/ol&gt;
+
+&lt;h3 id=&quot;ai-and-deep-learning-in-2017--a-year-in-review&quot;&gt;&lt;a href=&quot;http://www.wildml.com/2017/12/ai-and-deep-learning-in-2017-a-year-in-review/&quot;&gt;AI and Deep Learning in 2017 – A Year in Review&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;A really awesome post that summarize what is going on in deep learning in 2017. Some points that I enjoy most:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Evolution Algorithm (e.g. Genetic Algorithm) is coming back again.&lt;/li&gt;
+  &lt;li&gt;Lots of deep learning framework is available right now: PyTorch is pretty popular in academic, but personally I thing TensorFlow is still the bests to try out (It’s also my plan to be more familiar with TensorFlow and work on some side project).&lt;/li&gt;
+  &lt;li&gt;A good online reinforcement learning algorithm to read: &lt;a href=&quot;https://github.com/openai/baselines&quot;&gt;&lt;em&gt;OpenAI Baseline&lt;/em&gt;&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;A good online courses: https://stats385.github.io/&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;effective-modern-c&quot;&gt;Effective Modern C++&lt;/h3&gt;
+&lt;p&gt;Mainly read the chapter about lambda function, some take away is:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Avoid using default capture&lt;/li&gt;
+  &lt;li&gt;In C++14, we can use init capture to move data we would like to use into the closure class, or use some expression to initialize the data member&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c--&quot; data-lang=&quot;c++&quot;&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pw&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;move&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pw&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)](){&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pw&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pw&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;make_unique&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Widget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()](){&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pw&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Use decltype on auto&amp;amp;&amp;amp; parameters to forward them&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c--&quot; data-lang=&quot;c++&quot;&gt;&lt;span class=&quot;k&quot;&gt;auto&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[](&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;auto&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;param&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;forward&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;decltype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Another thing to remember is to prefer using &lt;strong&gt;alias&lt;/strong&gt; declarations than &lt;strong&gt;typedefs&lt;/strong&gt;, because &lt;strong&gt;alias&lt;/strong&gt; supports templates better:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c--&quot; data-lang=&quot;c++&quot;&gt;&lt;span class=&quot;k&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;typename&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MyAllocList&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MyAlloc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
 </description>
         <pubDate>Sun, 14 Jan 2018 00:00:00 -0800</pubDate>
         <link>http://localhost:4000//What-I-Read-This-Week-I/</link>
