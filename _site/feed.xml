@@ -7,6 +7,58 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>What I Read This Week 2</title>
+        <description>&lt;h3 id=&quot;evolving-search-recommendations-on-pinterest&quot;&gt;&lt;a href=&quot;https://medium.com/@Pinterest_Engineering/evolving-search-recommendations-on-pinterest-136e26e0468a&quot;&gt;Evolving search recommendations on Pinterest&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;A post introducing the search work done in Pinterest.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initially they use a &lt;em&gt;Term-Query graph&lt;/em&gt; to generate candidates. In this graph, each term (a single word) is represent a node, as well as the query. Each term node is connected to the query, weighted by the reciprocal of the number of queries that term shows up in. Each query node is also connected to query node, weighted by the relativeness. Most visited queries are recommended.&lt;/li&gt;
+  &lt;li&gt;They later changed to &lt;em&gt;Pixie&lt;/em&gt;, a graph based recommendation platform. The graph is build using query and pins. Compared with pervious solution, this solution will not break the query and thus keep the semantic information. &lt;strong&gt;To give better recommendation, semantic information is important.&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;They have further work to utilize embeddings for queries. Is embedding based candidate generation works better than random walk based candidate generation?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;an-overview-of-multi-task-learning-in-deep-neural-networks&quot;&gt;&lt;a href=&quot;http://ruder.io/multi-task/index.html#introduction&quot;&gt;An Overview of Multi-Task Learning in Deep Neural Networks&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;A pretty good blog introducing what MTL is, who is works and some recent works. Here are some points I think most beneficial:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Using one sentence to explain MTL: “By sharing representation among related tasks(leveraging different domain-specific knowledge), the generalization of model is improved.”&lt;/li&gt;
+  &lt;li&gt;Why MTL work:
+    &lt;ul&gt;
+      &lt;li&gt;Our training data will always contains some noise. Training a single goal on the data will easily get overfit. However, training on multiple tasks simultaneously will help cancel out this noise (&lt;strong&gt;Data Augmentation&lt;/strong&gt;).&lt;/li&gt;
+      &lt;li&gt;By training on multiple tasks and sharing the same representation at the same time, the model will try to find a more general hypothesis that would work for all tasks (&lt;strong&gt;Regularization&lt;/strong&gt;).&lt;/li&gt;
+      &lt;li&gt;Some feature combination might be pretty complex in one task and hard to let the model to capture, but easy in the other one. MTL will help sharing this info between tasks(&lt;strong&gt;Feature Engineering&lt;/strong&gt;).&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;There are mainly two form of MTL:
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;Hard Parameter Sharing&lt;/strong&gt;: Different tasks will have several same layers at the lower level, and have their own layers at higher level. A common use-case is that, when can use the bottom layers in VGG, and then train our own layer on our task.&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Soft Parameter Sharing&lt;/strong&gt;: Different tasks will have their own model, but each model can constraint each other to not differ too much.&lt;/li&gt;
+      &lt;li&gt;Currently, &lt;strong&gt;Hard Parameter Sharing&lt;/strong&gt; is still very popular, but &lt;strong&gt;Soft Parameter Sharing&lt;/strong&gt; is more promising as it let the model to learn what to share.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;welcoming-the-era-of-deep-neuroevolution&quot;&gt;&lt;a href=&quot;https://eng.uber.com/deep-neuroevolution/&quot;&gt;Welcoming the Era of Deep Neuroevolution&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Uber AI Lab’s work on using Genetic Algorithm instead of SGD to optimize DNN on reinforcement learning tasks.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;GA can produce comparatively similar result as SGD.&lt;/li&gt;
+  &lt;li&gt;They purposed a method to smartly guide the mutation to put more attention on the sensitive feature, to solve the problem GA has when dealing with large networks.&lt;/li&gt;
+  &lt;li&gt;They also purposed a method to enforce the exploration, which they try to have a population of candidates that act differently from each other as much as possible (unlikely to trapped in local minima).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;effective-modern-c&quot;&gt;[Effective Modern C++]&lt;/h3&gt;
+&lt;p&gt;Mainly read the smart pointer part.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;unique_ptr&lt;/code&gt; performs similar to the old fashion raw pointer. It indicates a exclusive ownership to the object it manages, thus it can only be moved not be copied. We can specify a custom deleter to a unique pointer, and the deleter would become part of the unique pointer’s type. It is very convenient to covert a unique pointer to a shared pointer.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;shared_ptr&lt;/code&gt; performs similar to the garbage collection in Java. It indicates a shared ownership to the object. The underlay mechanism is that each shared pointer will create a control block that would keep the reference count and other data. Since there is a separate object holding all extra info, the deleter we passed to shared pointer will not become a part of its type. Remember not using the raw pointer to initialize a shared pointer, as it is pretty dangerous and we might result in free the object multiple times. This is extremely the case when we are working with the &lt;code class=&quot;highlighter-rouge&quot;&gt;this&lt;/code&gt; pointer. To be able to safely create a shared pointer from &lt;code class=&quot;highlighter-rouge&quot;&gt;this&lt;/code&gt;, use &lt;code class=&quot;highlighter-rouge&quot;&gt;enable_shared_from_this&lt;/code&gt; template.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;enable_shared_from_this&lt;/code&gt; uses &lt;em&gt;Curiously Recurring Template Pattern (CRTP)&lt;/em&gt; (to be add more details later).&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;weak_ptr&lt;/code&gt; is like &lt;code class=&quot;highlighter-rouge&quot;&gt;shared_ptr&lt;/code&gt;, but it does not effect the reference count on the object, and the object it is pointing to might be destroyed. The use case for &lt;code class=&quot;highlighter-rouge&quot;&gt;weak_ptr&lt;/code&gt; can be &lt;strong&gt;cacheing&lt;/strong&gt;, &lt;strong&gt;observer lists&lt;/strong&gt; and the prevention of &lt;code class=&quot;highlighter-rouge&quot;&gt;shared_ptr&lt;/code&gt; cycles.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Sat, 20 Jan 2018 00:00:00 -0800</pubDate>
+        <link>http://localhost:4000//What-I-Read-This-Week-2/</link>
+        <guid isPermaLink="true">http://localhost:4000//What-I-Read-This-Week-2/</guid>
+      </item>
+    
+      <item>
         <title>读书有感 1</title>
         <description>&lt;p&gt;最近两天读了两本书，分别是武志红的《你就是答案》和史蒂芬柯维的《高效能人士的七个习惯》。这两本书都算是提升自我修养的书，但是有人可能这时候就嚷嚷说：“啊，这都是鸡汤，不要被鸡汤给灌糊涂了”。诚然这两本书的确有鸡汤的性质，但是里面的内容还是很在理的，即使说这些东西你其实早就知道，但是再读一读，还是能够进一步加深自己的认知和理解的。下面我就着重说几个给我印象最深刻的部分。&lt;/p&gt;
 
@@ -539,108 +591,6 @@ J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a&lt;/scr
         <pubDate>Fri, 08 Sep 2017 00:00:00 -0700</pubDate>
         <link>http://localhost:4000//Reinforcement-Learning-Lesson-5/</link>
         <guid isPermaLink="true">http://localhost:4000//Reinforcement-Learning-Lesson-5/</guid>
-      </item>
-    
-      <item>
-        <title>Reinforcement Learning Lesson 4</title>
-        <description>&lt;p&gt;In this lecture, we learn how to solve an unknown MDP. In the last lecture, we introduced how to calculate the value function given a policy. In this one, we will try to find the optimize policy by ourselves.&lt;/p&gt;
-
-&lt;h4 id=&quot;mento-calro-policy-iteration&quot;&gt;Mento Calro Policy Iteration&lt;/h4&gt;
-&lt;p&gt;In the &lt;a href=&quot;http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-2&quot;&gt;Lesson 2&lt;/a&gt;, we mentioned how to solve a MDP when we have full information about the MDP. One method is called &lt;strong&gt;Policy Iteration&lt;/strong&gt;. It can be divided into two components: &lt;em&gt;policy iterative evaluation&lt;/em&gt; and &lt;em&gt;policy improvement&lt;/em&gt;. For the evaluation part, we can use the methods in &lt;a href=&quot;http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-3&quot;&gt;last lesson&lt;/a&gt;, nominally MC and TD. However, we could not directly use the state value function, cause in the policy improvement step (e.g. greedy), we need to know the $R$ and $P$ to find the best action (recall the &lt;a href=&quot;http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-1&quot;&gt;Bellman Optimality Function&lt;/a&gt;). However, action value function does not need the model of the MDP while in greedy policy improvement:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_*(s) = argmax_a q(s, a)&lt;/script&gt;
-
-&lt;p&gt;For the policy improvement part. If we stick to the greedy method, it will not be good for us to explore all possible states. So we use another method which is called $\epsilon$-greedy. We will have $1-\epsilon$ probability to perform greedily (choose the current best action), and have $\epsilon$ probability to random choose an action:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\pi(s|a) = \begin{cases}
-\frac{\epsilon}{m} + 1 - \epsilon, &amp; \text{if $a^\star = argmax_a Q(s, a)$} \\
-\frac{\epsilon}{m}, &amp; \text{otherwise}
-\end{cases} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;We have the final Mento Calro Policy Iteration as:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Sample the kth episode $S_1, A_1, …, S_T$ from policy $\pi$&lt;/li&gt;
-  &lt;li&gt;For each state $S_t$ and $A_t$ in the episode&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;N(S_t, A_t) = N(S_t, A_t) + 1 \\
-Q(S_t, A_t) = Q(S_t, A_t) + \frac{1}{N(S_t, A_t)}((G_t - Q(S_t, A_t))) \\&lt;/script&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Update the $\epsilon$ and policy:&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\epsilon = 1/k \\
-\pi = \epsilon\text{-greedy}(Q)&lt;/script&gt;
-
-&lt;h4 id=&quot;sarsa-algorithm&quot;&gt;Sarsa Algorithm&lt;/h4&gt;
-&lt;p&gt;If we use the logic in TD for the evaluation part, then we would have the sarsa algorithm. The main difference is that, in original TD, we use the value state function of the successor state, however, we need the action value function right now. We can obtain that by run our current policy again (remember, TD does not need the complete sequence of experience, we can generate the state and action along the way). Following is the algorithm:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Initialize $Q$ for each state and action pair arbitrarily, set $Q(terminate, *)$ to 0&lt;/li&gt;
-  &lt;li&gt;Repeat for each episode
-    &lt;ul&gt;
-      &lt;li&gt;Initialize $S$, choose $A$ from the current policy derived from $Q$&lt;/li&gt;
-      &lt;li&gt;Repeat for each step in the episode until we hit terminal
-        &lt;ul&gt;
-          &lt;li&gt;Take action $A$, observe $R$ and $S^\prime$&lt;/li&gt;
-          &lt;li&gt;Choose $A^\prime$ from $S^\prime$ from the current policy derived from $Q$&lt;/li&gt;
-          &lt;li&gt;Update &lt;script type=&quot;math/tex&quot;&gt;Q(S, A) = Q(S, A) + \alpha(R + \gamma Q(S^\prime, A^\prime) - Q(S, A))&lt;/script&gt;&lt;/li&gt;
-          &lt;li&gt;Update $S = S^\prime, A = A^\prime$&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Similarly, we can also use Eligibility Trace for the sarsa algorithm and result in sarsa($\lambda$) algorithm. The algorithm is as follow:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Initialize $Q$ for each state and action pair arbitrarily, set $Q(terminate, *)$ to 0
-    &lt;ul&gt;
-      &lt;li&gt;Repeat for each episode&lt;/li&gt;
-      &lt;li&gt;Initialize $E$ for each $s, a$ pair to 0&lt;/li&gt;
-      &lt;li&gt;Initialize $S$, choose $A$ from the current policy derived from Q&lt;/li&gt;
-      &lt;li&gt;Repeat for each step in the episode until we hit terminal
-        &lt;ul&gt;
-          &lt;li&gt;Take action $A$, observe $R$ and $S^\prime$&lt;/li&gt;
-          &lt;li&gt;Choose $A^\prime$ from $S^\prime$ from the current policy derived from Q&lt;/li&gt;
-          &lt;li&gt;Calculate $\delta = R + \gamma Q(S^\prime, A^\prime) - Q(S, A)$&lt;/li&gt;
-          &lt;li&gt;Update $E(S, A) = E(S, A) + 1$&lt;/li&gt;
-          &lt;li&gt;For each $s$ and $a$ pair&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;Q(s, a) = Q(s, a) + \alpha\delta E(s, a) \\
-E(s, a) = \gamma\lambda E(s, a)&lt;/script&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Update $S = S^\prime, A = A^\prime$&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&quot;q-learning&quot;&gt;Q Learning&lt;/h4&gt;
-&lt;p&gt;Both MC policy iteration and sarsa algorithm are &lt;strong&gt;online learning&lt;/strong&gt; method, which means that they are observing there own policy, learning along the process. There is another category which is called &lt;strong&gt;offline learning&lt;/strong&gt;, in which we learn from other policy, not the policy we are trying to improving. Example is that a robots learns walking by observing human. Q learning falls in this category. It is pretty similar to the sarsa algorithm, the only difference is that when we get the action for successor state, we replace the $\epsilon$-greedy to greedy policy. The Q learning method is as follow:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Initialize Q for each state and action pair arbitrarily, set Q(terminate, *) to 0&lt;/li&gt;
-  &lt;li&gt;Repeat for each episode
-    &lt;ul&gt;
-      &lt;li&gt;Initialize $S$, choose $A$ from the current policy derived from Q&lt;/li&gt;
-      &lt;li&gt;Repeat for each step in the episode until we hit terminal
-        &lt;ul&gt;
-          &lt;li&gt;Take action $A$, observe $R$ and $S^\prime$&lt;/li&gt;
-          &lt;li&gt;Update &lt;script type=&quot;math/tex&quot;&gt;Q(S, A) = Q(S, A) + \alpha(R + \gamma max_a Q(S^\prime, a) - Q(S, A))&lt;/script&gt;&lt;/li&gt;
-          &lt;li&gt;Update $S = S^\prime$&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Sat, 19 Aug 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//Reinforcement-Learning-Lesson-4/</link>
-        <guid isPermaLink="true">http://localhost:4000//Reinforcement-Learning-Lesson-4/</guid>
       </item>
     
   </channel>

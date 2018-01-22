@@ -1,0 +1,544 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.9.0 by Michael Rose
+  Copyright 2013-2018 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE.txt
+-->
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>What I Read This Week 2 - Coding Monkey</title>
+<meta name="description" content="Evolving search recommendations on PinterestA post introducing the search work done in Pinterest.  Initially they use a Term-Query graph to generate candidates. In this graph, each term (a single word) is represent a node, as well as the query. Each term node is connected to the query, weighted by the reciprocal of the number of queries that term shows up in. Each query node is also connected to query node, weighted by the relativeness. Most visited queries are recommended.  They later changed to Pixie, a graph based recommendation platform. The graph is build using query and pins. Compared with pervious solution, this solution will not break the query and thus keep the semantic information. To give better recommendation, semantic information is important.  They have further work to utilize embeddings for queries. Is embedding based candidate generation works better than random walk based candidate generation?">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Coding Monkey">
+<meta property="og:title" content="What I Read This Week 2">
+<meta property="og:url" content="http://localhost:4000/What-I-Read-This-Week-2/">
+
+
+  <meta property="og:description" content="Evolving search recommendations on PinterestA post introducing the search work done in Pinterest.  Initially they use a Term-Query graph to generate candidates. In this graph, each term (a single word) is represent a node, as well as the query. Each term node is connected to the query, weighted by the reciprocal of the number of queries that term shows up in. Each query node is also connected to query node, weighted by the relativeness. Most visited queries are recommended.  They later changed to Pixie, a graph based recommendation platform. The graph is build using query and pins. Compared with pervious solution, this solution will not break the query and thus keep the semantic information. To give better recommendation, semantic information is important.  They have further work to utilize embeddings for queries. Is embedding based candidate generation works better than random walk based candidate generation?">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2018-01-20T00:00:00-08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/What-I-Read-This-Week-2/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Person",
+      "name" : "Yang Pei",
+      "url" : "http://localhost:4000",
+      "sameAs" : null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="http://localhost:4000/feed.xml" type="application/atom+xml" rel="alternate" title="Coding Monkey Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="http://localhost:4000/assets/css/main.css">
+
+<!--[if lte IE 9]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use http://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    <div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        <a class="site-title" href="http://localhost:4000/">Coding Monkey</a>
+        <ul class="visible-links">
+          
+            
+            <li class="masthead__menu-item">
+              <a href="https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/" >Quick-Start Guide</a>
+            </li>
+          
+        </ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle Menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Yang Pei</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        I am a Coding Monkey
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="http://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Mountain View</span>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+    <meta itemprop="headline" content="What I Read This Week 2">
+    <meta itemprop="description" content="Evolving search recommendations on PinterestA post introducing the search work done in Pinterest.  Initially they use a Term-Query graph to generate candidates. In this graph, each term (a single word) is represent a node, as well as the query. Each term node is connected to the query, weighted by the reciprocal of the number of queries that term shows up in. Each query node is also connected to query node, weighted by the relativeness. Most visited queries are recommended.  They later changed to Pixie, a graph based recommendation platform. The graph is build using query and pins. Compared with pervious solution, this solution will not break the query and thus keep the semantic information. To give better recommendation, semantic information is important.  They have further work to utilize embeddings for queries. Is embedding based candidate generation works better than random walk based candidate generation?">
+    <meta itemprop="datePublished" content="January 20, 2018">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 class="page__title" itemprop="headline">What I Read This Week 2
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  3 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h3 id="evolving-search-recommendations-on-pinterest"><a href="https://medium.com/@Pinterest_Engineering/evolving-search-recommendations-on-pinterest-136e26e0468a">Evolving search recommendations on Pinterest</a></h3>
+<p>A post introducing the search work done in Pinterest.</p>
+<ul>
+  <li>Initially they use a <em>Term-Query graph</em> to generate candidates. In this graph, each term (a single word) is represent a node, as well as the query. Each term node is connected to the query, weighted by the reciprocal of the number of queries that term shows up in. Each query node is also connected to query node, weighted by the relativeness. Most visited queries are recommended.</li>
+  <li>They later changed to <em>Pixie</em>, a graph based recommendation platform. The graph is build using query and pins. Compared with pervious solution, this solution will not break the query and thus keep the semantic information. <strong>To give better recommendation, semantic information is important.</strong></li>
+  <li>They have further work to utilize embeddings for queries. Is embedding based candidate generation works better than random walk based candidate generation?</li>
+</ul>
+
+<h3 id="an-overview-of-multi-task-learning-in-deep-neural-networks"><a href="http://ruder.io/multi-task/index.html#introduction">An Overview of Multi-Task Learning in Deep Neural Networks</a></h3>
+<p>A pretty good blog introducing what MTL is, who is works and some recent works. Here are some points I think most beneficial:</p>
+<ul>
+  <li>Using one sentence to explain MTL: “By sharing representation among related tasks(leveraging different domain-specific knowledge), the generalization of model is improved.”</li>
+  <li>Why MTL work:
+    <ul>
+      <li>Our training data will always contains some noise. Training a single goal on the data will easily get overfit. However, training on multiple tasks simultaneously will help cancel out this noise (<strong>Data Augmentation</strong>).</li>
+      <li>By training on multiple tasks and sharing the same representation at the same time, the model will try to find a more general hypothesis that would work for all tasks (<strong>Regularization</strong>).</li>
+      <li>Some feature combination might be pretty complex in one task and hard to let the model to capture, but easy in the other one. MTL will help sharing this info between tasks(<strong>Feature Engineering</strong>).</li>
+    </ul>
+  </li>
+  <li>There are mainly two form of MTL:
+    <ul>
+      <li><strong>Hard Parameter Sharing</strong>: Different tasks will have several same layers at the lower level, and have their own layers at higher level. A common use-case is that, when can use the bottom layers in VGG, and then train our own layer on our task.</li>
+      <li><strong>Soft Parameter Sharing</strong>: Different tasks will have their own model, but each model can constraint each other to not differ too much.</li>
+      <li>Currently, <strong>Hard Parameter Sharing</strong> is still very popular, but <strong>Soft Parameter Sharing</strong> is more promising as it let the model to learn what to share.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="welcoming-the-era-of-deep-neuroevolution"><a href="https://eng.uber.com/deep-neuroevolution/">Welcoming the Era of Deep Neuroevolution</a></h3>
+<p>Uber AI Lab’s work on using Genetic Algorithm instead of SGD to optimize DNN on reinforcement learning tasks.</p>
+<ul>
+  <li>GA can produce comparatively similar result as SGD.</li>
+  <li>They purposed a method to smartly guide the mutation to put more attention on the sensitive feature, to solve the problem GA has when dealing with large networks.</li>
+  <li>They also purposed a method to enforce the exploration, which they try to have a population of candidates that act differently from each other as much as possible (unlikely to trapped in local minima).</li>
+</ul>
+
+<h3 id="effective-modern-c">[Effective Modern C++]</h3>
+<p>Mainly read the smart pointer part.</p>
+<ul>
+  <li><code class="highlighter-rouge">unique_ptr</code> performs similar to the old fashion raw pointer. It indicates a exclusive ownership to the object it manages, thus it can only be moved not be copied. We can specify a custom deleter to a unique pointer, and the deleter would become part of the unique pointer’s type. It is very convenient to covert a unique pointer to a shared pointer.</li>
+  <li><code class="highlighter-rouge">shared_ptr</code> performs similar to the garbage collection in Java. It indicates a shared ownership to the object. The underlay mechanism is that each shared pointer will create a control block that would keep the reference count and other data. Since there is a separate object holding all extra info, the deleter we passed to shared pointer will not become a part of its type. Remember not using the raw pointer to initialize a shared pointer, as it is pretty dangerous and we might result in free the object multiple times. This is extremely the case when we are working with the <code class="highlighter-rouge">this</code> pointer. To be able to safely create a shared pointer from <code class="highlighter-rouge">this</code>, use <code class="highlighter-rouge">enable_shared_from_this</code> template.</li>
+  <li><code class="highlighter-rouge">enable_shared_from_this</code> uses <em>Curiously Recurring Template Pattern (CRTP)</em> (to be add more details later).</li>
+  <li><code class="highlighter-rouge">weak_ptr</code> is like <code class="highlighter-rouge">shared_ptr</code>, but it does not effect the reference count on the object, and the object it is pointing to might be destroyed. The use case for <code class="highlighter-rouge">weak_ptr</code> can be <strong>cacheing</strong>, <strong>observer lists</strong> and the prevention of <code class="highlighter-rouge">shared_ptr</code> cycles.</li>
+</ul>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2018-01-20T00:00:00-08:00">January 20, 2018</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=What+I+Read+This+Week+2%20http%3A%2F%2Flocalhost%3A4000%2FWhat-I-Read-This-Week-2%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2FWhat-I-Read-This-Week-2%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://plus.google.com/share?url=http%3A%2F%2Flocalhost%3A4000%2FWhat-I-Read-This-Week-2%2F" class="btn btn--google-plus" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Google Plus"><i class="fab fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2FWhat-I-Read-This-Week-2%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="http://localhost:4000/%E8%AF%BB%E4%B9%A6%E6%9C%89%E6%84%9F-1/" class="pagination--pager" title="读书有感 1
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
+    
+      <div class="archive__item-teaser">
+        <img src=
+          
+            "http://localhost:4000/assets/violet.jpg"
+          
+          alt="">
+      </div>
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="http://localhost:4000/%E8%AF%BB%E4%B9%A6%E6%9C%89%E6%84%9F-1/" rel="permalink">读书有感 1
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  less than 1 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">最近两天读了两本书，分别是武志红的《你就是答案》和史蒂芬柯维的《高效能人士的七个习惯》。这两本书都算是提升自我修养的书，但是有人可能这时候就嚷嚷说：“啊，这都是鸡汤，不要被鸡汤给灌糊涂了”。诚然这两本书的确有鸡汤的性质，但是里面的内容还是很在理的，即使说这些东西你其实早就知道，但是再读一读，还是能够进一步加深自己...</p>
+  </article>
+</div>
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
+    
+      <div class="archive__item-teaser">
+        <img src=
+          
+            "http://localhost:4000/assets/violet.jpg"
+          
+          alt="">
+      </div>
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="http://localhost:4000/What-I-Read-This-Week-I/" rel="permalink">What I Read This Week 1
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  2 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">The 3 Tricks That Made AlphaGo Zero Work
+This post explains why AlphaGo Zero out-perform than it’s elder brother AlphaGo, summarizing in 3 points that lead t...</p>
+  </article>
+</div>
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
+    
+      <div class="archive__item-teaser">
+        <img src=
+          
+            "http://localhost:4000/assets/violet.jpg"
+          
+          alt="">
+      </div>
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="http://localhost:4000/2018-%E6%96%B0%E5%B9%B4%E8%AE%A1%E5%88%92/" rel="permalink">2018 新年计划
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  less than 1 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">2018年的主题，就是要变得自信以及学会Deep Work!
+
+</p>
+  </article>
+</div>
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
+    
+      <div class="archive__item-teaser">
+        <img src=
+          
+            "http://localhost:4000/assets/violet.jpg"
+          
+          alt="">
+      </div>
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="http://localhost:4000/Deep-Work-Reading-Note/" rel="permalink">Deep Work Reading Note
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  3 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">“Deep Work” is the first book I read this year. I was pretty impressed by the idea and methods the author purposed to help you gain the ability to do “deep w...</p>
+  </article>
+</div>
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+    
+    
+    
+    
+    
+    <li><a href="http://localhost:4000/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2018 Yang Pei. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="http://localhost:4000/assets/js/main.min.js"></script>
+  <script src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
+
+
+
+
+
+
+
+
+  </body>
+</html>
