@@ -7,6 +7,47 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>What I Read This Week 3</title>
+        <description>&lt;h3 id=&quot;explicit-vs-implicit-recommenders&quot;&gt;&lt;a href=&quot;https://medium.com/the-graph/insights-from-an-evening-with-recommender-systems-experts-ab44d677dc5e&quot;&gt;Explicit vs. Implicit Recommenders&lt;/a&gt;&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;Never use RMSE (or other metrics only take explicit feedback (e.g. rating)) as measurement for your recommendation system&lt;/li&gt;
+  &lt;li&gt;Implicit feedback (e.g. click/view) is far more valuable than explicit one&lt;/li&gt;
+  &lt;li&gt;Netflix is not using &lt;strong&gt;star&lt;/strong&gt; anymore as an effort to remove explicit feedback&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This is a pretty interesting argument and I would like to put a question mark on it. Plan to do some experiment to justify this argument.&lt;/p&gt;
+
+&lt;h3 id=&quot;introduction-to-learning-to-trade-with-reinforcement-learning&quot;&gt;&lt;a href=&quot;http://www.wildml.com/2018/02/introduction-to-learning-to-trade-with-reinforcement-learning/&quot;&gt;Introduction to Learning to Trade with Reinforcement Learning&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;A good post on introducing using reinforcement learning techniques to do trading. The author opens with some background and basic concept in trading, then comes with the limitation of using supervised learning method and current approach. Explained how we can model the trading into reinforcement learning, what kinds of environment, state, actions, rewards, etc. And then stated the beneficial to use reinforcement learning.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;It’s pretty hard to make money by predicting the price only through supervised learning. Even though we could accurately predict the price next time, we still need to face the problem of &lt;strong&gt;liquidity available&lt;/strong&gt;, &lt;strong&gt;network latency&lt;/strong&gt; and &lt;strong&gt;fees&lt;/strong&gt;. To make money by supervised learning, we need to accurate predict the large volume of price change or a long time period, or smartly manage our orders and fee, which all is very challenge.&lt;/li&gt;
+  &lt;li&gt;Another problem with supervised learning is that its not indicate a policy we should execute. You have to come up with a rule based policy.&lt;/li&gt;
+  &lt;li&gt;For the reinforcement learning based strategy, we have several beneficial points:
+    &lt;ul&gt;
+      &lt;li&gt;&lt;em&gt;Learned Policy&lt;/em&gt;: we won’t do a job like “first have a model to predict price and then compose a rule based policy”&lt;/li&gt;
+      &lt;li&gt;&lt;em&gt;Trained in a simulated environment&lt;/em&gt;: We can add all the factors that would affect our model into the environment, and let the model learn to response to these factors (e.g. network latency)&lt;/li&gt;
+      &lt;li&gt;&lt;em&gt;Learning to adopt to market conditions&lt;/em&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;em&gt;Ability to model other agents&lt;/em&gt;, this stems from the fact that we can incorporate other agent into our environment and let our agent to game with them&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;titanic-data-science-solutions&quot;&gt;&lt;a href=&quot;https://www.kaggle.com/startupsci/titanic-data-science-solutions&quot;&gt;Titanic Data Science Solutions&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;A good notebook introduce a basic workflow of how to solve a competition on kaggle. The most valuable part in my opinion is how to use pandas to do lots of data investigation and feature visualization.&lt;/p&gt;
+
+&lt;h3 id=&quot;exploratory-data-analysis-with-pandas&quot;&gt;&lt;a href=&quot;https://medium.com/open-machine-learning-course/open-machine-learning-course-topic-1-exploratory-data-analysis-with-pandas-de57880f1a68&quot;&gt;Exploratory data analysis with Pandas&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;A good tutorial on explaining how to use pandas to do data analysis. The assignment is well-written and pretty helpful for mastering all kinds of functions in pandas.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/pandas-dev/pandas/blob/master/doc/cheatsheet/Pandas_Cheat_Sheet.pdf&quot;&gt;Pandas Cheat Sheet&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Sun, 25 Feb 2018 00:00:00 -0800</pubDate>
+        <link>http://localhost:4000//What-I-Read-This-Week-3/</link>
+        <guid isPermaLink="true">http://localhost:4000//What-I-Read-This-Week-3/</guid>
+      </item>
+    
+      <item>
         <title>DQN In Practice</title>
         <description>&lt;p&gt;Recently I have been working on Deep-Q-Learning and apply it to some interesting AI games. In this post, I would like to give a brief introduction to how I implemented the Deep-Q-Learning, as well as lots of learning along the way.&lt;/p&gt;
 
@@ -541,108 +582,6 @@ R_{t+1} = R_\eta(R_{t+1}|S_t, A_t)&lt;/script&gt;
         <pubDate>Mon, 11 Sep 2017 00:00:00 -0700</pubDate>
         <link>http://localhost:4000//Reinforcement-Learning-Lesson-7/</link>
         <guid isPermaLink="true">http://localhost:4000//Reinforcement-Learning-Lesson-7/</guid>
-      </item>
-    
-      <item>
-        <title>Reinforcement Learning Lesson 6</title>
-        <description>&lt;p&gt;In the pervious we use a model to approximate the state value/action value function. In this post, we are going to learn how to directly parameterize a policy, which means we would directly get the probability of each action given a state:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\pi_{\theta}(s ,a) = P[a|s, \theta]&lt;/script&gt;
-
-&lt;p&gt;In this case, we are not going to have any value function. A slight variance of this method is called &lt;strong&gt;Actor-Critic&lt;/strong&gt;, in which both value function and policy are modeled and learnt.&lt;/p&gt;
-
-&lt;p&gt;The advantage of &lt;strong&gt;Policy based RL&lt;/strong&gt; is:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Better convergence properties&lt;/li&gt;
-  &lt;li&gt;Effective in high-dimensional or continuous action spaces&lt;/li&gt;
-  &lt;li&gt;Can learn stochastic policies&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&quot;policy-objective-functions&quot;&gt;Policy Objective Functions&lt;/h4&gt;
-&lt;p&gt;Since we are going to learn $\pi_\theta (s, a)$ and find the best $\theta$, we need to first find a way to measure the quality of our policy. These are called &lt;strong&gt;policy objective function&lt;/strong&gt; and some we can use are:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;In episode environment we can use the start value&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;J_1(\theta) = V^{\pi_\theta}(s_1) = E_{\pi_\theta}[v_1]&lt;/script&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;In continuous environment we can use average value or average reward pre time-step&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;J_{avV}(\theta) = \sum_{s}d^{\pi_\theta}(s)V^{\pi_\theta}(s) \\
-J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a&lt;/script&gt;
-
-&lt;p&gt;where $d^{\pi_\theta}(s)$ is stationary distribution of Markov chain for $\pi_\theta$.&lt;/p&gt;
-
-&lt;p&gt;After we have the measurement of the policy quality, we are going to find the best parameter which gives us the best quality and this becomes an optimization problem. Actually, similar to the last post, we can also use stochastic gradient to help use here. Since we are trying to find the maximum value, we are going to use what is called gradient ascent to find the steepest direction to update our parameter (very similar to gradient decrease).&lt;/p&gt;
-
-&lt;h4 id=&quot;score-function&quot;&gt;Score Function&lt;/h4&gt;
-&lt;p&gt;In order to compute the policy gradient analytically, we introduced the &lt;strong&gt;score function&lt;/strong&gt;. Assume policy $\pi_{\theta}$ is differentiable whenever it is non-zero and we know the gradient $\nabla_\theta \pi_\theta (s, a)$. Then using some tricky we have:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align}
-\nabla_\theta \pi_\theta (s, a) &amp; = \pi_\theta (s, a) \frac{\nabla_\theta \pi_\theta (s, a) }{\pi_\theta (s, a)} \\
-&amp; = \pi_\theta (s, a) \nabla_\theta log \pi_\theta (s, a)
-\end{align} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;Here, $\nabla_\theta log \pi_\theta (s, a)$ is the &lt;strong&gt;score function&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;h4 id=&quot;policy-gradient-theorem&quot;&gt;Policy Gradient Theorem&lt;/h4&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;For any differentiable policy $\pi_\theta (s, a)$, for any of the policy objective functions $J_1, J_{avV}, J_{avR}$, the policy gradient is&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\nabla_\theta J(\theta) = E_{\pi_\theta}[\nabla_\theta log \pi_\theta (s, a) Q^{\pi_\theta} (s, a)]&lt;/script&gt;
-
-&lt;h4 id=&quot;monte-carlo-policy-gradient&quot;&gt;Monte-Carlo Policy Gradient&lt;/h4&gt;
-&lt;p&gt;Use return as an unbiased sample of $Q^{\pi_\theta} (s, a)$, the algorithm is as follow:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Initialize $\theta$ arbitrarily
-    &lt;ul&gt;
-      &lt;li&gt;for each episode ${s_1, a_1, r_2, …, s_{T-1}, a_{T-1}, r_T} ~ \pi_\theta$ do
-        &lt;ul&gt;
-          &lt;li&gt;for $t = 1$ to $T - 1$ do
-            &lt;ul&gt;
-              &lt;li&gt;$\theta = \theta + \alpha \nabla_\theta log \pi_\theta (s, a) v_t$&lt;/li&gt;
-            &lt;/ul&gt;
-          &lt;/li&gt;
-          &lt;li&gt;end for&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;end for&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;return $\theta$&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&quot;actor-critic-policy-gradient&quot;&gt;Actor Critic Policy Gradient&lt;/h4&gt;
-&lt;p&gt;The problem with Monte-Carlo Policy Gradient is that is has a very high variance. In order to reduce the variance, we can use a &lt;strong&gt;critic&lt;/strong&gt; to estimate the action value function. Thus in &lt;strong&gt;Actor Critic Policy Gradient&lt;/strong&gt;, we have two components:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;em&gt;Critic&lt;/em&gt; updates action value function parameters $w$&lt;/li&gt;
-  &lt;li&gt;&lt;em&gt;Actor&lt;/em&gt; updates policy parameters $\theta$, in direction suggested by critic&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Here is an example when we use linear value function approximation for the critic:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Initialize $s$, $\theta$&lt;/li&gt;
-  &lt;li&gt;Sample $a ~ \pi_\theta$&lt;/li&gt;
-  &lt;li&gt;for each step do
-    &lt;ul&gt;
-      &lt;li&gt;Sample reward $r$, sample next state $s’$&lt;/li&gt;
-      &lt;li&gt;Sample action $a’ ~ \pi_\theta (s’, a’)$&lt;/li&gt;
-      &lt;li&gt;$\delta = r + \gamma Q_w(s’, a’) - Q_w(s, a)$ (This is the TD error)&lt;/li&gt;
-      &lt;li&gt;$\theta = \theta + \alpha \nabla_\theta log \pi_\theta (s, a) Q_w(s, a)$ (We replace with the approximation)&lt;/li&gt;
-      &lt;li&gt;$w = w + \beta \delta \phi(s, a)$ (Update value function approximation model parameter)&lt;/li&gt;
-      &lt;li&gt;$a = a’$, $s = s’$&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;end for&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Sun, 10 Sep 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//Reinforcment-Learning-Lesson-6/</link>
-        <guid isPermaLink="true">http://localhost:4000//Reinforcment-Learning-Lesson-6/</guid>
       </item>
     
   </channel>

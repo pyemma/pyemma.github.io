@@ -133,4 +133,9 @@ var store = [{
         "excerpt":"Recently I have been working on Deep-Q-Learning and apply it to some interesting AI games. In this post, I would like to give a brief introduction to how I implemented the Deep-Q-Learning, as well as lots of learning along the way.What is DQNTo understand DQN, we need first know is...","categories": [],
         "tags": [],
         "url": "http://localhost:4000/DQN-In-Practice/",
+        "teaser":"http://localhost:4000/assets/violet.jpg"},{
+        "title": "What I Read This Week 3",
+        "excerpt":"Explicit vs. Implicit Recommenders Never use RMSE (or other metrics only take explicit feedback (e.g. rating)) as measurement for your recommendation system Implicit feedback (e.g. click/view) is far more valuable than explicit one Netflix is not using star anymore as an effort to remove explicit feedbackThis is a pretty interesting...","categories": [],
+        "tags": [],
+        "url": "http://localhost:4000/What-I-Read-This-Week-3/",
         "teaser":"http://localhost:4000/assets/violet.jpg"}]
