@@ -10,38 +10,38 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Math Equation - Coding Monkey</title>
-<meta name="description" content="Use $$ to write math equation">
+<!-- begin _includes/seo.html --><title>What I Read This Week 4 - Coding Monkey</title>
+<meta name="description" content="A visual proof that neural nets can compute any functionA really good writing on helping understand why neural network can approximate any functions, without too much illustrate on complex mathematic theory.">
 
 
 
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="Coding Monkey">
-<meta property="og:title" content="Math Equation">
-<meta property="og:url" content="http://localhost:4000/Math-Equation/">
+<meta property="og:title" content="What I Read This Week 4">
+<meta property="og:url" content="http://localhost:4000/What-I-Read-This-Week-4/">
 
 
-  <meta property="og:description" content="Use $$ to write math equation">
-
-
-
-
-
-
-
-  <meta property="article:published_time" content="2017-08-12T00:00:00-07:00">
+  <meta property="og:description" content="A visual proof that neural nets can compute any functionA really good writing on helping understand why neural network can approximate any functions, without too much illustrate on complex mathematic theory.">
 
 
 
 
 
-  
+
+
+  <meta property="article:published_time" content="2018-03-03T00:00:00-08:00">
+
+
+
+
 
   
 
+  
 
-<link rel="canonical" href="http://localhost:4000/Math-Equation/">
+
+<link rel="canonical" href="http://localhost:4000/What-I-Read-This-Week-4/">
 
 
 
@@ -237,15 +237,15 @@
 
 
   <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Math Equation">
-    <meta itemprop="description" content="Use $$ to write math equation">
-    <meta itemprop="datePublished" content="August 12, 2017">
+    <meta itemprop="headline" content="What I Read This Week 4">
+    <meta itemprop="description" content="A visual proof that neural nets can compute any functionA really good writing on helping understand why neural network can approximate any functions, without too much illustrate on complex mathematic theory.">
+    <meta itemprop="datePublished" content="March 03, 2018">
     
 
     <div class="page__inner-wrap">
       
         <header>
-          <h1 class="page__title" itemprop="headline">Math Equation
+          <h1 class="page__title" itemprop="headline">What I Read This Week 4
 </h1>
           
             <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
@@ -253,7 +253,7 @@
 
 
 
-  less than 1 minute read
+  1 minute read
 </p>
           
         </header>
@@ -261,39 +261,15 @@
 
       <section class="page__content" itemprop="text">
         
-        <p>Use <code class="highlighter-rouge">$$</code> to write math equation</p>
+        <h3 id="a-visual-proof-that-neural-nets-can-compute-any-function"><a href="http://neuralnetworksanddeeplearning.com/chap4.html">A visual proof that neural nets can compute any function</a></h3>
+<p>A really good writing on helping understand why neural network can approximate any functions, without too much illustrate on complex mathematic theory.</p>
 
-<script type="math/tex; mode=display">\sum_{n=1}^\infty 1/n^2 = \frac{\pi^2}{6}</script>
+<p>The main idea the author used is that, for any activation function used in neuron, we can make it has a pretty large weight and bias and it would be like a function that, before some value it would be 0 and after it would be 1. We can have two neurons, manipulate the weight and bias to get a step function. The range of this step function could be pretty small, together with the idea of calculus, we can use millions of such step function to approximate almost all functions. Here is an example from the original blog to show this idea. The parameter \(s \) is get by \( s = -b/w \), and \( h \) is a parameter used to control the hight of the step function. For example, the neuron \(s = 0.4 \) and \( s = 0.6 \) is a pair, the \( h \) for the first one is \( -1.2 \) and for the second one is \( 1.2 \). Thus, they worked together, we get a step function that starts at \( 0.4 \), jump to \( -1.2 \), and back at \( 0.6 \).</p>
 
-<script type="math/tex; mode=display">\textbf{A}\textbf{B} = \textbf{C}</script>
+<p><img src="/assets/nn_approx.png" alt="Neural Network Approximate Any Function" /></p>
 
-<p>Use <code class="highlighter-rouge">\begin{equation}</code> to write math equation
-\begin{equation}
-\sum_{n=1}^\infty 1/n^2 = \frac{\pi^2}{6}
-\end{equation}</p>
-
-<script type="math/tex; mode=display">% <![CDATA[
-\begin{align*}
-  & \phi(x,y) = \phi \left(\sum_{i=1}^n x_ie_i, \sum_{j=1}^n y_je_j \right)
-  = \sum_{i=1}^n \sum_{j=1}^n x_i y_j \phi(e_i, e_j) = \\
-  & (x_1, \ldots, x_n) \left( \begin{array}{ccc}
-      \phi(e_1, e_1) & \cdots & \phi(e_1, e_n) \\
-      \vdots & \ddots & \vdots \\
-      \phi(e_n, e_1) & \cdots & \phi(e_n, e_n)
-    \end{array} \right)
-  \left( \begin{array}{c}
-      y_1 \\
-      \vdots \\
-      y_n
-    \end{array} \right)
-\end{align*} %]]></script>
-
-<script type="math/tex; mode=display">% <![CDATA[
-f(n) =
-\begin{cases}
-n/2,  & \text{if $n$ is even} \\
-3n+1, & \text{if $n$ is odd}
-\end{cases} %]]></script>
+<h3 id="understanding-capsule-networksais-alluring-new-architecture"><a href="https://medium.freecodecamp.org/understanding-capsule-networks-ais-alluring-new-architecture-bdb228173ddc">Understanding Capsule Networks — AI’s Alluring New Architecture</a></h3>
+<p>Another very good tutorial blog on capsule neural network, the author also provide a visualization tool that we can play with.</p>
 
         
       </section>
@@ -304,7 +280,7 @@ n/2,  & \text{if $n$ is even} \\
 
 
         
-          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2017-08-12T00:00:00-07:00">August 12, 2017</time></p>
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2018-03-03T00:00:00-08:00">March 03, 2018</time></p>
         
       </footer>
 
@@ -313,25 +289,24 @@ n/2,  & \text{if $n$ is even} \\
     <h4 class="page__share-title">Share on</h4>
   
 
-  <a href="https://twitter.com/intent/tweet?text=Math+Equation%20http%3A%2F%2Flocalhost%3A4000%2FMath-Equation%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?text=What+I+Read+This+Week+4%20http%3A%2F%2Flocalhost%3A4000%2FWhat-I-Read-This-Week-4%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2FMath-Equation%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2FWhat-I-Read-This-Week-4%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
-  <a href="https://plus.google.com/share?url=http%3A%2F%2Flocalhost%3A4000%2FMath-Equation%2F" class="btn btn--google-plus" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Google Plus"><i class="fab fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
+  <a href="https://plus.google.com/share?url=http%3A%2F%2Flocalhost%3A4000%2FWhat-I-Read-This-Week-4%2F" class="btn btn--google-plus" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Google Plus"><i class="fab fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2FMath-Equation%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2FWhat-I-Read-This-Week-4%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
       
   <nav class="pagination">
     
-      <a href="http://localhost:4000/Clean-Code-Summarize/" class="pagination--pager" title="Clean Code Summarize
+      <a href="http://localhost:4000/What-I-Read-This-Week-3/" class="pagination--pager" title="What I Read This Week 3
 ">Previous</a>
     
     
-      <a href="http://localhost:4000/Reinforcement-Learning-Lesson-1/" class="pagination--pager" title="Reinforcement Learning Lesson 1
-">Next</a>
+      <a href="#" class="pagination--pager disabled">Next</a>
     
   </nav>
 
@@ -345,41 +320,6 @@ n/2,  & \text{if $n$ is even} \\
     <div class="page__related">
       <h4 class="page__related-title">You May Also Enjoy</h4>
       <div class="grid__wrapper">
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
-    
-      <div class="archive__item-teaser">
-        <img src=
-          
-            "http://localhost:4000/assets/violet.jpg"
-          
-          alt="">
-      </div>
-    
-    <h2 class="archive__item-title" itemprop="headline">
-      
-        <a href="http://localhost:4000/What-I-Read-This-Week-4/" rel="permalink">What I Read This Week 4
-</a>
-      
-    </h2>
-    
-      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
-
-
-
-
-  1 minute read
-</p>
-    
-    <p class="archive__item-excerpt" itemprop="description">A visual proof that neural nets can compute any function
-A really good writing on helping understand why neural network can approximate any functions, withou...</p>
-  </article>
-</div>
         
           
 
@@ -444,7 +384,7 @@ A really good writing on helping understand why neural network can approximate a
 
 
 
-  5 minute read
+  4 minute read
 </p>
     
     <p class="archive__item-excerpt" itemprop="description">Recently I have been working on Deep-Q-Learning and apply it to some interesting AI games. In this post, I would like to give a brief introduction to how I i...</p>
@@ -488,8 +428,43 @@ A post introducing the search work done in Pinterest.
   </article>
 </div>
         
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
+    
+      <div class="archive__item-teaser">
+        <img src=
+          
+            "http://localhost:4000/assets/violet.jpg"
+          
+          alt="">
+      </div>
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="http://localhost:4000/%E8%AF%BB%E4%B9%A6%E6%9C%89%E6%84%9F-1/" rel="permalink">读书有感 1
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  less than 1 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">最近两天读了两本书，分别是武志红的《你就是答案》和史蒂芬柯维的《高效能人士的七个习惯》。这两本书都算是提升自我修养的书，但是有人可能这时候就嚷嚷说：“啊，这都是鸡汤，不要被鸡汤给灌糊涂了”。诚然这两本书的确有鸡汤的性质，但是里面的内容还是很在理的，即使说这些东西你其实早就知道，但是再读一读，还是能够进一步加深自己...</p>
+  </article>
+</div>
+        
       </div>
     </div>
+  
   
 </div>
 

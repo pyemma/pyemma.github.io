@@ -7,6 +7,23 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>What I Read This Week 4</title>
+        <description>&lt;h3 id=&quot;a-visual-proof-that-neural-nets-can-compute-any-function&quot;&gt;&lt;a href=&quot;http://neuralnetworksanddeeplearning.com/chap4.html&quot;&gt;A visual proof that neural nets can compute any function&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;A really good writing on helping understand why neural network can approximate any functions, without too much illustrate on complex mathematic theory.&lt;/p&gt;
+
+&lt;p&gt;The main idea the author used is that, for any activation function used in neuron, we can make it has a pretty large weight and bias and it would be like a function that, before some value it would be 0 and after it would be 1. We can have two neurons, manipulate the weight and bias to get a step function. The range of this step function could be pretty small, together with the idea of calculus, we can use millions of such step function to approximate almost all functions. Here is an example from the original blog to show this idea. The parameter \(s \) is get by \( s = -b/w \), and \( h \) is a parameter used to control the hight of the step function. For example, the neuron \(s = 0.4 \) and \( s = 0.6 \) is a pair, the \( h \) for the first one is \( -1.2 \) and for the second one is \( 1.2 \). Thus, they worked together, we get a step function that starts at \( 0.4 \), jump to \( -1.2 \), and back at \( 0.6 \).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/nn_approx.png&quot; alt=&quot;Neural Network Approximate Any Function&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;understanding-capsule-networksais-alluring-new-architecture&quot;&gt;&lt;a href=&quot;https://medium.freecodecamp.org/understanding-capsule-networks-ais-alluring-new-architecture-bdb228173ddc&quot;&gt;Understanding Capsule Networks — AI’s Alluring New Architecture&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Another very good tutorial blog on capsule neural network, the author also provide a visualization tool that we can play with.&lt;/p&gt;
+</description>
+        <pubDate>Sat, 03 Mar 2018 00:00:00 -0800</pubDate>
+        <link>http://localhost:4000//What-I-Read-This-Week-4/</link>
+        <guid isPermaLink="true">http://localhost:4000//What-I-Read-This-Week-4/</guid>
+      </item>
+    
+      <item>
         <title>What I Read This Week 3</title>
         <description>&lt;h3 id=&quot;explicit-vs-implicit-recommenders&quot;&gt;&lt;a href=&quot;https://medium.com/the-graph/insights-from-an-evening-with-recommender-systems-experts-ab44d677dc5e&quot;&gt;Explicit vs. Implicit Recommenders&lt;/a&gt;&lt;/h3&gt;
 &lt;ul&gt;
@@ -503,85 +520,6 @@
         <pubDate>Wed, 13 Sep 2017 00:00:00 -0700</pubDate>
         <link>http://localhost:4000//Reinforcement-Learning-Lesson-8/</link>
         <guid isPermaLink="true">http://localhost:4000//Reinforcement-Learning-Lesson-8/</guid>
-      </item>
-    
-      <item>
-        <title>Reinforcement Learning Lesson 7</title>
-        <description>&lt;p&gt;In the pervious notes, we are all using &lt;strong&gt;model-free&lt;/strong&gt; reinforcement learning method to find the solution for the problem. Today we are going to introduce method that directly learns from the experience and tries to understand the underlaying world.&lt;/p&gt;
-
-&lt;p&gt;From &lt;a href=&quot;http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-1&quot;&gt;Lesson 1&lt;/a&gt; we know that a MDP can be represent by $&amp;lt;S, A, P, R&amp;gt;$, and our model is going to understand and simulate this. We will only introduce the simple version here, in which we assume that the $S$ and $A$ is known, and thus we only need to model $P$ and $R$. We can formulate it as:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;S_{t+1} ~ P_\eta(S_{t+1}|S_t, A_t) \\
-R_{t+1} = R_\eta(R_{t+1}|S_t, A_t)&lt;/script&gt;
-
-&lt;p&gt;where the prediction of next state is a density estimation problem and the reward is a regression problem.&lt;/p&gt;
-
-&lt;h4 id=&quot;integrated-architecture&quot;&gt;Integrated Architecture&lt;/h4&gt;
-&lt;p&gt;In this architecture, we are going to consider two types of experience. &lt;strong&gt;Real experience&lt;/strong&gt; which is sampled from the environment, and &lt;strong&gt;Simulated experience&lt;/strong&gt; which is sampled from our model. In the past, we only use the real experience to learn value function/policy. Now, we are going to learn our model from real experience, then plan and learn value function/policy from both real and simulated experience. This is thus called integrated architecture (integration of real and fake), the &lt;strong&gt;Dyna Architecture&lt;/strong&gt;. Here is an picture to illustrate what the logic flow of Dyna is like.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/assets/dyna.png&quot; alt=&quot;Dyna Architecture&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;According to the Dyna architecture, we can design many algorithm, here is an example of &lt;strong&gt;Dyna-Q Algorithm&lt;/strong&gt;:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Initialize $Q(s, a)$ and $Model(s, a)$ for all $s$ and $a$&lt;/li&gt;
-  &lt;li&gt;Do forever:
-    &lt;ul&gt;
-      &lt;li&gt;$S =$ current (nonterminal) state&lt;/li&gt;
-      &lt;li&gt;$A = \epsilon - \text{greedy}(S, Q)$&lt;/li&gt;
-      &lt;li&gt;Execute action $A$; observe result reward $R$, and state $S’$&lt;/li&gt;
-      &lt;li&gt;$Q(S, A) = Q(S, A) + \alpha[R + \gamma max_a Q(S’, a) - Q(S, A)]$ (This is using real experience)&lt;/li&gt;
-      &lt;li&gt;Update $Model(S, A)$ using $R, S’$&lt;/li&gt;
-      &lt;li&gt;Repeat $n$ times: (This is using simulated experience to learn value function)
-        &lt;ul&gt;
-          &lt;li&gt;$S =$ random previously observed state&lt;/li&gt;
-          &lt;li&gt;$A =$ random action previously taken in $S$&lt;/li&gt;
-          &lt;li&gt;Sample $R, S’$ from $Model(S, A)$&lt;/li&gt;
-          &lt;li&gt;$Q(S, A) = Q(S, A) + \alpha[R + \gamma max_a Q(S’, a) - Q(S, A)]$&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&quot;monte-carlo-tree-search&quot;&gt;Monte-Carlo Tree Search&lt;/h4&gt;
-&lt;p&gt;&lt;strong&gt;Monte-Carlo Tree Search&lt;/strong&gt; is a very efficient algorithm to plan once we have a model.&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Given a model $M_v$&lt;/li&gt;
-  &lt;li&gt;Simulate $K$ episodes from current state $s_t$ using current simulation policy $\pi$&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;{s_t, A_t^k, R_{t+1}^k, S_{t+1}^k, ..., S_T^k} ~ M_v, \pi&lt;/script&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Build a search tree containing visited states and actions&lt;/li&gt;
-  &lt;li&gt;Evaluate state $Q(s, a)$ by mean return of episodes from $s, a$&lt;/li&gt;
-  &lt;li&gt;After search is finished, select current (real) action with maximum value in search tree&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;In MCMT, the simulation policy $\pi$ improves. Each simulation consists of two phases (in-tree, out-of-tree):&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Tree policy (improves): pick action to maximize $Q(S, A)$&lt;/li&gt;
-  &lt;li&gt;Default policy (fixed): pick action randomly&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Repeat (each simulation):&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Evaluate states $Q(S, A)$ by Mento-Carlo evaluation&lt;/li&gt;
-  &lt;li&gt;Improve tree policy, e.g. by $\epsilon-\text{greedy}(Q)$&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;There are several advantages of MCMT:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Highly selective best-first search&lt;/li&gt;
-  &lt;li&gt;Evaluates states dynamically&lt;/li&gt;
-  &lt;li&gt;Uses sampling to break curse of dimensionality&lt;/li&gt;
-  &lt;li&gt;Works for “black-box” models (only requires samples)&lt;/li&gt;
-  &lt;li&gt;Computationally efficient, anytime&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Mon, 11 Sep 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//Reinforcement-Learning-Lesson-7/</link>
-        <guid isPermaLink="true">http://localhost:4000//Reinforcement-Learning-Lesson-7/</guid>
       </item>
     
   </channel>

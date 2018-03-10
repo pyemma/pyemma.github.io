@@ -138,4 +138,9 @@ var store = [{
         "excerpt":"Explicit vs. Implicit Recommenders Never use RMSE (or other metrics only take explicit feedback (e.g. rating)) as measurement for your recommendation system Implicit feedback (e.g. click/view) is far more valuable than explicit one Netflix is not using star anymore as an effort to remove explicit feedbackThis is a pretty interesting...","categories": [],
         "tags": [],
         "url": "http://localhost:4000/What-I-Read-This-Week-3/",
+        "teaser":"http://localhost:4000/assets/violet.jpg"},{
+        "title": "What I Read This Week 4",
+        "excerpt":"A visual proof that neural nets can compute any functionA really good writing on helping understand why neural network can approximate any functions, without too much illustrate on complex mathematic theory.The main idea the author used is that, for any activation function used in neuron, we can make it has...","categories": [],
+        "tags": [],
+        "url": "http://localhost:4000/What-I-Read-This-Week-4/",
         "teaser":"http://localhost:4000/assets/violet.jpg"}]
