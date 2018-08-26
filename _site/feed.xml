@@ -7,6 +7,41 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Reading Notes 08/19</title>
+        <description>&lt;h4 id=&quot;model-interpreting&quot;&gt;Model Interpreting&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.oreilly.com/ideas/ideas-on-interpreting-machine-learning&quot;&gt;Ideas on interpreting machine learning&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Residual analysis can help understand which part of the data model is doing wrongly and thus find solution to improve it. However it’s straight forward to apply this method if the problem is a pure regression problem, which is actually not a common practice in industry. How to do this with for logistic regression? (devariance?)&lt;/li&gt;
+  &lt;li&gt;A bunch of other method: surrogate model (train a simpler model on the output of the complexity model, which is similar to distill info of a neural network into a BDT), &lt;a href=&quot;https://arxiv.org/pdf/1602.04938v1.pdf&quot;&gt;LIME&lt;/a&gt;, maximum activation analysis (pair with LIME is better), variance importance (different way to compute the importance, pervade in tree model), sensitivity analysis, leave one covariance out, tree interpreter.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Sun, 19 Aug 2018 00:00:00 -0700</pubDate>
+        <link>http://localhost:4000//Reading-Notes/</link>
+        <guid isPermaLink="true">http://localhost:4000//Reading-Notes/</guid>
+      </item>
+    
+      <item>
+        <title>What I Read This Week 5</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://medium.com/intuitionmachine/google-and-ubers-best-practices-for-deep-learning-58488a8899b6&quot;&gt;Google and Uber’s Best Practices for Deep Learning&lt;/a&gt;
+A good post introducing how &lt;strong&gt;Uber&lt;/strong&gt; and &lt;strong&gt;Google&lt;/strong&gt; apply deep learning in real world (not in academic). The post illustrates some highlight of the two machine learning platform build by these two giants: &lt;a href=&quot;https://eng.uber.com/michelangelo/&quot;&gt;Michelangelo&lt;/a&gt; and &lt;a href=&quot;http://www.kdd.org/kdd2017/papers/view/tfx-a-tensorflow-based-production-scale-machine-learning-platform&quot;&gt;TFX&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;For these two platform, there share some common idea: &lt;em&gt;enforce the share of knowledge across the company&lt;/em&gt;. For example, the all provide feature store, which is shared across the company and every team can reuse the feature easily. Also, the meta-data about model is also stored so that everyone can learn how model is trained, how’s the performance and might apply similar model design to their own problem.&lt;/p&gt;
+
+&lt;p&gt;The TFX is relatively more complex than Michelangelo (because Google is larger in scale right :) ). Some unique traits included in TFX that impresses me a lot:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;TFX emphasize a lot on data management, it provides a mechanism to monitor the distribution and statistic of the data. This will help engineer understand the data as well as detecting some abnormality in the data.&lt;/li&gt;
+  &lt;li&gt;TFX also provide transfer-learning by making warm-up from model trained on common features pretty easy.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.tensorflow.org/programmers_guide/eager&quot;&gt;TensforFlow Eager Execution&lt;/a&gt;
+Helpful for model debugging.&lt;/p&gt;
+</description>
+        <pubDate>Sat, 31 Mar 2018 00:00:00 -0700</pubDate>
+        <link>http://localhost:4000//What-I-Read-This-Week-5/</link>
+        <guid isPermaLink="true">http://localhost:4000//What-I-Read-This-Week-5/</guid>
+      </item>
+    
+      <item>
         <title>What I Read This Week 4</title>
         <description>&lt;h3 id=&quot;a-visual-proof-that-neural-nets-can-compute-any-function&quot;&gt;&lt;a href=&quot;http://neuralnetworksanddeeplearning.com/chap4.html&quot;&gt;A visual proof that neural nets can compute any function&lt;/a&gt;&lt;/h3&gt;
 &lt;p&gt;A really good writing on helping understand why neural network can approximate any functions, without too much illustrate on complex mathematic theory.&lt;/p&gt;
@@ -415,111 +450,6 @@
         <pubDate>Thu, 04 Jan 2018 00:00:00 -0800</pubDate>
         <link>http://localhost:4000//Deep-Work-Reading-Note/</link>
         <guid isPermaLink="true">http://localhost:4000//Deep-Work-Reading-Note/</guid>
-      </item>
-    
-      <item>
-        <title>2017 年终终结</title>
-        <description>&lt;p&gt;2017年一转眼就过去了，自己也从一个刚刚毕业的学生成了一个快上了两年班的上班族了。趁着年末好好回顾一下这一整年发生的事情，一方面是给自己留个纪念，另一方面也是好好总结一下这一年的得失，找到改进的方向。&lt;/p&gt;
-
-&lt;h3 id=&quot;工作&quot;&gt;工作&lt;/h3&gt;
-&lt;p&gt;前半年工作比较顺利，但是后半年工作比较艰辛。首先最开心的事情就是年初得升职了，然后上半年的表现的评级也还不错，算是对自己能力的一个肯定。但是下半年由于种种原因，主要负责的项目一直进展非常不顺利，而且最后没能发布出去，很郁闷。辛辛苦苦干了大半年，每天基本从早上9点工作到晚上10点才回家，每个周末也去公司加班，但是还是事与愿违。而且由于一直专注于这个项目，导致疏忽了其他的方面工作，例如roadmap啊，mentor新人啊之类的，和上半年比起来差不少。&lt;/p&gt;
-
-&lt;p&gt;反思了一下，感觉还是太焦躁心急，不够沉稳。心里总是想着早点升职多赚钱什么的，然而往往事与愿违。尤其是自己的计划被打乱之后，整个人就会变得非常的消沉，郁闷。一个很好的例子就是今年回国H1B签证被check，导致在国内待了两个月。当时的心情是非常的郁闷，还经常自己吓唬自己万一拿不到签证回不去美国咋办，好好的工作没了，自己怎么就这么倒霉。现在回头看感觉自己当时真是好笑，本来两个月的时间完全可以出去逛逛玩玩当个长假来休息，但是由于自己太重视这份工作，使自己一直纠结于被check的这一无法改变的事实，在家愁了两个月。不过经历过这一出之后，自己的心态也有所改善，脾气基本上是给磨没了。现在遇到点事情能比当时更沉得住气一些了。然而离自己理想的境界还有很长的距离， 希望在今后的日子里能在“不以物喜，不以己悲”的修炼上更进一步。&lt;/p&gt;
-
-&lt;p&gt;另一个就是要想办法挑战自己。最近在工作上一直处于自己的舒适区，只是在做一些自己已经很熟练的工作而不去做一些自己没有尝试过的更具有挑战性的事情。很大的程度上这是因为担心脱离舒适区的后果，比如想换组，但是万一换到别的组表现不如现在的好影响了自己的评级了咋办？风险自然是有的，磨难肯定也是不少，但是只有经历过这些，才能成长，才能有进一步的提高，才能有更广的可能性。套用钢之炼金术师里面的台词，“在经历过这些磨难之后，就能获得钢铁般的心”。最近刚刚看过了吴军老师对于职业发展的一个观点：“稀缺性”。现在自己的工作，换一个人来干一样能干，都是一些简单的写写代码，调调参数什么的。这说明自己的稀缺性还不够，想要增加自己的稀缺性，那么就要敢于去尝试一些别人不能做的事情，这种事情往往风险比较大，存在于舒适区之外。另一方面，就是要增加自己的见识，对自己的领域要有一些比较深入的看法和见解，因为这个东西，别人是不可能轻易学去的，当然培养这方面也很困难，需要大量的经验积累，而这种经验，如果一直处于舒适区，是很难获得的。&lt;/p&gt;
-
-&lt;h3 id=&quot;学习&quot;&gt;学习&lt;/h3&gt;
-&lt;p&gt;年初定下来的好多计划最终都没有坚持下来：&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;想要学口琴，但是一点都没有练过&lt;/li&gt;
-  &lt;li&gt;想要学习日语，但是没能坚持下来&lt;/li&gt;
-  &lt;li&gt;想要学习GO语言，但是根本就没有开始&lt;/li&gt;
-  &lt;li&gt;想要看一些开源的代码，结果没看过&lt;/li&gt;
-  &lt;li&gt;想要做一些side project，但是一个也没做出来&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;但是还是有一些坚持下来了：&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;每个月读一本书&lt;/li&gt;
-  &lt;li&gt;学习了TensorFlow并且写了些简单的算法&lt;/li&gt;
-  &lt;li&gt;自学了Reinforcement Learning&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;感觉自己在增长新技能这方面有点不够专注，什么都想沾一手，但是最终的结果是什么都没有学到，典型的“想得太多，做得太少”。而且我还另一个特点，开始干一件事情的阈值很高，但是只要开始了，我就会坚持下去，尽量做到完美，这也表现出我不是一个半途而废的人，那么关键就是怎么开始了。所以在2018年，打算缩减自己的计划，把精力集中在两三个事情上，强迫自己开始并坚持下去。&lt;/p&gt;
-
-&lt;p&gt;另一个就是自己不太擅长记录，比如读过的书，看过就扔了，没有提炼出一些个性化的东西；学过的一些技术，也是没有好好的总结，过一阵子也就忘记了。之前尝试过写读书笔记以及技术博客，但是都没有坚持下来。在新的一年里要坚持更新自己的博客。&lt;/p&gt;
-
-&lt;h3 id=&quot;感情&quot;&gt;感情&lt;/h3&gt;
-&lt;p&gt;感情这一年就是很扎心了。先是跟前女友分手了，之后被一个妹子表白第二天就又被发卡，现在联系一个新认识的妹子结果一直不怎么受待见。这很可能跟我负能量比较多，不够自信有关。我这个人看待事物的时候有点消极，遇到什么事情总是喜欢把消极面放大而不会从积极的焦虑去考虑。然后自信也比较低，总感觉自己比不上别人。感觉这是自己性格方面的两个很重要的缺陷。为此我还买了本书叫《正能量》，想看看从心理学的角度怎么能改正一下。总而言之一句话就是表现的乐观就会感觉乐观，表现的自信就会感觉自信，即行为影响情绪。所以平时说话多用积极的字眼，经常保持微笑，不整天愁眉苦脸的，来帮助自己树立正能量和自信。除此之外，也更加深入的明白了一个道理，找女朋友这件事绝对不能将就，要找就找自己喜欢的，想一辈子过日子的。不能抱着说，“先谈着，慢慢培养感情”，这种思想。培养感情是要建立在一定的冲动之上，如果连一点喜欢的感觉都没有，强迫自己培养感情喜欢上对方，对方痛苦，你自己也痛苦，还浪费时间跟精力，实在不是明智之举。&lt;/p&gt;
-
-&lt;p&gt;当然啦，平时跟基友也总吐槽自己单身，埋怨自己怎么找不到女朋友啥的，但是其实单身的生活还是比较享受的。每天想在公司加班就加班，想回家打游戏就打游戏，周末想去吃个日料就去吃个日料，想到咖啡店看书就去咖啡店看书。时间充分的自由支配也挺好的。&lt;/p&gt;
-
-&lt;h3 id=&quot;生活&quot;&gt;生活&lt;/h3&gt;
-&lt;p&gt;生活方面感觉是这一年取得的成就最大的，那就是健身整整坚持了一整年，而且小有成效，再也不用为买什么衣服而发愁了哈哈。从上半年的每天坚持跑步，到下半年每天和同事去健身房做力量训练，虽然过程很痛苦，但是心里充满了成就感。年初的时候参加了公司组织的10km的长跑比赛，跑进了1小时；卧推现在能举起200lb以上；体重曾经一度控制在70kg，这些都是曾经我不敢想象的，然而通过自己的努力都做到了，非常的欣慰。&lt;/p&gt;
-
-&lt;p&gt;另一个感觉很欣慰的事情就是成了一个狂热的咖啡和日料的爱好者。每个周末都会抽个半天去各种各样的咖啡店品尝咖啡看看书，体验一下不同的咖啡店的环境和氛围；晚上也会去各种日料店吃日料，顺便发个美食攻略贴。这些算是给自己单调的生活填上了一些乐趣。&lt;/p&gt;
-
-&lt;p&gt;俗话说得好，“读万卷书，行万里路”。新的一年里想多出去走走，领略一下不同城市的风景。&lt;/p&gt;
-
-&lt;h3 id=&quot;结语&quot;&gt;结语&lt;/h3&gt;
-&lt;p&gt;不管2017年怎么样，都已经成为过去，不必太纠结于这一整年的失落和痛苦，让那些成为以后酒桌上的笑谈。昂首挺胸，迎接崭新的一年！&lt;/p&gt;
-</description>
-        <pubDate>Fri, 29 Dec 2017 00:00:00 -0800</pubDate>
-        <link>http://localhost:4000//2017-%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</link>
-        <guid isPermaLink="true">http://localhost:4000//2017-%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</guid>
-      </item>
-    
-      <item>
-        <title>Reinforcement Learning Lesson 8</title>
-        <description>&lt;p&gt;This is the last lesson for the entire reinforcement learning, and in this lesson we will learn something related to exploit and explore. In machine learning service, like recommendation service, there is always a trade off between exploit and explore. Exploit means we are always choosing the best given the current information we have, while explore means try something new we haven’t tried yet. An example is if you go to restaurant, you can always go to the one you enjoy most(exploit), while you can also try a new one(explore).&lt;/p&gt;
-
-&lt;p&gt;This problem is usually formularized as multi bandit problem, which can be represented as \(&amp;lt;A, R&amp;gt; \). Here \( A \) is a set of action we can take, and \( R^a(r) = P[R=r, A=a] \) is an &lt;strong&gt;unknown&lt;/strong&gt; probability distribution over rewards. At each time, our agent is going to pick an action, and the environment will generate a reward. The goal is to maximize the cumulative reward.&lt;/p&gt;
-
-&lt;h4 id=&quot;regret&quot;&gt;Regret&lt;/h4&gt;
-&lt;p&gt;We can measure the goodness of our action use &lt;strong&gt;regret&lt;/strong&gt;. Suppose the action value is the mean reward for an action \( a \)&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;Q(a) = E[r|a]&lt;/script&gt;
-
-&lt;p&gt;and the optimal value \( V^\star \) is the max mean reward we can get&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;V^\star = Q(a^\star) = max_{a\in A}Q(a)&lt;/script&gt;
-
-&lt;p&gt;Then maximize the cumulative reward is equivalent to minimize the total regret, which is&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;L_t = E[\sum_{i=1}^t (V^\star - Q(a_i))]&lt;/script&gt;
-
-&lt;h4 id=&quot;upper-confidence-bound&quot;&gt;Upper Confidence Bound&lt;/h4&gt;
-&lt;p&gt;We can try to solve this problem in the face of uncertainty. The best action we should try is the one that would on one hand has a high mean reward, and on the other hand have a high uncertainty. We might get a higher reward, which is good. While we can also get a worse reward, but that does not matter, since we can reduce our uncertainty about that action, and prefer other action which might have higher reward. A more formal description is as follow:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Estimate an upper confidence \( \hat{U_t}(a) \) for each action value, which depends on the number of times \( a \) has been selected, the larger the times, the smaller the upper confidence&lt;/li&gt;
-  &lt;li&gt;Such that \( Q(a) \le \hat{Q_t}(a) + \hat{U_t}(a) \) with high probability&lt;/li&gt;
-  &lt;li&gt;Select action maximize Upper Confidence Bound (UCB)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;a_t = argmax_{a\in A} \hat{Q_t}(a) + \hat{U_t}(a)&lt;/script&gt;
-
-&lt;p&gt;We need to come up with some method to calculate the upper bound. Here, we bring &lt;em&gt;Hoeffding’s Inequality&lt;/em&gt; for help&lt;/p&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;Let \( X_1,…, X_t \) be i.i.d. random variables in \( [0, 1] \), and let \( \bar{X_t} = \frac{1}{i} \sum_{i=1}^t X_i \) be the sample mean. Then&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;P[E[X] &gt; \bar{X}_t + u] \le e^{-2tu^2}&lt;/script&gt;
-
-&lt;p&gt;With this we can have&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;P[Q(a) &gt; \hat{Q_t}(a) + \hat{U_t}] \le e^{-2N_t(a)U_t(a)^2}&lt;/script&gt;
-
-&lt;p&gt;where \( N_t(a) \) is the expected number of \( a \) is selected. We then can pick a probability \( p \) that true value exceeds UCB, and reduce $p$ as we observer more rewards, e.g. \( p = t^{-4} \). Then we could obtain the upper bound as:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;U_t(a) = \sqrt{\frac{2logt}{N_t(a)}}&lt;/script&gt;
-
-&lt;p&gt;And finally we have the UCB1 algorithm&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;a_t = argmax_{a\in A} (Q(a) + \sqrt{\frac{2logt}{N_t(a)}})&lt;/script&gt;
-</description>
-        <pubDate>Wed, 13 Sep 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//Reinforcement-Learning-Lesson-8/</link>
-        <guid isPermaLink="true">http://localhost:4000//Reinforcement-Learning-Lesson-8/</guid>
       </item>
     
   </channel>

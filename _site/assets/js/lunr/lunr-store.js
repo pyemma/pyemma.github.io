@@ -143,4 +143,14 @@ var store = [{
         "excerpt":"A visual proof that neural nets can compute any functionA really good writing on helping understand why neural network can approximate any functions, without too much illustrate on complex mathematic theory.The main idea the author used is that, for any activation function used in neuron, we can make it has...","categories": [],
         "tags": [],
         "url": "http://localhost:4000/What-I-Read-This-Week-4/",
+        "teaser":"http://localhost:4000/assets/violet.jpg"},{
+        "title": "What I Read This Week 5",
+        "excerpt":"Google and Uber’s Best Practices for Deep LearningA good post introducing how Uber and Google apply deep learning in real world (not in academic). The post illustrates some highlight of the two machine learning platform build by these two giants: Michelangelo and TFX.For these two platform, there share some common...","categories": [],
+        "tags": [],
+        "url": "http://localhost:4000/What-I-Read-This-Week-5/",
+        "teaser":"http://localhost:4000/assets/violet.jpg"},{
+        "title": "Reading Notes 08/19",
+        "excerpt":"Model Interpreting Ideas on interpreting machine learning Residual analysis can help understand which part of the data model is doing wrongly and thus find solution to improve it. However it’s straight forward to apply this method if the problem is a pure regression problem, which is actually not a common...","categories": [],
+        "tags": [],
+        "url": "http://localhost:4000/Reading-Notes/",
         "teaser":"http://localhost:4000/assets/violet.jpg"}]

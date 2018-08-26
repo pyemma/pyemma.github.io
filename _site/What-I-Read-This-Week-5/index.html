@@ -10,38 +10,38 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Math Equation - Coding Monkey</title>
-<meta name="description" content="Use $$ to write math equation">
+<!-- begin _includes/seo.html --><title>What I Read This Week 5 - Coding Monkey</title>
+<meta name="description" content="Google and Uber’s Best Practices for Deep LearningA good post introducing how Uber and Google apply deep learning in real world (not in academic). The post illustrates some highlight of the two machine learning platform build by these two giants: Michelangelo and TFX.">
 
 
 
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="Coding Monkey">
-<meta property="og:title" content="Math Equation">
-<meta property="og:url" content="http://localhost:4000/Math-Equation/">
+<meta property="og:title" content="What I Read This Week 5">
+<meta property="og:url" content="http://localhost:4000/What-I-Read-This-Week-5/">
 
 
-  <meta property="og:description" content="Use $$ to write math equation">
-
-
-
-
-
-
-
-  <meta property="article:published_time" content="2017-08-12T00:00:00-07:00">
+  <meta property="og:description" content="Google and Uber’s Best Practices for Deep LearningA good post introducing how Uber and Google apply deep learning in real world (not in academic). The post illustrates some highlight of the two machine learning platform build by these two giants: Michelangelo and TFX.">
 
 
 
 
 
-  
+
+
+  <meta property="article:published_time" content="2018-03-31T00:00:00-07:00">
+
+
+
+
 
   
 
+  
 
-<link rel="canonical" href="http://localhost:4000/Math-Equation/">
+
+<link rel="canonical" href="http://localhost:4000/What-I-Read-This-Week-5/">
 
 
 
@@ -237,15 +237,15 @@
 
 
   <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Math Equation">
-    <meta itemprop="description" content="Use $$ to write math equation">
-    <meta itemprop="datePublished" content="August 12, 2017">
+    <meta itemprop="headline" content="What I Read This Week 5">
+    <meta itemprop="description" content="Google and Uber’s Best Practices for Deep LearningA good post introducing how Uber and Google apply deep learning in real world (not in academic). The post illustrates some highlight of the two machine learning platform build by these two giants: Michelangelo and TFX.">
+    <meta itemprop="datePublished" content="March 31, 2018">
     
 
     <div class="page__inner-wrap">
       
         <header>
-          <h1 class="page__title" itemprop="headline">Math Equation
+          <h1 class="page__title" itemprop="headline">What I Read This Week 5
 </h1>
           
             <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
@@ -261,39 +261,19 @@
 
       <section class="page__content" itemprop="text">
         
-        <p>Use <code class="highlighter-rouge">$$</code> to write math equation</p>
+        <p><a href="https://medium.com/intuitionmachine/google-and-ubers-best-practices-for-deep-learning-58488a8899b6">Google and Uber’s Best Practices for Deep Learning</a>
+A good post introducing how <strong>Uber</strong> and <strong>Google</strong> apply deep learning in real world (not in academic). The post illustrates some highlight of the two machine learning platform build by these two giants: <a href="https://eng.uber.com/michelangelo/">Michelangelo</a> and <a href="http://www.kdd.org/kdd2017/papers/view/tfx-a-tensorflow-based-production-scale-machine-learning-platform">TFX</a>.</p>
 
-<script type="math/tex; mode=display">\sum_{n=1}^\infty 1/n^2 = \frac{\pi^2}{6}</script>
+<p>For these two platform, there share some common idea: <em>enforce the share of knowledge across the company</em>. For example, the all provide feature store, which is shared across the company and every team can reuse the feature easily. Also, the meta-data about model is also stored so that everyone can learn how model is trained, how’s the performance and might apply similar model design to their own problem.</p>
 
-<script type="math/tex; mode=display">\textbf{A}\textbf{B} = \textbf{C}</script>
+<p>The TFX is relatively more complex than Michelangelo (because Google is larger in scale right :) ). Some unique traits included in TFX that impresses me a lot:</p>
+<ul>
+  <li>TFX emphasize a lot on data management, it provides a mechanism to monitor the distribution and statistic of the data. This will help engineer understand the data as well as detecting some abnormality in the data.</li>
+  <li>TFX also provide transfer-learning by making warm-up from model trained on common features pretty easy.</li>
+</ul>
 
-<p>Use <code class="highlighter-rouge">\begin{equation}</code> to write math equation
-\begin{equation}
-\sum_{n=1}^\infty 1/n^2 = \frac{\pi^2}{6}
-\end{equation}</p>
-
-<script type="math/tex; mode=display">% <![CDATA[
-\begin{align*}
-  & \phi(x,y) = \phi \left(\sum_{i=1}^n x_ie_i, \sum_{j=1}^n y_je_j \right)
-  = \sum_{i=1}^n \sum_{j=1}^n x_i y_j \phi(e_i, e_j) = \\
-  & (x_1, \ldots, x_n) \left( \begin{array}{ccc}
-      \phi(e_1, e_1) & \cdots & \phi(e_1, e_n) \\
-      \vdots & \ddots & \vdots \\
-      \phi(e_n, e_1) & \cdots & \phi(e_n, e_n)
-    \end{array} \right)
-  \left( \begin{array}{c}
-      y_1 \\
-      \vdots \\
-      y_n
-    \end{array} \right)
-\end{align*} %]]></script>
-
-<script type="math/tex; mode=display">% <![CDATA[
-f(n) =
-\begin{cases}
-n/2,  & \text{if $n$ is even} \\
-3n+1, & \text{if $n$ is odd}
-\end{cases} %]]></script>
+<p><a href="https://www.tensorflow.org/programmers_guide/eager">TensforFlow Eager Execution</a>
+Helpful for model debugging.</p>
 
         
       </section>
@@ -304,7 +284,7 @@ n/2,  & \text{if $n$ is even} \\
 
 
         
-          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2017-08-12T00:00:00-07:00">August 12, 2017</time></p>
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2018-03-31T00:00:00-07:00">March 31, 2018</time></p>
         
       </footer>
 
@@ -313,24 +293,24 @@ n/2,  & \text{if $n$ is even} \\
     <h4 class="page__share-title">Share on</h4>
   
 
-  <a href="https://twitter.com/intent/tweet?text=Math+Equation%20http%3A%2F%2Flocalhost%3A4000%2FMath-Equation%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?text=What+I+Read+This+Week+5%20http%3A%2F%2Flocalhost%3A4000%2FWhat-I-Read-This-Week-5%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2FMath-Equation%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2FWhat-I-Read-This-Week-5%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
-  <a href="https://plus.google.com/share?url=http%3A%2F%2Flocalhost%3A4000%2FMath-Equation%2F" class="btn btn--google-plus" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Google Plus"><i class="fab fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
+  <a href="https://plus.google.com/share?url=http%3A%2F%2Flocalhost%3A4000%2FWhat-I-Read-This-Week-5%2F" class="btn btn--google-plus" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Google Plus"><i class="fab fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2FMath-Equation%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2FWhat-I-Read-This-Week-5%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
       
   <nav class="pagination">
     
-      <a href="http://localhost:4000/Clean-Code-Summarize/" class="pagination--pager" title="Clean Code Summarize
+      <a href="http://localhost:4000/What-I-Read-This-Week-4/" class="pagination--pager" title="What I Read This Week 4
 ">Previous</a>
     
     
-      <a href="http://localhost:4000/Reinforcement-Learning-Lesson-1/" class="pagination--pager" title="Reinforcement Learning Lesson 1
+      <a href="http://localhost:4000/Reading-Notes/" class="pagination--pager" title="Reading Notes 08/19
 ">Next</a>
     
   </nav>
@@ -380,41 +360,6 @@ n/2,  & \text{if $n$ is even} \\
 
   Ideas on interpreting machine learning
   Residual analysis can help understand which part of the data model is doing wrongly and thus f...</p>
-  </article>
-</div>
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
-    
-      <div class="archive__item-teaser">
-        <img src=
-          
-            "http://localhost:4000/assets/violet.jpg"
-          
-          alt="">
-      </div>
-    
-    <h2 class="archive__item-title" itemprop="headline">
-      
-        <a href="http://localhost:4000/What-I-Read-This-Week-5/" rel="permalink">What I Read This Week 5
-</a>
-      
-    </h2>
-    
-      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
-
-
-
-
-  1 minute read
-</p>
-    
-    <p class="archive__item-excerpt" itemprop="description">Google and Uber’s Best Practices for Deep Learning
-A good post introducing how Uber and Google apply deep learning in real world (not in academic). The post ...</p>
   </article>
 </div>
         
@@ -489,8 +434,43 @@ A really good writing on helping understand why neural network can approximate a
   </article>
 </div>
         
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="http://schema.org/CreativeWork">
+    
+      <div class="archive__item-teaser">
+        <img src=
+          
+            "http://localhost:4000/assets/violet.jpg"
+          
+          alt="">
+      </div>
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="http://localhost:4000/DQN-In-Practice/" rel="permalink">DQN In Practice
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Recently I have been working on Deep-Q-Learning and apply it to some interesting AI games. In this post, I would like to give a brief introduction to how I i...</p>
+  </article>
+</div>
+        
       </div>
     </div>
+  
   
 </div>
 
