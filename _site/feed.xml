@@ -7,6 +7,19 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>牧羊少年的奇幻之旅</title>
+        <description>&lt;ul&gt;
+  &lt;li&gt;追求梦想，不要被眼前的舒适和成就困住&lt;/li&gt;
+  &lt;li&gt;关注当下，不要纠结过去和担心未来&lt;/li&gt;
+  &lt;li&gt;炼金术的真谛：变得更好 (Be a better man)&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Sun, 23 Dec 2018 00:00:00 -0800</pubDate>
+        <link>http://localhost:4000//%E7%89%A7%E7%BE%8A%E5%B0%91%E5%B9%B4%E7%9A%84%E5%A5%87%E5%B9%BB%E4%B9%8B%E6%97%85/</link>
+        <guid isPermaLink="true">http://localhost:4000//%E7%89%A7%E7%BE%8A%E5%B0%91%E5%B9%B4%E7%9A%84%E5%A5%87%E5%B9%BB%E4%B9%8B%E6%97%85/</guid>
+      </item>
+    
+      <item>
         <title>Reading Notes 08/19</title>
         <description>&lt;h4 id=&quot;model-interpreting&quot;&gt;Model Interpreting&lt;/h4&gt;
 &lt;ul&gt;
@@ -404,52 +417,6 @@ Helpful for model debugging.&lt;/p&gt;
         <pubDate>Sun, 07 Jan 2018 00:00:00 -0800</pubDate>
         <link>http://localhost:4000//2018-%E6%96%B0%E5%B9%B4%E8%AE%A1%E5%88%92/</link>
         <guid isPermaLink="true">http://localhost:4000//2018-%E6%96%B0%E5%B9%B4%E8%AE%A1%E5%88%92/</guid>
-      </item>
-    
-      <item>
-        <title>Deep Work Reading Note</title>
-        <description>&lt;p&gt;“Deep Work” is the first book I read this year. I was pretty impressed by the idea and methods the author purposed to help you gain the ability to do “deep work”, which means how to be concentrate on the work that can really generate value. In this note, I would like to summarize the main points of author, together with my personal experience.&lt;/p&gt;
-
-&lt;p&gt;Deep work is the work which can really generate value, compared with shallow work, which is more like some routines that don’t need to think about too much to finish. Only by doing deep work, can we really improve ourselves, broaden our vision and shape our skills. As my personal experience, learning a new machine learning algorithm, or build a new APP counts to deep work, but repeatedly doing some interview algorithm exercise is shallow work.&lt;/p&gt;
-
-&lt;p&gt;There are mainly 4 different strategies for deep work:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Monastic: This is the most crucial strategies, which means that you are going to disconnected with all around and only focusing on the work you are doing all the time. This strategy does not apply to me, as I have work to do everyday and could not totally block others.&lt;/li&gt;
-  &lt;li&gt;Bimodal: This is less crucial then the above one. For this one, you are not going to disconnected with the world all the time, but periodically. For example, for each year, you might choose two or three month to disconnect; or for each month, you choose one week to disconnect. This also does not apply for me, if I’m absent for too long, my manager would go crazy about me.&lt;/li&gt;
-  &lt;li&gt;Rhythmic: This maybe the most common way to do deep work, which is to schedule some time each day dedicatedly. For example, every morning from 7:00 am to 9:00 am do deep work. This is the most suitable strategy for me, as well as for most of us. Although the “deepness” is not as powerful as the above two, but it still works pretty well. My plan is to change my schedule, and leave some time before go to work and go to bed, do some deep work.&lt;/li&gt;
-  &lt;li&gt;Journalistic: This is the most flexible version, which is just to do deep work occasionally across the day, whenever you have some time. But this really need have strong deep work ability, so that you can switch to deep work easily. Because the switch will consume lots of power-will, which is limited resource.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Besides these strategies, there are also some tips to help do deep work:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Come up with some rules when you do deep work, e.g. where to work (red rock cafe?), how to work (ban internet, no wechat) and how to support you deep work (relax music and good coffee)&lt;/li&gt;
-  &lt;li&gt;Go to some really really really expensive places :)&lt;/li&gt;
-  &lt;li&gt;Collaboration with others to help inspire your idea, but still work alone to do deep work&lt;/li&gt;
-  &lt;li&gt;Execute like a business:
-    &lt;ul&gt;
-      &lt;li&gt;Have a small number of clear ambitious. I usually fail this one, as I was always trying to do lots of thing together to maximums my parallelism.&lt;/li&gt;
-      &lt;li&gt;Record to number of deep hour you spend on deep work&lt;/li&gt;
-      &lt;li&gt;Keep a compelling scoreboard to track your progress&lt;/li&gt;
-      &lt;li&gt;Spend sometime to introspect how well you are doing deep work, what you success and what you fail to do&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Take good rest, e.g. stop working after 8:00 pm&lt;/li&gt;
-  &lt;li&gt;Divide the working hour into some large block (deep work block and shallow work block). This would be extreme helpful for me, as I was easily distracted when I was writing code. What I plan to do is to have three long (more than 1hr) deep working blocks to focusing on coding, reading/writing important document/posts. Also schedule every minutes of the work time.&lt;/li&gt;
-  &lt;li&gt;Do some meditate productively. What I plan is to spend some time walking around the campus
-    &lt;ul&gt;
-      &lt;li&gt;Be wary of distraction and looping. When you start to distract from your original problem, remind yourself and come back. Also you need to avoid the looping question you have already thought about&lt;/li&gt;
-      &lt;li&gt;Structure deep thinking&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Do some memory exercise to help you improve your concentration&lt;/li&gt;
-  &lt;li&gt;Quit social media (no Facebook, wechat :) )&lt;/li&gt;
-  &lt;li&gt;Know how to tell what is deep work and what is shallow work, and prioritize deep work.&lt;/li&gt;
-  &lt;li&gt;Talk with your manager about the percentage of shallow work spend on each day.&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Thu, 04 Jan 2018 00:00:00 -0800</pubDate>
-        <link>http://localhost:4000//Deep-Work-Reading-Note/</link>
-        <guid isPermaLink="true">http://localhost:4000//Deep-Work-Reading-Note/</guid>
       </item>
     
   </channel>

@@ -153,4 +153,9 @@ var store = [{
         "excerpt":"Model Interpreting Ideas on interpreting machine learning Residual analysis can help understand which part of the data model is doing wrongly and thus find solution to improve it. However it’s straight forward to apply this method if the problem is a pure regression problem, which is actually not a common...","categories": [],
         "tags": [],
         "url": "http://localhost:4000/Reading-Notes/",
+        "teaser":"http://localhost:4000/assets/violet.jpg"},{
+        "title": "牧羊少年的奇幻之旅",
+        "excerpt":"  追求梦想，不要被眼前的舒适和成就困住  关注当下，不要纠结过去和担心未来  炼金术的真谛：变得更好 (Be a better man)","categories": [],
+        "tags": [],
+        "url": "http://localhost:4000/%E7%89%A7%E7%BE%8A%E5%B0%91%E5%B9%B4%E7%9A%84%E5%A5%87%E5%B9%BB%E4%B9%8B%E6%97%85/",
         "teaser":"http://localhost:4000/assets/violet.jpg"}]
