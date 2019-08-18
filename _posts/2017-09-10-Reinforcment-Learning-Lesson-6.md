@@ -1,6 +1,8 @@
 ---
   layout: single
   title: "Reinforcement Learning Lesson 6"
+  tags:
+    - reinforcement learning
 ---
 In the pervious we use a model to approximate the state value/action value function. In this post, we are going to learn how to directly parameterize a policy, which means we would directly get the probability of each action given a state:
 

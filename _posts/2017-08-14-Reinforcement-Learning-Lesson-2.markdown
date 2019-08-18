@@ -2,7 +2,7 @@
 layout: single
 title: "Reinforcement Learning Lesson 2"
 ---
-In the last post, we introduced the definition of Markov Decision Process and Bellman Equation. Now, if you are given the states $S$, action $A$, transition matrix $P$, rewards $R$ and discounting ratio $\gamma$, how would you come up with a solution for this MDP? i.e. how would you calculate the value function and come up with an optimal policy for it?
+In the last post, we introduced the definition of Markov Decision Process and Bellman Equation. Now, if you are given the states \\( S \\), action $A$, transition matrix $P$, rewards $R$ and discounting ratio \\( \gamma \\), how would you come up with a solution for this MDP? i.e. how would you calculate the value function and come up with an optimal policy for it?
 
 #### Value Iteration
 This first method is to apply the Bellman Optimality Equation repeatedly. The idea is that we continue update the best estimation for each state value function, and once all $s^\prime$ reachable from $s$ achieve its optimal value function, then $v(s)$ can also achieve the optimal value. The algorithm is as follow:

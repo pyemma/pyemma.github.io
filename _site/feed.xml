@@ -7,19 +7,6 @@
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
-        <title>牧羊少年的奇幻之旅</title>
-        <description>&lt;ul&gt;
-  &lt;li&gt;追求梦想，不要被眼前的舒适和成就困住&lt;/li&gt;
-  &lt;li&gt;关注当下，不要纠结过去和担心未来&lt;/li&gt;
-  &lt;li&gt;炼金术的真谛：变得更好 (Be a better man)&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Sun, 23 Dec 2018 00:00:00 -0800</pubDate>
-        <link>http://localhost:4000//%E7%89%A7%E7%BE%8A%E5%B0%91%E5%B9%B4%E7%9A%84%E5%A5%87%E5%B9%BB%E4%B9%8B%E6%97%85/</link>
-        <guid isPermaLink="true">http://localhost:4000//%E7%89%A7%E7%BE%8A%E5%B0%91%E5%B9%B4%E7%9A%84%E5%A5%87%E5%B9%BB%E4%B9%8B%E6%97%85/</guid>
-      </item>
-    
-      <item>
         <title>Reading Notes 08/19</title>
         <description>&lt;h4 id=&quot;model-interpreting&quot;&gt;Model Interpreting&lt;/h4&gt;
 &lt;ul&gt;
@@ -258,55 +245,6 @@ Helpful for model debugging.&lt;/p&gt;
       </item>
     
       <item>
-        <title>读书有感 1</title>
-        <description>&lt;p&gt;最近两天读了两本书，分别是武志红的《你就是答案》和史蒂芬柯维的《高效能人士的七个习惯》。这两本书都算是提升自我修养的书，但是有人可能这时候就嚷嚷说：“啊，这都是鸡汤，不要被鸡汤给灌糊涂了”。诚然这两本书的确有鸡汤的性质，但是里面的内容还是很在理的，即使说这些东西你其实早就知道，但是再读一读，还是能够进一步加深自己的认知和理解的。下面我就着重说几个给我印象最深刻的部分。&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;生命是一个历程，一个整体，我们不能太在乎一时的得失，成长才是最重要的。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;这一点对我的触动是最大的。在现实生活中，我是一个得失心非常重的人，经常把眼前的结果看的非常非常重要。比如说最近的年底考核，我上个half每天加班工作，就是希望最后能得到升职的机会，然而事与愿违，今天跟老板meeting，说我没能升上去，打击很大。这就开始有点自暴自弃，不想再好好干活了，成了一个“自断经脉的打工族”。这正反应出，我自己并没有什么人生目标，认为自己的价值就是根据这种外界的物质来衡量的，所谓的“以荣誉为中心的生活”。我应该学会调整自己，拒绝以这种外界的物质来衡量自己，而是真正的明白自己想成为什么样的人，想做什么样的事情。我们要有一个好的人生规划，包括一个一以贯之的目标，以及从整体的角度看待生命。想找的目标不是一件容易的事情，我打算参考《高效能人士的七个习惯》中的“个人使命宣言”来逐渐认清自己，找到自己的人生目标。&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;遇到挫折要做到对事不对人&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;我发觉自己的“挫折商”不够强大，遇到点不顺心的事情，就开始夸大其后果，否定自己的能力，任由其影响自己。挫折商可以从四个方面来衡量，控制，归因，延伸以及忍耐。想要提升挫折商，试试下面的方法：&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;任何时候，都要问问自己，“我可以做什么”。&lt;/li&gt;
-  &lt;li&gt;内向归因，问题发生时，问问自己该承担什么样的责任，而自己又可以如何去改变。&lt;/li&gt;
-  &lt;li&gt;不把问题扩大。哦，有失败发生了，但它就是这么一件事情而已，这并不意味着我其他方面有问题。&lt;/li&gt;
-  &lt;li&gt;如果你真的确定一件事可以做，它是有道理的，那么努力将其进行到底。&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;跳好爱情的双人舞&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;之前的好一段时间都被感情的事情困扰：要么就是自己心仪很久的女生追求不到，要么就是新认识的女生对自己爱答不理的。很自卑，一度有“注孤生”的感觉。但是其实这大可不必要，保持积极乐观的态度，坦然真诚的对待女生，相信自己值得被爱，总是能遇到合适的人的。除此之外，爱情需要深深的理解和接受，我不能太过于“外貌协会”，而要真正的去了解对方的内心世界，接纳真实的对方。&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;第四代时间管理&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;这个是我从《高效能人士的七个习惯》中得到的最有价值的一点。这个第四代的时间管理有几个最主要的方面：&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;按照自己所处的角色不同，设定不同的任务，然而这些任务需要以第二类任务为主（不紧急，重要）&lt;/li&gt;
-  &lt;li&gt;以一周为计划来安排这些任务&lt;/li&gt;
-  &lt;li&gt;每天跟进进度进行调整&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;比如下图就是我尝试制定的一个一周的计划表
-&lt;img src=&quot;/assets/weekly_schedule.png&quot; alt=&quot;一周计划表&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;这样做的益处是可以帮助自己专注于第二类任务，从而使自己得到真正的提高，更加符合自己的“个人使命宣言”。&lt;/p&gt;
-</description>
-        <pubDate>Tue, 16 Jan 2018 00:00:00 -0800</pubDate>
-        <link>http://localhost:4000//%E8%AF%BB%E4%B9%A6%E6%9C%89%E6%84%9F-1/</link>
-        <guid isPermaLink="true">http://localhost:4000//%E8%AF%BB%E4%B9%A6%E6%9C%89%E6%84%9F-1/</guid>
-      </item>
-    
-      <item>
         <title>What I Read This Week 1</title>
         <description>&lt;h3 id=&quot;the-3-tricks-that-made-alphago-zero-work&quot;&gt;&lt;a href=&quot;https://hackernoon.com/the-3-tricks-that-made-alphago-zero-work-f3d47b6686ef&quot;&gt;The 3 Tricks That Made AlphaGo Zero Work&lt;/a&gt;&lt;/h3&gt;
 &lt;p&gt;This post explains why AlphaGo Zero out-perform than it’s elder brother AlphaGo, summarizing in 3 points that lead to the supreme result:&lt;/p&gt;
@@ -363,60 +301,181 @@ Helpful for model debugging.&lt;/p&gt;
       </item>
     
       <item>
-        <title>2018 新年计划</title>
-        <description>&lt;p&gt;&lt;em&gt;2018年的主题，就是要变得自信以及学会Deep Work!&lt;/em&gt;&lt;/p&gt;
+        <title>Deep Work Reading Note</title>
+        <description>&lt;p&gt;“Deep Work” is the first book I read this year. I was pretty impressed by the idea and methods the author purposed to help you gain the ability to do “deep work”, which means how to be concentrate on the work that can really generate value. In this note, I would like to summarize the main points of author, together with my personal experience.&lt;/p&gt;
 
-&lt;h3 id=&quot;工作&quot;&gt;工作&lt;/h3&gt;
+&lt;p&gt;Deep work is the work which can really generate value, compared with shallow work, which is more like some routines that don’t need to think about too much to finish. Only by doing deep work, can we really improve ourselves, broaden our vision and shape our skills. As my personal experience, learning a new machine learning algorithm, or build a new APP counts to deep work, but repeatedly doing some interview algorithm exercise is shallow work.&lt;/p&gt;
+
+&lt;p&gt;There are mainly 4 different strategies for deep work:&lt;/p&gt;
 &lt;ul&gt;
-  &lt;li&gt;升职加薪
-    &lt;ul&gt;
-      &lt;li&gt;跳出自己的安逸区，接受更具有挑战的项目&lt;/li&gt;
-      &lt;li&gt;加深对C++和Python的理解&lt;/li&gt;
-      &lt;li&gt;加深机器学习领域的研究，多读post, blog, paper，每两周写一篇blog总结&lt;/li&gt;
-      &lt;li&gt;提高自己的见识，要多和高人交流，学习别人的经验&lt;/li&gt;
-      &lt;li&gt;(bonus)发表一遍学术论文，参加一次学术会议&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
+  &lt;li&gt;Monastic: This is the most crucial strategies, which means that you are going to disconnected with all around and only focusing on the work you are doing all the time. This strategy does not apply to me, as I have work to do everyday and could not totally block others.&lt;/li&gt;
+  &lt;li&gt;Bimodal: This is less crucial then the above one. For this one, you are not going to disconnected with the world all the time, but periodically. For example, for each year, you might choose two or three month to disconnect; or for each month, you choose one week to disconnect. This also does not apply for me, if I’m absent for too long, my manager would go crazy about me.&lt;/li&gt;
+  &lt;li&gt;Rhythmic: This maybe the most common way to do deep work, which is to schedule some time each day dedicatedly. For example, every morning from 7:00 am to 9:00 am do deep work. This is the most suitable strategy for me, as well as for most of us. Although the “deepness” is not as powerful as the above two, but it still works pretty well. My plan is to change my schedule, and leave some time before go to work and go to bed, do some deep work.&lt;/li&gt;
+  &lt;li&gt;Journalistic: This is the most flexible version, which is just to do deep work occasionally across the day, whenever you have some time. But this really need have strong deep work ability, so that you can switch to deep work easily. Because the switch will consume lots of power-will, which is limited resource.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&quot;学习&quot;&gt;学习&lt;/h3&gt;
+&lt;p&gt;Besides these strategies, there are also some tips to help do deep work:&lt;/p&gt;
 &lt;ul&gt;
-  &lt;li&gt;完成一个side project
+  &lt;li&gt;Come up with some rules when you do deep work, e.g. where to work (red rock cafe?), how to work (ban internet, no wechat) and how to support you deep work (relax music and good coffee)&lt;/li&gt;
+  &lt;li&gt;Go to some really really really expensive places :)&lt;/li&gt;
+  &lt;li&gt;Collaboration with others to help inspire your idea, but still work alone to do deep work&lt;/li&gt;
+  &lt;li&gt;Execute like a business:
     &lt;ul&gt;
-      &lt;li&gt;starcraft AI?&lt;/li&gt;
-      &lt;li&gt;photo style transfer?&lt;/li&gt;
-      &lt;li&gt;chatbot?&lt;/li&gt;
+      &lt;li&gt;Have a small number of clear ambitious. I usually fail this one, as I was always trying to do lots of thing together to maximums my parallelism.&lt;/li&gt;
+      &lt;li&gt;Record to number of deep hour you spend on deep work&lt;/li&gt;
+      &lt;li&gt;Keep a compelling scoreboard to track your progress&lt;/li&gt;
+      &lt;li&gt;Spend sometime to introspect how well you are doing deep work, what you success and what you fail to do&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;参加kaggle的比赛&lt;/li&gt;
-  &lt;li&gt;一门新的语言: GO&lt;/li&gt;
-  &lt;li&gt;一门新的计算机技术&lt;/li&gt;
-  &lt;li&gt;每个月至少读一本书，每本书写一篇读后感&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;生活&quot;&gt;生活&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;胸围再大一圈，练出腹肌
+  &lt;li&gt;Take good rest, e.g. stop working after 8:00 pm&lt;/li&gt;
+  &lt;li&gt;Divide the working hour into some large block (deep work block and shallow work block). This would be extreme helpful for me, as I was easily distracted when I was writing code. What I plan to do is to have three long (more than 1hr) deep working blocks to focusing on coding, reading/writing important document/posts. Also schedule every minutes of the work time.&lt;/li&gt;
+  &lt;li&gt;Do some meditate productively. What I plan is to spend some time walking around the campus
     &lt;ul&gt;
-      &lt;li&gt;每天坚持去gym，坚持每次练一组腹肌强化&lt;/li&gt;
-      &lt;li&gt;每周晨跑三次&lt;/li&gt;
+      &lt;li&gt;Be wary of distraction and looping. When you start to distract from your original problem, remind yourself and come back. Also you need to avoid the looping question you have already thought about&lt;/li&gt;
+      &lt;li&gt;Structure deep thinking&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;日语
-    &lt;ul&gt;
-      &lt;li&gt;每周安排计划固定学习的时间&lt;/li&gt;
-      &lt;li&gt;参加N2考试&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;口琴&lt;/li&gt;
-  &lt;li&gt;出去旅游两次&lt;/li&gt;
-  &lt;li&gt;喝遍湾区的咖啡店，逛遍湾区的书店&lt;/li&gt;
-  &lt;li&gt;(bonus) 每周去尝试一家新的饭店&lt;/li&gt;
+  &lt;li&gt;Do some memory exercise to help you improve your concentration&lt;/li&gt;
+  &lt;li&gt;Quit social media (no Facebook, wechat :) )&lt;/li&gt;
+  &lt;li&gt;Know how to tell what is deep work and what is shallow work, and prioritize deep work.&lt;/li&gt;
+  &lt;li&gt;Talk with your manager about the percentage of shallow work spend on each day.&lt;/li&gt;
 &lt;/ul&gt;
 </description>
-        <pubDate>Sun, 07 Jan 2018 00:00:00 -0800</pubDate>
-        <link>http://localhost:4000//2018-%E6%96%B0%E5%B9%B4%E8%AE%A1%E5%88%92/</link>
-        <guid isPermaLink="true">http://localhost:4000//2018-%E6%96%B0%E5%B9%B4%E8%AE%A1%E5%88%92/</guid>
+        <pubDate>Thu, 04 Jan 2018 00:00:00 -0800</pubDate>
+        <link>http://localhost:4000//Deep-Work-Reading-Note/</link>
+        <guid isPermaLink="true">http://localhost:4000//Deep-Work-Reading-Note/</guid>
+      </item>
+    
+      <item>
+        <title>Reinforcement Learning Lesson 8</title>
+        <description>&lt;p&gt;This is the last lesson for the entire reinforcement learning, and in this lesson we will learn something related to exploit and explore. In machine learning service, like recommendation service, there is always a trade off between exploit and explore. Exploit means we are always choosing the best given the current information we have, while explore means try something new we haven’t tried yet. An example is if you go to restaurant, you can always go to the one you enjoy most(exploit), while you can also try a new one(explore).&lt;/p&gt;
+
+&lt;p&gt;This problem is usually formularized as multi bandit problem, which can be represented as \(&amp;lt;A, R&amp;gt; \). Here \( A \) is a set of action we can take, and \( R^a(r) = P[R=r, A=a] \) is an &lt;strong&gt;unknown&lt;/strong&gt; probability distribution over rewards. At each time, our agent is going to pick an action, and the environment will generate a reward. The goal is to maximize the cumulative reward.&lt;/p&gt;
+
+&lt;h4 id=&quot;regret&quot;&gt;Regret&lt;/h4&gt;
+&lt;p&gt;We can measure the goodness of our action use &lt;strong&gt;regret&lt;/strong&gt;. Suppose the action value is the mean reward for an action \( a \)&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;Q(a) = E[r|a]&lt;/script&gt;
+
+&lt;p&gt;and the optimal value \( V^\star \) is the max mean reward we can get&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;V^\star = Q(a^\star) = max_{a\in A}Q(a)&lt;/script&gt;
+
+&lt;p&gt;Then maximize the cumulative reward is equivalent to minimize the total regret, which is&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;L_t = E[\sum_{i=1}^t (V^\star - Q(a_i))]&lt;/script&gt;
+
+&lt;h4 id=&quot;upper-confidence-bound&quot;&gt;Upper Confidence Bound&lt;/h4&gt;
+&lt;p&gt;We can try to solve this problem in the face of uncertainty. The best action we should try is the one that would on one hand has a high mean reward, and on the other hand have a high uncertainty. We might get a higher reward, which is good. While we can also get a worse reward, but that does not matter, since we can reduce our uncertainty about that action, and prefer other action which might have higher reward. A more formal description is as follow:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Estimate an upper confidence \( \hat{U_t}(a) \) for each action value, which depends on the number of times \( a \) has been selected, the larger the times, the smaller the upper confidence&lt;/li&gt;
+  &lt;li&gt;Such that \( Q(a) \le \hat{Q_t}(a) + \hat{U_t}(a) \) with high probability&lt;/li&gt;
+  &lt;li&gt;Select action maximize Upper Confidence Bound (UCB)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;a_t = argmax_{a\in A} \hat{Q_t}(a) + \hat{U_t}(a)&lt;/script&gt;
+
+&lt;p&gt;We need to come up with some method to calculate the upper bound. Here, we bring &lt;em&gt;Hoeffding’s Inequality&lt;/em&gt; for help&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Let \( X_1,…, X_t \) be i.i.d. random variables in \( [0, 1] \), and let \( \bar{X_t} = \frac{1}{i} \sum_{i=1}^t X_i \) be the sample mean. Then&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;P[E[X] &gt; \bar{X}_t + u] \le e^{-2tu^2}&lt;/script&gt;
+
+&lt;p&gt;With this we can have&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;P[Q(a) &gt; \hat{Q_t}(a) + \hat{U_t}] \le e^{-2N_t(a)U_t(a)^2}&lt;/script&gt;
+
+&lt;p&gt;where \( N_t(a) \) is the expected number of \( a \) is selected. We then can pick a probability \( p \) that true value exceeds UCB, and reduce $p$ as we observer more rewards, e.g. \( p = t^{-4} \). Then we could obtain the upper bound as:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;U_t(a) = \sqrt{\frac{2logt}{N_t(a)}}&lt;/script&gt;
+
+&lt;p&gt;And finally we have the UCB1 algorithm&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;a_t = argmax_{a\in A} (Q(a) + \sqrt{\frac{2logt}{N_t(a)}})&lt;/script&gt;
+</description>
+        <pubDate>Wed, 13 Sep 2017 00:00:00 -0700</pubDate>
+        <link>http://localhost:4000//Reinforcement-Learning-Lesson-8/</link>
+        <guid isPermaLink="true">http://localhost:4000//Reinforcement-Learning-Lesson-8/</guid>
+      </item>
+    
+      <item>
+        <title>Reinforcement Learning Lesson 7</title>
+        <description>&lt;p&gt;In the pervious notes, we are all using &lt;strong&gt;model-free&lt;/strong&gt; reinforcement learning method to find the solution for the problem. Today we are going to introduce method that directly learns from the experience and tries to understand the underlaying world.&lt;/p&gt;
+
+&lt;p&gt;From &lt;a href=&quot;http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-1&quot;&gt;Lesson 1&lt;/a&gt; we know that a MDP can be represent by \( &amp;lt;S, A, P, R&amp;gt; \), and our model is going to understand and simulate this. We will only introduce the simple version here, in which we assume that the \( S \) and \( A \) is known, and thus we only need to model \( P \) and \( R \). We can formulate it as:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;S_{t+1} ~ P_\eta(S_{t+1}|S_t, A_t) \\
+R_{t+1} = R_\eta(R_{t+1}|S_t, A_t)&lt;/script&gt;
+
+&lt;p&gt;where the prediction of next state is a density estimation problem and the reward is a regression problem.&lt;/p&gt;
+
+&lt;h2 id=&quot;integrated-architecture&quot;&gt;Integrated Architecture&lt;/h2&gt;
+&lt;p&gt;In this architecture, we are going to consider two types of experience. &lt;strong&gt;Real experience&lt;/strong&gt; which is sampled from the environment, and &lt;strong&gt;Simulated experience&lt;/strong&gt; which is sampled from our model. In the past, we only use the real experience to learn value function/policy. Now, we are going to learn our model from real experience, then plan and learn value function/policy from both real and simulated experience. This is thus called integrated architecture (integration of real and fake), the &lt;strong&gt;Dyna Architecture&lt;/strong&gt;. Here is an picture to illustrate what the logic flow of Dyna is like.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/dyna.png&quot; alt=&quot;Dyna Architecture&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;According to the Dyna architecture, we can design many algorithm, here is an example of &lt;strong&gt;Dyna-Q Algorithm&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initialize \( Q(s, a) \) and \( Model(s, a) \) for all \( s \) and \( a \)&lt;/li&gt;
+  &lt;li&gt;Do forever:
+    &lt;ul&gt;
+      &lt;li&gt;\( S = \) current (nonterminal) state&lt;/li&gt;
+      &lt;li&gt;\( A = \epsilon - \text{greedy}(S, Q) \)&lt;/li&gt;
+      &lt;li&gt;Execute action \( A \); observe result reward \( R \), and state \( S’ \)&lt;/li&gt;
+      &lt;li&gt;\( Q(S, A) = Q(S, A) + \alpha[R + \gamma max_a Q(S’, a) - Q(S, A)] \) (This is using real experience)&lt;/li&gt;
+      &lt;li&gt;Update \( Model(S, A) \) using \( R, S’ \)&lt;/li&gt;
+      &lt;li&gt;Repeat \( n \) times: (This is using simulated experience to learn value function)
+        &lt;ul&gt;
+          &lt;li&gt;\( S = \) random previously observed state&lt;/li&gt;
+          &lt;li&gt;\( A = \) random action previously taken in \( S \)&lt;/li&gt;
+          &lt;li&gt;Sample \( R, S’ \) from \( Model(S, A) \)&lt;/li&gt;
+          &lt;li&gt;\( Q(S, A) = Q(S, A) + \alpha[R + \gamma max_a Q(S’, a) - Q(S, A)] \)&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;monte-carlo-tree-search&quot;&gt;Monte-Carlo Tree Search&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Monte-Carlo Tree Search&lt;/strong&gt; is a very efficient algorithm to plan once we have a model.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Given a model \( M_v \)&lt;/li&gt;
+  &lt;li&gt;Simulate $K$ episodes from current state $s_t$ using current simulation policy \( \pi \)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;{s_t, A_t^k, R_{t+1}^k, S_{t+1}^k, ..., S_T^k} ~ M_v, \pi&lt;/script&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Build a search tree containing visited states and actions&lt;/li&gt;
+  &lt;li&gt;Evaluate state \( Q(s, a) \) by mean return of episodes from \( s, a \)&lt;/li&gt;
+  &lt;li&gt;After search is finished, select current (real) action with maximum value in search tree&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In MCMT, the simulation policy \( \pi \) improves. Each simulation consists of two phases (in-tree, out-of-tree):&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Tree policy (improves): pick action to maximize \( Q(S, A) \)&lt;/li&gt;
+  &lt;li&gt;Default policy (fixed): pick action randomly&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Repeat (each simulation):&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Evaluate states \( Q(S, A) \) by Mento-Carlo evaluation&lt;/li&gt;
+  &lt;li&gt;Improve tree policy, e.g. by \( \epsilon-\text{greedy}(Q) \)s&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;There are several advantages of MCMT:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Highly selective best-first search&lt;/li&gt;
+  &lt;li&gt;Evaluates states dynamically&lt;/li&gt;
+  &lt;li&gt;Uses sampling to break curse of dimensionality&lt;/li&gt;
+  &lt;li&gt;Works for “black-box” models (only requires samples)&lt;/li&gt;
+  &lt;li&gt;Computationally efficient, anytime&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Mon, 11 Sep 2017 00:00:00 -0700</pubDate>
+        <link>http://localhost:4000//Reinforcement-Learning-Lesson-7/</link>
+        <guid isPermaLink="true">http://localhost:4000//Reinforcement-Learning-Lesson-7/</guid>
       </item>
     
   </channel>
