@@ -3,8 +3,8 @@
   <channel>
     <title>Yang Pei</title>
     <description>The effort a coding monkey paid when he managed to become a coding machine.</description>
-    <link>http://localhost:4000</link>
-    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
+    <link>https://pyemma.github.io</link>
+    <atom:link href="https://pyemma.github.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
         <title>Reading Notes 08/19</title>
@@ -16,8 +16,8 @@
 &lt;/ul&gt;
 </description>
         <pubDate>Sun, 19 Aug 2018 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//Reading-Notes/</link>
-        <guid isPermaLink="true">http://localhost:4000//Reading-Notes/</guid>
+        <link>https://pyemma.github.io//Reading-Notes/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//Reading-Notes/</guid>
       </item>
     
       <item>
@@ -37,8 +37,8 @@ A good post introducing how &lt;strong&gt;Uber&lt;/strong&gt; and &lt;strong&gt;
 Helpful for model debugging.&lt;/p&gt;
 </description>
         <pubDate>Sat, 31 Mar 2018 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//What-I-Read-This-Week-5/</link>
-        <guid isPermaLink="true">http://localhost:4000//What-I-Read-This-Week-5/</guid>
+        <link>https://pyemma.github.io//What-I-Read-This-Week-5/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//What-I-Read-This-Week-5/</guid>
       </item>
     
       <item>
@@ -54,8 +54,8 @@ Helpful for model debugging.&lt;/p&gt;
 &lt;p&gt;Another very good tutorial blog on capsule neural network, the author also provide a visualization tool that we can play with.&lt;/p&gt;
 </description>
         <pubDate>Sat, 03 Mar 2018 00:00:00 -0800</pubDate>
-        <link>http://localhost:4000//What-I-Read-This-Week-4/</link>
-        <guid isPermaLink="true">http://localhost:4000//What-I-Read-This-Week-4/</guid>
+        <link>https://pyemma.github.io//What-I-Read-This-Week-4/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//What-I-Read-This-Week-4/</guid>
       </item>
     
       <item>
@@ -95,8 +95,8 @@ Helpful for model debugging.&lt;/p&gt;
 &lt;/ul&gt;
 </description>
         <pubDate>Sun, 25 Feb 2018 00:00:00 -0800</pubDate>
-        <link>http://localhost:4000//What-I-Read-This-Week-3/</link>
-        <guid isPermaLink="true">http://localhost:4000//What-I-Read-This-Week-3/</guid>
+        <link>https://pyemma.github.io//What-I-Read-This-Week-3/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//What-I-Read-This-Week-3/</guid>
       </item>
     
       <item>
@@ -188,8 +188,8 @@ Helpful for model debugging.&lt;/p&gt;
 &lt;/ol&gt;
 </description>
         <pubDate>Sat, 27 Jan 2018 00:00:00 -0800</pubDate>
-        <link>http://localhost:4000//DQN-In-Practice/</link>
-        <guid isPermaLink="true">http://localhost:4000//DQN-In-Practice/</guid>
+        <link>https://pyemma.github.io//DQN-In-Practice/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//DQN-In-Practice/</guid>
       </item>
     
       <item>
@@ -240,8 +240,8 @@ Helpful for model debugging.&lt;/p&gt;
 &lt;/ul&gt;
 </description>
         <pubDate>Sat, 20 Jan 2018 00:00:00 -0800</pubDate>
-        <link>http://localhost:4000//What-I-Read-This-Week-2/</link>
-        <guid isPermaLink="true">http://localhost:4000//What-I-Read-This-Week-2/</guid>
+        <link>https://pyemma.github.io//What-I-Read-This-Week-2/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//What-I-Read-This-Week-2/</guid>
       </item>
     
       <item>
@@ -296,8 +296,8 @@ Helpful for model debugging.&lt;/p&gt;
 
 </description>
         <pubDate>Sun, 14 Jan 2018 00:00:00 -0800</pubDate>
-        <link>http://localhost:4000//What-I-Read-This-Week-I/</link>
-        <guid isPermaLink="true">http://localhost:4000//What-I-Read-This-Week-I/</guid>
+        <link>https://pyemma.github.io//What-I-Read-This-Week-I/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//What-I-Read-This-Week-I/</guid>
       </item>
     
       <item>
@@ -342,8 +342,8 @@ Helpful for model debugging.&lt;/p&gt;
 &lt;/ul&gt;
 </description>
         <pubDate>Thu, 04 Jan 2018 00:00:00 -0800</pubDate>
-        <link>http://localhost:4000//Deep-Work-Reading-Note/</link>
-        <guid isPermaLink="true">http://localhost:4000//Deep-Work-Reading-Note/</guid>
+        <link>https://pyemma.github.io//Deep-Work-Reading-Note/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//Deep-Work-Reading-Note/</guid>
       </item>
     
       <item>
@@ -395,8 +395,8 @@ Helpful for model debugging.&lt;/p&gt;
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;a_t = argmax_{a\in A} (Q(a) + \sqrt{\frac{2logt}{N_t(a)}})&lt;/script&gt;
 </description>
         <pubDate>Wed, 13 Sep 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//Reinforcement-Learning-Lesson-8/</link>
-        <guid isPermaLink="true">http://localhost:4000//Reinforcement-Learning-Lesson-8/</guid>
+        <link>https://pyemma.github.io//Reinforcement-Learning-Lesson-8/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//Reinforcement-Learning-Lesson-8/</guid>
       </item>
     
       <item>
@@ -474,8 +474,8 @@ R_{t+1} = R_\eta(R_{t+1}|S_t, A_t)&lt;/script&gt;
 &lt;/ul&gt;
 </description>
         <pubDate>Mon, 11 Sep 2017 00:00:00 -0700</pubDate>
-        <link>http://localhost:4000//Reinforcement-Learning-Lesson-7/</link>
-        <guid isPermaLink="true">http://localhost:4000//Reinforcement-Learning-Lesson-7/</guid>
+        <link>https://pyemma.github.io//Reinforcement-Learning-Lesson-7/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//Reinforcement-Learning-Lesson-7/</guid>
       </item>
     
   </channel>
