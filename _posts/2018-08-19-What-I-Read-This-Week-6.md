@@ -1,6 +1,10 @@
 ---
   layout: single
-  title: Reading Notes 08/19
+  title: What I Read This Week 6
+  categories:
+    - reading notes
+  tags:
+    - model interpreting
 ---
 
 #### Model Interpreting

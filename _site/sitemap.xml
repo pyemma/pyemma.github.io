@@ -109,7 +109,7 @@
 <lastmod>2018-03-31T00:00:00-07:00</lastmod>
 </url>
 <url>
-<loc>https://pyemma.github.io/Reading-Notes/</loc>
+<loc>https://pyemma.github.io/reading%20notes/What-I-Read-This-Week-6/</loc>
 <lastmod>2018-08-19T00:00:00-07:00</lastmod>
 </url>
 <url>
@@ -123,6 +123,9 @@
 </url>
 <url>
 <loc>https://pyemma.github.io/about/</loc>
+</url>
+<url>
+<loc>https://pyemma.github.io/categories/</loc>
 </url>
 <url>
 <loc>https://pyemma.github.io/tags/project/</loc>
@@ -147,6 +150,15 @@
 </url>
 <url>
 <loc>https://pyemma.github.io/tags/reinforcement-learning/</loc>
+</url>
+<url>
+<loc>https://pyemma.github.io/tags/reading-notes/</loc>
+</url>
+<url>
+<loc>https://pyemma.github.io/tags/model-interpreting/</loc>
+</url>
+<url>
+<loc>https://pyemma.github.io/categories/reading-notes/</loc>
 </url>
 <url>
 <loc>https://pyemma.github.io/page2/</loc>

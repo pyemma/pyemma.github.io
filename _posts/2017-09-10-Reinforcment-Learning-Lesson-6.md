@@ -18,7 +18,7 @@ The advantage of **Policy based RL** is:
 * Can learn stochastic policies
 
 #### Policy Objective Functions
-Since we are going to learn $\pi_\theta (s, a)$ and find the best $\theta$, we need to first find a way to measure the quality of our policy. These are called **policy objective function** and some we can use are:
+Since we are going to learn \\( \pi_\theta (s, a) \\) and find the best \\( \theta \\), we need to first find a way to measure the quality of our policy. These are called **policy objective function** and some we can use are:
 * In episode environment we can use the start value
 
 $$
@@ -32,7 +32,7 @@ J_{avV}(\theta) = \sum_{s}d^{\pi_\theta}(s)V^{\pi_\theta}(s) \\
 J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a
 $$
 
-where $d^{\pi_\theta}(s)$ is stationary distribution of Markov chain for $\pi_\theta$.
+where \\( d^{\pi_\theta}(s) \\) is stationary distribution of Markov chain for \\( \pi_\theta \\).
 
 After we have the measurement of the policy quality, we are going to find the best parameter which gives us the best quality and this becomes an optimization problem. Actually, similar to the last post, we can also use stochastic gradient to help use here. Since we are trying to find the maximum value, we are going to use what is called gradient ascent to find the steepest direction to update our parameter (very similar to gradient decrease).
 

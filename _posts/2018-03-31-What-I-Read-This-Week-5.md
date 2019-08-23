@@ -1,6 +1,8 @@
 ---
   layout: single
   title: What I Read This Week 5
+  tags:
+    - reading notes
 ---
 [Google and Uber’s Best Practices for Deep Learning](https://medium.com/intuitionmachine/google-and-ubers-best-practices-for-deep-learning-58488a8899b6)
 A good post introducing how **Uber** and **Google** apply deep learning in real world (not in academic). The post illustrates some highlight of the two machine learning platform build by these two giants: [Michelangelo](https://eng.uber.com/michelangelo/) and [TFX](http://www.kdd.org/kdd2017/papers/view/tfx-a-tensorflow-based-production-scale-machine-learning-platform).
