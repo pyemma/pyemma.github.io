@@ -14,11 +14,6 @@ var store = [{
         "tags": ["project","distributed system","data structure"],
         "url": "https://pyemma.github.io/Simple-Bloom-Filter-Implementation-Part-I/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
-        "title": "How To Read A Book",
-        "excerpt":"This is the key part I read from the book «How To Read A Book», how to do analytical reading. Figure out what a book is about Classify the book according to kind and subject matter. (Is it a theory book or a practical book?) State what the whole book...","categories": [],
-        "tags": ["reading"],
-        "url": "https://pyemma.github.io/How-To-Read-A-Book/",
-        "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
         "title": "Simple Bloom Filter Implementation Part 2",
         "excerpt":"IntroductionIn the last blog, we introduced the initial version of bloom filter. In the first implementation, we only tested our bloom filter on built in type String. This time, we tested in against a custom class Person. The idea is simple: we use thrift to define our custom data structure....","categories": [],
         "tags": ["project","distributed system","data structure"],
@@ -99,43 +94,8 @@ var store = [{
         "tags": [],
         "url": "https://pyemma.github.io/Reinforcement-Learning-Lesson-8/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
-        "title": "Deep Work Reading Note",
-        "excerpt":"“Deep Work” is the first book I read this year. I was pretty impressed by the idea and methods the author purposed to help you gain the ability to do “deep work”, which means how to be concentrate on the work that can really generate value. In this note, I...","categories": [],
-        "tags": [],
-        "url": "https://pyemma.github.io/Deep-Work-Reading-Note/",
-        "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
-        "title": "What I Read This Week 1",
-        "excerpt":"The 3 Tricks That Made AlphaGo Zero WorkThis post explains why AlphaGo Zero out-perform than it’s elder brother AlphaGo, summarizing in 3 points that lead to the supreme result: Use the evaluations provided by MCTS to continually improve the neural network’s evaluations of the board position, instead of using human...","categories": [],
-        "tags": [],
-        "url": "https://pyemma.github.io/What-I-Read-This-Week-I/",
-        "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
-        "title": "What I Read This Week 2",
-        "excerpt":"Evolving search recommendations on PinterestA post introducing the search work done in Pinterest. Initially they use a Term-Query graph to generate candidates. In this graph, each term (a single word) is represent a node, as well as the query. Each term node is connected to the query, weighted by the...","categories": [],
-        "tags": [],
-        "url": "https://pyemma.github.io/What-I-Read-This-Week-2/",
-        "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
         "title": "DQN In Practice",
         "excerpt":"Recently I have been working on Deep-Q-Learning and apply it to some interesting AI games. In this post, I would like to give a brief introduction to how I implemented the Deep-Q-Learning, as well as lots of learning along the way.What is DQNTo understand DQN, we need first know is...","categories": [],
         "tags": [],
         "url": "https://pyemma.github.io/DQN-In-Practice/",
-        "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
-        "title": "What I Read This Week 3",
-        "excerpt":"Explicit vs. Implicit Recommenders Never use RMSE (or other metrics only take explicit feedback (e.g. rating)) as measurement for your recommendation system Implicit feedback (e.g. click/view) is far more valuable than explicit one Netflix is not using star anymore as an effort to remove explicit feedbackThis is a pretty interesting...","categories": [],
-        "tags": [],
-        "url": "https://pyemma.github.io/What-I-Read-This-Week-3/",
-        "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
-        "title": "What I Read This Week 4",
-        "excerpt":"A visual proof that neural nets can compute any functionA really good writing on helping understand why neural network can approximate any functions, without too much illustrate on complex mathematic theory.The main idea the author used is that, for any activation function used in neuron, we can make it has...","categories": [],
-        "tags": ["reading notes"],
-        "url": "https://pyemma.github.io/What-I-Read-This-Week-4/",
-        "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
-        "title": "What I Read This Week 5",
-        "excerpt":"Google and Uber’s Best Practices for Deep LearningA good post introducing how Uber and Google apply deep learning in real world (not in academic). The post illustrates some highlight of the two machine learning platform build by these two giants: Michelangelo and TFX.For these two platform, there share some common...","categories": [],
-        "tags": ["reading notes"],
-        "url": "https://pyemma.github.io/What-I-Read-This-Week-5/",
-        "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
-        "title": "What I Read This Week 6",
-        "excerpt":"Model Interpreting Ideas on interpreting machine learning Residual analysis can help understand which part of the data model is doing wrongly and thus find solution to improve it. However it’s straight forward to apply this method if the problem is a pure regression problem, which is actually not a common...","categories": ["reading notes"],
-        "tags": ["model interpreting"],
-        "url": "https://pyemma.github.io/reading%20notes/What-I-Read-This-Week-6/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"}]

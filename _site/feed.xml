@@ -7,99 +7,6 @@
     <atom:link href="https://pyemma.github.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
-        <title>What I Read This Week 6</title>
-        <description>&lt;h4 id=&quot;model-interpreting&quot;&gt;Model Interpreting&lt;/h4&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.oreilly.com/ideas/ideas-on-interpreting-machine-learning&quot;&gt;Ideas on interpreting machine learning&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Residual analysis can help understand which part of the data model is doing wrongly and thus find solution to improve it. However it’s straight forward to apply this method if the problem is a pure regression problem, which is actually not a common practice in industry. How to do this with for logistic regression? (devariance?)&lt;/li&gt;
-  &lt;li&gt;A bunch of other method: surrogate model (train a simpler model on the output of the complexity model, which is similar to distill info of a neural network into a BDT), &lt;a href=&quot;https://arxiv.org/pdf/1602.04938v1.pdf&quot;&gt;LIME&lt;/a&gt;, maximum activation analysis (pair with LIME is better), variance importance (different way to compute the importance, pervade in tree model), sensitivity analysis, leave one covariance out, tree interpreter.&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Sun, 19 Aug 2018 00:00:00 -0700</pubDate>
-        <link>https://pyemma.github.io//reading%20notes/What-I-Read-This-Week-6/</link>
-        <guid isPermaLink="true">https://pyemma.github.io//reading%20notes/What-I-Read-This-Week-6/</guid>
-      </item>
-    
-      <item>
-        <title>What I Read This Week 5</title>
-        <description>&lt;p&gt;&lt;a href=&quot;https://medium.com/intuitionmachine/google-and-ubers-best-practices-for-deep-learning-58488a8899b6&quot;&gt;Google and Uber’s Best Practices for Deep Learning&lt;/a&gt;
-A good post introducing how &lt;strong&gt;Uber&lt;/strong&gt; and &lt;strong&gt;Google&lt;/strong&gt; apply deep learning in real world (not in academic). The post illustrates some highlight of the two machine learning platform build by these two giants: &lt;a href=&quot;https://eng.uber.com/michelangelo/&quot;&gt;Michelangelo&lt;/a&gt; and &lt;a href=&quot;http://www.kdd.org/kdd2017/papers/view/tfx-a-tensorflow-based-production-scale-machine-learning-platform&quot;&gt;TFX&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;For these two platform, there share some common idea: &lt;em&gt;enforce the share of knowledge across the company&lt;/em&gt;. For example, the all provide feature store, which is shared across the company and every team can reuse the feature easily. Also, the meta-data about model is also stored so that everyone can learn how model is trained, how’s the performance and might apply similar model design to their own problem.&lt;/p&gt;
-
-&lt;p&gt;The TFX is relatively more complex than Michelangelo (because Google is larger in scale right :) ). Some unique traits included in TFX that impresses me a lot:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;TFX emphasize a lot on data management, it provides a mechanism to monitor the distribution and statistic of the data. This will help engineer understand the data as well as detecting some abnormality in the data.&lt;/li&gt;
-  &lt;li&gt;TFX also provide transfer-learning by making warm-up from model trained on common features pretty easy.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.tensorflow.org/programmers_guide/eager&quot;&gt;TensforFlow Eager Execution&lt;/a&gt;
-Helpful for model debugging.&lt;/p&gt;
-</description>
-        <pubDate>Sat, 31 Mar 2018 00:00:00 -0700</pubDate>
-        <link>https://pyemma.github.io//What-I-Read-This-Week-5/</link>
-        <guid isPermaLink="true">https://pyemma.github.io//What-I-Read-This-Week-5/</guid>
-      </item>
-    
-      <item>
-        <title>What I Read This Week 4</title>
-        <description>&lt;h3 id=&quot;a-visual-proof-that-neural-nets-can-compute-any-function&quot;&gt;&lt;a href=&quot;http://neuralnetworksanddeeplearning.com/chap4.html&quot;&gt;A visual proof that neural nets can compute any function&lt;/a&gt;&lt;/h3&gt;
-&lt;p&gt;A really good writing on helping understand why neural network can approximate any functions, without too much illustrate on complex mathematic theory.&lt;/p&gt;
-
-&lt;p&gt;The main idea the author used is that, for any activation function used in neuron, we can make it has a pretty large weight and bias and it would be like a function that, before some value it would be 0 and after it would be 1. We can have two neurons, manipulate the weight and bias to get a step function. The range of this step function could be pretty small, together with the idea of calculus, we can use millions of such step function to approximate almost all functions. Here is an example from the original blog to show this idea. The parameter \(s \) is get by \( s = -b/w \), and \( h \) is a parameter used to control the hight of the step function. For example, the neuron \(s = 0.4 \) and \( s = 0.6 \) is a pair, the \( h \) for the first one is \( -1.2 \) and for the second one is \( 1.2 \). Thus, they worked together, we get a step function that starts at \( 0.4 \), jump to \( -1.2 \), and back at \( 0.6 \).&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/assets/nn_approx.png&quot; alt=&quot;Neural Network Approximate Any Function&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;understanding-capsule-networksais-alluring-new-architecture&quot;&gt;&lt;a href=&quot;https://medium.freecodecamp.org/understanding-capsule-networks-ais-alluring-new-architecture-bdb228173ddc&quot;&gt;Understanding Capsule Networks — AI’s Alluring New Architecture&lt;/a&gt;&lt;/h3&gt;
-&lt;p&gt;Another very good tutorial blog on capsule neural network, the author also provide a visualization tool that we can play with.&lt;/p&gt;
-</description>
-        <pubDate>Sat, 03 Mar 2018 00:00:00 -0800</pubDate>
-        <link>https://pyemma.github.io//What-I-Read-This-Week-4/</link>
-        <guid isPermaLink="true">https://pyemma.github.io//What-I-Read-This-Week-4/</guid>
-      </item>
-    
-      <item>
-        <title>What I Read This Week 3</title>
-        <description>&lt;h3 id=&quot;explicit-vs-implicit-recommenders&quot;&gt;&lt;a href=&quot;https://medium.com/the-graph/insights-from-an-evening-with-recommender-systems-experts-ab44d677dc5e&quot;&gt;Explicit vs. Implicit Recommenders&lt;/a&gt;&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;Never use RMSE (or other metrics only take explicit feedback (e.g. rating)) as measurement for your recommendation system&lt;/li&gt;
-  &lt;li&gt;Implicit feedback (e.g. click/view) is far more valuable than explicit one&lt;/li&gt;
-  &lt;li&gt;Netflix is not using &lt;strong&gt;star&lt;/strong&gt; anymore as an effort to remove explicit feedback&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;This is a pretty interesting argument and I would like to put a question mark on it. Plan to do some experiment to justify this argument.&lt;/p&gt;
-
-&lt;h3 id=&quot;introduction-to-learning-to-trade-with-reinforcement-learning&quot;&gt;&lt;a href=&quot;http://www.wildml.com/2018/02/introduction-to-learning-to-trade-with-reinforcement-learning/&quot;&gt;Introduction to Learning to Trade with Reinforcement Learning&lt;/a&gt;&lt;/h3&gt;
-&lt;p&gt;A good post on introducing using reinforcement learning techniques to do trading. The author opens with some background and basic concept in trading, then comes with the limitation of using supervised learning method and current approach. Explained how we can model the trading into reinforcement learning, what kinds of environment, state, actions, rewards, etc. And then stated the beneficial to use reinforcement learning.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;It’s pretty hard to make money by predicting the price only through supervised learning. Even though we could accurately predict the price next time, we still need to face the problem of &lt;strong&gt;liquidity available&lt;/strong&gt;, &lt;strong&gt;network latency&lt;/strong&gt; and &lt;strong&gt;fees&lt;/strong&gt;. To make money by supervised learning, we need to accurate predict the large volume of price change or a long time period, or smartly manage our orders and fee, which all is very challenge.&lt;/li&gt;
-  &lt;li&gt;Another problem with supervised learning is that its not indicate a policy we should execute. You have to come up with a rule based policy.&lt;/li&gt;
-  &lt;li&gt;For the reinforcement learning based strategy, we have several beneficial points:
-    &lt;ul&gt;
-      &lt;li&gt;&lt;em&gt;Learned Policy&lt;/em&gt;: we won’t do a job like “first have a model to predict price and then compose a rule based policy”&lt;/li&gt;
-      &lt;li&gt;&lt;em&gt;Trained in a simulated environment&lt;/em&gt;: We can add all the factors that would affect our model into the environment, and let the model learn to response to these factors (e.g. network latency)&lt;/li&gt;
-      &lt;li&gt;&lt;em&gt;Learning to adopt to market conditions&lt;/em&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;em&gt;Ability to model other agents&lt;/em&gt;, this stems from the fact that we can incorporate other agent into our environment and let our agent to game with them&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;titanic-data-science-solutions&quot;&gt;&lt;a href=&quot;https://www.kaggle.com/startupsci/titanic-data-science-solutions&quot;&gt;Titanic Data Science Solutions&lt;/a&gt;&lt;/h3&gt;
-&lt;p&gt;A good notebook introduce a basic workflow of how to solve a competition on kaggle. The most valuable part in my opinion is how to use pandas to do lots of data investigation and feature visualization.&lt;/p&gt;
-
-&lt;h3 id=&quot;exploratory-data-analysis-with-pandas&quot;&gt;&lt;a href=&quot;https://medium.com/open-machine-learning-course/open-machine-learning-course-topic-1-exploratory-data-analysis-with-pandas-de57880f1a68&quot;&gt;Exploratory data analysis with Pandas&lt;/a&gt;&lt;/h3&gt;
-&lt;p&gt;A good tutorial on explaining how to use pandas to do data analysis. The assignment is well-written and pretty helpful for mastering all kinds of functions in pandas.&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/pandas-dev/pandas/blob/master/doc/cheatsheet/Pandas_Cheat_Sheet.pdf&quot;&gt;Pandas Cheat Sheet&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Sun, 25 Feb 2018 00:00:00 -0800</pubDate>
-        <link>https://pyemma.github.io//What-I-Read-This-Week-3/</link>
-        <guid isPermaLink="true">https://pyemma.github.io//What-I-Read-This-Week-3/</guid>
-      </item>
-    
-      <item>
         <title>DQN In Practice</title>
         <description>&lt;p&gt;Recently I have been working on Deep-Q-Learning and apply it to some interesting AI games. In this post, I would like to give a brief introduction to how I implemented the Deep-Q-Learning, as well as lots of learning along the way.&lt;/p&gt;
 
@@ -190,160 +97,6 @@ Helpful for model debugging.&lt;/p&gt;
         <pubDate>Sat, 27 Jan 2018 00:00:00 -0800</pubDate>
         <link>https://pyemma.github.io//DQN-In-Practice/</link>
         <guid isPermaLink="true">https://pyemma.github.io//DQN-In-Practice/</guid>
-      </item>
-    
-      <item>
-        <title>What I Read This Week 2</title>
-        <description>&lt;h3 id=&quot;evolving-search-recommendations-on-pinterest&quot;&gt;&lt;a href=&quot;https://medium.com/@Pinterest_Engineering/evolving-search-recommendations-on-pinterest-136e26e0468a&quot;&gt;Evolving search recommendations on Pinterest&lt;/a&gt;&lt;/h3&gt;
-&lt;p&gt;A post introducing the search work done in Pinterest.&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Initially they use a &lt;em&gt;Term-Query graph&lt;/em&gt; to generate candidates. In this graph, each term (a single word) is represent a node, as well as the query. Each term node is connected to the query, weighted by the reciprocal of the number of queries that term shows up in. Each query node is also connected to query node, weighted by the relativeness. Most visited queries are recommended.&lt;/li&gt;
-  &lt;li&gt;They later changed to &lt;em&gt;Pixie&lt;/em&gt;, a graph based recommendation platform. The graph is build using query and pins. Compared with pervious solution, this solution will not break the query and thus keep the semantic information. &lt;strong&gt;To give better recommendation, semantic information is important.&lt;/strong&gt;&lt;/li&gt;
-  &lt;li&gt;They have further work to utilize embeddings for queries. Is embedding based candidate generation works better than random walk based candidate generation?&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;an-overview-of-multi-task-learning-in-deep-neural-networks&quot;&gt;&lt;a href=&quot;http://ruder.io/multi-task/index.html#introduction&quot;&gt;An Overview of Multi-Task Learning in Deep Neural Networks&lt;/a&gt;&lt;/h3&gt;
-&lt;p&gt;A pretty good blog introducing what MTL is, who is works and some recent works. Here are some points I think most beneficial:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Using one sentence to explain MTL: “By sharing representation among related tasks(leveraging different domain-specific knowledge), the generalization of model is improved.”&lt;/li&gt;
-  &lt;li&gt;Why MTL work:
-    &lt;ul&gt;
-      &lt;li&gt;Our training data will always contains some noise. Training a single goal on the data will easily get overfit. However, training on multiple tasks simultaneously will help cancel out this noise (&lt;strong&gt;Data Augmentation&lt;/strong&gt;).&lt;/li&gt;
-      &lt;li&gt;By training on multiple tasks and sharing the same representation at the same time, the model will try to find a more general hypothesis that would work for all tasks (&lt;strong&gt;Regularization&lt;/strong&gt;).&lt;/li&gt;
-      &lt;li&gt;Some feature combination might be pretty complex in one task and hard to let the model to capture, but easy in the other one. MTL will help sharing this info between tasks(&lt;strong&gt;Feature Engineering&lt;/strong&gt;).&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;There are mainly two form of MTL:
-    &lt;ul&gt;
-      &lt;li&gt;&lt;strong&gt;Hard Parameter Sharing&lt;/strong&gt;: Different tasks will have several same layers at the lower level, and have their own layers at higher level. A common use-case is that, when can use the bottom layers in VGG, and then train our own layer on our task.&lt;/li&gt;
-      &lt;li&gt;&lt;strong&gt;Soft Parameter Sharing&lt;/strong&gt;: Different tasks will have their own model, but each model can constraint each other to not differ too much.&lt;/li&gt;
-      &lt;li&gt;Currently, &lt;strong&gt;Hard Parameter Sharing&lt;/strong&gt; is still very popular, but &lt;strong&gt;Soft Parameter Sharing&lt;/strong&gt; is more promising as it let the model to learn what to share.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;welcoming-the-era-of-deep-neuroevolution&quot;&gt;&lt;a href=&quot;https://eng.uber.com/deep-neuroevolution/&quot;&gt;Welcoming the Era of Deep Neuroevolution&lt;/a&gt;&lt;/h3&gt;
-&lt;p&gt;Uber AI Lab’s work on using Genetic Algorithm instead of SGD to optimize DNN on reinforcement learning tasks.&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;GA can produce comparatively similar result as SGD.&lt;/li&gt;
-  &lt;li&gt;They purposed a method to smartly guide the mutation to put more attention on the sensitive feature, to solve the problem GA has when dealing with large networks.&lt;/li&gt;
-  &lt;li&gt;They also purposed a method to enforce the exploration, which they try to have a population of candidates that act differently from each other as much as possible (unlikely to trapped in local minima).&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;effective-modern-c&quot;&gt;[Effective Modern C++]&lt;/h3&gt;
-&lt;p&gt;Mainly read the smart pointer part.&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;unique_ptr&lt;/code&gt; performs similar to the old fashion raw pointer. It indicates a exclusive ownership to the object it manages, thus it can only be moved not be copied. We can specify a custom deleter to a unique pointer, and the deleter would become part of the unique pointer’s type. It is very convenient to covert a unique pointer to a shared pointer.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;shared_ptr&lt;/code&gt; performs similar to the garbage collection in Java. It indicates a shared ownership to the object. The underlay mechanism is that each shared pointer will create a control block that would keep the reference count and other data. Since there is a separate object holding all extra info, the deleter we passed to shared pointer will not become a part of its type. Remember not using the raw pointer to initialize a shared pointer, as it is pretty dangerous and we might result in free the object multiple times. This is extremely the case when we are working with the &lt;code class=&quot;highlighter-rouge&quot;&gt;this&lt;/code&gt; pointer. To be able to safely create a shared pointer from &lt;code class=&quot;highlighter-rouge&quot;&gt;this&lt;/code&gt;, use &lt;code class=&quot;highlighter-rouge&quot;&gt;enable_shared_from_this&lt;/code&gt; template.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;enable_shared_from_this&lt;/code&gt; uses &lt;em&gt;Curiously Recurring Template Pattern (CRTP)&lt;/em&gt; (to be add more details later).&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;weak_ptr&lt;/code&gt; is like &lt;code class=&quot;highlighter-rouge&quot;&gt;shared_ptr&lt;/code&gt;, but it does not effect the reference count on the object, and the object it is pointing to might be destroyed. The use case for &lt;code class=&quot;highlighter-rouge&quot;&gt;weak_ptr&lt;/code&gt; can be &lt;strong&gt;cacheing&lt;/strong&gt;, &lt;strong&gt;observer lists&lt;/strong&gt; and the prevention of &lt;code class=&quot;highlighter-rouge&quot;&gt;shared_ptr&lt;/code&gt; cycles.&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Sat, 20 Jan 2018 00:00:00 -0800</pubDate>
-        <link>https://pyemma.github.io//What-I-Read-This-Week-2/</link>
-        <guid isPermaLink="true">https://pyemma.github.io//What-I-Read-This-Week-2/</guid>
-      </item>
-    
-      <item>
-        <title>What I Read This Week 1</title>
-        <description>&lt;h3 id=&quot;the-3-tricks-that-made-alphago-zero-work&quot;&gt;&lt;a href=&quot;https://hackernoon.com/the-3-tricks-that-made-alphago-zero-work-f3d47b6686ef&quot;&gt;The 3 Tricks That Made AlphaGo Zero Work&lt;/a&gt;&lt;/h3&gt;
-&lt;p&gt;This post explains why AlphaGo Zero out-perform than it’s elder brother AlphaGo, summarizing in 3 points that lead to the supreme result:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Use the evaluations provided by MCTS to continually improve the neural network’s evaluations of the board position, instead of using human play (This is actually the idea of using &lt;strong&gt;better training sample&lt;/strong&gt;).&lt;/li&gt;
-  &lt;li&gt;Use a single neural network to predict which &lt;strong&gt;move&lt;/strong&gt; to recommend &lt;em&gt;and&lt;/em&gt; which &lt;strong&gt;move&lt;/strong&gt; are likely to win the game (This is the idea of using &lt;a href=&quot;http://ruder.io/multi-task/index.html#introduction&quot;&gt;&lt;strong&gt;Multitask Learning&lt;/strong&gt;&lt;/a&gt;).&lt;/li&gt;
-  &lt;li&gt;Use a upgrade version of neural network (from convolutional neural network to &lt;strong&gt;residual neural network&lt;/strong&gt;).&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;intuitive-rl-intro-to-advantage-actor-critic-a2c&quot;&gt;&lt;a href=&quot;https://medium.com/@rudygilman/intuitive-rl-intro-to-advantage-actor-critic-a2c-4ff545978752&quot;&gt;Intuitive RL: Intro to Advantage-Actor-Critic (A2C)&lt;/a&gt;&lt;/h3&gt;
-&lt;p&gt;A very vivid introduction of &lt;strong&gt;Advantage-Actor-Critic&lt;/strong&gt; reinforcement learning.&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;First we should keep in mind that &lt;strong&gt;Actor-Critic&lt;/strong&gt; is a blend of both value estimation and policy estimation reinforcement learning method, a.k.a we will try to learn value function, as well as policy from game play (This is different from pure value function based method and policy based method).&lt;/li&gt;
-  &lt;li&gt;In &lt;strong&gt;Actor-Critic&lt;/strong&gt;, the &lt;strong&gt;Actor&lt;/strong&gt; will tries to optimize the parameter for policy and &lt;strong&gt;Critic&lt;/strong&gt; will tries to optimize the parameter for the value function of a state. This can be done by having a single model outputting both the value of the state, as will as the probability of action.&lt;/li&gt;
-  &lt;li&gt;By jump into one state, taking action and get reward. We will get the training examples for our &lt;strong&gt;Critic&lt;/strong&gt;. The estimate for each state will become more and more accurate. In this way, we don’t need to wait until the end of the game to get the value of each state, which is high in variance.&lt;/li&gt;
-  &lt;li&gt;In stead of simply policy gradient update the policy (which tries to avoid the action that lead to a state with low value), we use &lt;strong&gt;Advantage&lt;/strong&gt;, which is the relative improvement of the action take (e.g. current state is -100, and take action A we arrive in a state with -20, the improvement of the action is 80!). The idea behind this is that the action might be the result that result in a low value.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&quot;ai-and-deep-learning-in-2017--a-year-in-review&quot;&gt;&lt;a href=&quot;http://www.wildml.com/2017/12/ai-and-deep-learning-in-2017-a-year-in-review/&quot;&gt;AI and Deep Learning in 2017 – A Year in Review&lt;/a&gt;&lt;/h3&gt;
-&lt;p&gt;A really awesome post that summarize what is going on in deep learning in 2017. Some points that I enjoy most:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Evolution Algorithm (e.g. Genetic Algorithm) is coming back again.&lt;/li&gt;
-  &lt;li&gt;Lots of deep learning framework is available right now: PyTorch is pretty popular in academic, but personally I thing TensorFlow is still the bests to try out (It’s also my plan to be more familiar with TensorFlow and work on some side project).&lt;/li&gt;
-  &lt;li&gt;A good online reinforcement learning algorithm to read: &lt;a href=&quot;https://github.com/openai/baselines&quot;&gt;&lt;em&gt;OpenAI Baseline&lt;/em&gt;&lt;/a&gt;.&lt;/li&gt;
-  &lt;li&gt;A good online courses: https://stats385.github.io/&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;effective-modern-c&quot;&gt;Effective Modern C++&lt;/h3&gt;
-&lt;p&gt;Mainly read the chapter about lambda function, some take away is:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Avoid using default capture&lt;/li&gt;
-  &lt;li&gt;In C++14, we can use init capture to move data we would like to use into the closure class, or use some expression to initialize the data member&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c--&quot; data-lang=&quot;c++&quot;&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pw&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;move&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pw&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)](){&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pw&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pw&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;make_unique&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Widget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()](){&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pw&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Use decltype on auto&amp;amp;&amp;amp; parameters to forward them&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c--&quot; data-lang=&quot;c++&quot;&gt;&lt;span class=&quot;k&quot;&gt;auto&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[](&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;auto&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;param&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;forward&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;decltype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;Another thing to remember is to prefer using &lt;strong&gt;alias&lt;/strong&gt; declarations than &lt;strong&gt;typedefs&lt;/strong&gt;, because &lt;strong&gt;alias&lt;/strong&gt; supports templates better:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c--&quot; data-lang=&quot;c++&quot;&gt;&lt;span class=&quot;k&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;typename&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MyAllocList&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MyAlloc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-</description>
-        <pubDate>Sun, 14 Jan 2018 00:00:00 -0800</pubDate>
-        <link>https://pyemma.github.io//What-I-Read-This-Week-I/</link>
-        <guid isPermaLink="true">https://pyemma.github.io//What-I-Read-This-Week-I/</guid>
-      </item>
-    
-      <item>
-        <title>Deep Work Reading Note</title>
-        <description>&lt;p&gt;“Deep Work” is the first book I read this year. I was pretty impressed by the idea and methods the author purposed to help you gain the ability to do “deep work”, which means how to be concentrate on the work that can really generate value. In this note, I would like to summarize the main points of author, together with my personal experience.&lt;/p&gt;
-
-&lt;p&gt;Deep work is the work which can really generate value, compared with shallow work, which is more like some routines that don’t need to think about too much to finish. Only by doing deep work, can we really improve ourselves, broaden our vision and shape our skills. As my personal experience, learning a new machine learning algorithm, or build a new APP counts to deep work, but repeatedly doing some interview algorithm exercise is shallow work.&lt;/p&gt;
-
-&lt;p&gt;There are mainly 4 different strategies for deep work:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Monastic: This is the most crucial strategies, which means that you are going to disconnected with all around and only focusing on the work you are doing all the time. This strategy does not apply to me, as I have work to do everyday and could not totally block others.&lt;/li&gt;
-  &lt;li&gt;Bimodal: This is less crucial then the above one. For this one, you are not going to disconnected with the world all the time, but periodically. For example, for each year, you might choose two or three month to disconnect; or for each month, you choose one week to disconnect. This also does not apply for me, if I’m absent for too long, my manager would go crazy about me.&lt;/li&gt;
-  &lt;li&gt;Rhythmic: This maybe the most common way to do deep work, which is to schedule some time each day dedicatedly. For example, every morning from 7:00 am to 9:00 am do deep work. This is the most suitable strategy for me, as well as for most of us. Although the “deepness” is not as powerful as the above two, but it still works pretty well. My plan is to change my schedule, and leave some time before go to work and go to bed, do some deep work.&lt;/li&gt;
-  &lt;li&gt;Journalistic: This is the most flexible version, which is just to do deep work occasionally across the day, whenever you have some time. But this really need have strong deep work ability, so that you can switch to deep work easily. Because the switch will consume lots of power-will, which is limited resource.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Besides these strategies, there are also some tips to help do deep work:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Come up with some rules when you do deep work, e.g. where to work (red rock cafe?), how to work (ban internet, no wechat) and how to support you deep work (relax music and good coffee)&lt;/li&gt;
-  &lt;li&gt;Go to some really really really expensive places :)&lt;/li&gt;
-  &lt;li&gt;Collaboration with others to help inspire your idea, but still work alone to do deep work&lt;/li&gt;
-  &lt;li&gt;Execute like a business:
-    &lt;ul&gt;
-      &lt;li&gt;Have a small number of clear ambitious. I usually fail this one, as I was always trying to do lots of thing together to maximums my parallelism.&lt;/li&gt;
-      &lt;li&gt;Record to number of deep hour you spend on deep work&lt;/li&gt;
-      &lt;li&gt;Keep a compelling scoreboard to track your progress&lt;/li&gt;
-      &lt;li&gt;Spend sometime to introspect how well you are doing deep work, what you success and what you fail to do&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Take good rest, e.g. stop working after 8:00 pm&lt;/li&gt;
-  &lt;li&gt;Divide the working hour into some large block (deep work block and shallow work block). This would be extreme helpful for me, as I was easily distracted when I was writing code. What I plan to do is to have three long (more than 1hr) deep working blocks to focusing on coding, reading/writing important document/posts. Also schedule every minutes of the work time.&lt;/li&gt;
-  &lt;li&gt;Do some meditate productively. What I plan is to spend some time walking around the campus
-    &lt;ul&gt;
-      &lt;li&gt;Be wary of distraction and looping. When you start to distract from your original problem, remind yourself and come back. Also you need to avoid the looping question you have already thought about&lt;/li&gt;
-      &lt;li&gt;Structure deep thinking&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Do some memory exercise to help you improve your concentration&lt;/li&gt;
-  &lt;li&gt;Quit social media (no Facebook, wechat :) )&lt;/li&gt;
-  &lt;li&gt;Know how to tell what is deep work and what is shallow work, and prioritize deep work.&lt;/li&gt;
-  &lt;li&gt;Talk with your manager about the percentage of shallow work spend on each day.&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Thu, 04 Jan 2018 00:00:00 -0800</pubDate>
-        <link>https://pyemma.github.io//Deep-Work-Reading-Note/</link>
-        <guid isPermaLink="true">https://pyemma.github.io//Deep-Work-Reading-Note/</guid>
       </item>
     
       <item>
@@ -476,6 +229,597 @@ R_{t+1} = R_\eta(R_{t+1}|S_t, A_t)&lt;/script&gt;
         <pubDate>Mon, 11 Sep 2017 00:00:00 -0700</pubDate>
         <link>https://pyemma.github.io//Reinforcement-Learning-Lesson-7/</link>
         <guid isPermaLink="true">https://pyemma.github.io//Reinforcement-Learning-Lesson-7/</guid>
+      </item>
+    
+      <item>
+        <title>Reinforcement Learning Lesson 6</title>
+        <description>&lt;p&gt;In the pervious we use a model to approximate the state value/action value function. In this post, we are going to learn how to directly parameterize a policy, which means we would directly get the probability of each action given a state:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\pi_{\theta}(s ,a) = P[a|s, \theta]&lt;/script&gt;
+
+&lt;p&gt;In this case, we are not going to have any value function. A slight variance of this method is called &lt;strong&gt;Actor-Critic&lt;/strong&gt;, in which both value function and policy are modeled and learnt.&lt;/p&gt;
+
+&lt;p&gt;The advantage of &lt;strong&gt;Policy based RL&lt;/strong&gt; is:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Better convergence properties&lt;/li&gt;
+  &lt;li&gt;Effective in high-dimensional or continuous action spaces&lt;/li&gt;
+  &lt;li&gt;Can learn stochastic policies&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;policy-objective-functions&quot;&gt;Policy Objective Functions&lt;/h4&gt;
+&lt;p&gt;Since we are going to learn \( \pi_\theta (s, a) \) and find the best \( \theta \), we need to first find a way to measure the quality of our policy. These are called &lt;strong&gt;policy objective function&lt;/strong&gt; and some we can use are:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;In episode environment we can use the start value&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;J_1(\theta) = V^{\pi_\theta}(s_1) = E_{\pi_\theta}[v_1]&lt;/script&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;In continuous environment we can use average value or average reward pre time-step&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;J_{avV}(\theta) = \sum_{s}d^{\pi_\theta}(s)V^{\pi_\theta}(s) \\
+J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a&lt;/script&gt;
+
+&lt;p&gt;where \( d^{\pi_\theta}(s) \) is stationary distribution of Markov chain for \( \pi_\theta \).&lt;/p&gt;
+
+&lt;p&gt;After we have the measurement of the policy quality, we are going to find the best parameter which gives us the best quality and this becomes an optimization problem. Actually, similar to the last post, we can also use stochastic gradient to help use here. Since we are trying to find the maximum value, we are going to use what is called gradient ascent to find the steepest direction to update our parameter (very similar to gradient decrease).&lt;/p&gt;
+
+&lt;h4 id=&quot;score-function&quot;&gt;Score Function&lt;/h4&gt;
+&lt;p&gt;In order to compute the policy gradient analytically, we introduced the &lt;strong&gt;score function&lt;/strong&gt;. Assume policy $\pi_{\theta}$ is differentiable whenever it is non-zero and we know the gradient $\nabla_\theta \pi_\theta (s, a)$. Then using some tricky we have:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align}
+\nabla_\theta \pi_\theta (s, a) &amp; = \pi_\theta (s, a) \frac{\nabla_\theta \pi_\theta (s, a) }{\pi_\theta (s, a)} \\
+&amp; = \pi_\theta (s, a) \nabla_\theta log \pi_\theta (s, a)
+\end{align} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Here, $\nabla_\theta log \pi_\theta (s, a)$ is the &lt;strong&gt;score function&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h4 id=&quot;policy-gradient-theorem&quot;&gt;Policy Gradient Theorem&lt;/h4&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;For any differentiable policy $\pi_\theta (s, a)$, for any of the policy objective functions $J_1, J_{avV}, J_{avR}$, the policy gradient is&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\nabla_\theta J(\theta) = E_{\pi_\theta}[\nabla_\theta log \pi_\theta (s, a) Q^{\pi_\theta} (s, a)]&lt;/script&gt;
+
+&lt;h4 id=&quot;monte-carlo-policy-gradient&quot;&gt;Monte-Carlo Policy Gradient&lt;/h4&gt;
+&lt;p&gt;Use return as an unbiased sample of $Q^{\pi_\theta} (s, a)$, the algorithm is as follow:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initialize $\theta$ arbitrarily
+    &lt;ul&gt;
+      &lt;li&gt;for each episode ${s_1, a_1, r_2, …, s_{T-1}, a_{T-1}, r_T} ~ \pi_\theta$ do
+        &lt;ul&gt;
+          &lt;li&gt;for $t = 1$ to $T - 1$ do
+            &lt;ul&gt;
+              &lt;li&gt;$\theta = \theta + \alpha \nabla_\theta log \pi_\theta (s, a) v_t$&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;end for&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;end for&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;return $\theta$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;actor-critic-policy-gradient&quot;&gt;Actor Critic Policy Gradient&lt;/h4&gt;
+&lt;p&gt;The problem with Monte-Carlo Policy Gradient is that is has a very high variance. In order to reduce the variance, we can use a &lt;strong&gt;critic&lt;/strong&gt; to estimate the action value function. Thus in &lt;strong&gt;Actor Critic Policy Gradient&lt;/strong&gt;, we have two components:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;em&gt;Critic&lt;/em&gt; updates action value function parameters $w$&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;Actor&lt;/em&gt; updates policy parameters $\theta$, in direction suggested by critic&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Here is an example when we use linear value function approximation for the critic:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initialize $s$, $\theta$&lt;/li&gt;
+  &lt;li&gt;Sample $a ~ \pi_\theta$&lt;/li&gt;
+  &lt;li&gt;for each step do
+    &lt;ul&gt;
+      &lt;li&gt;Sample reward $r$, sample next state $s’$&lt;/li&gt;
+      &lt;li&gt;Sample action $a’ ~ \pi_\theta (s’, a’)$&lt;/li&gt;
+      &lt;li&gt;$\delta = r + \gamma Q_w(s’, a’) - Q_w(s, a)$ (This is the TD error)&lt;/li&gt;
+      &lt;li&gt;$\theta = \theta + \alpha \nabla_\theta log \pi_\theta (s, a) Q_w(s, a)$ (We replace with the approximation)&lt;/li&gt;
+      &lt;li&gt;$w = w + \beta \delta \phi(s, a)$ (Update value function approximation model parameter)&lt;/li&gt;
+      &lt;li&gt;$a = a’$, $s = s’$&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;end for&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Sun, 10 Sep 2017 00:00:00 -0700</pubDate>
+        <link>https://pyemma.github.io//Reinforcment-Learning-Lesson-6/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//Reinforcment-Learning-Lesson-6/</guid>
+      </item>
+    
+      <item>
+        <title>Reinforcement Learning Lesson 5</title>
+        <description>&lt;p&gt;In this post, we are going to look into how can we solve the real world problem with a practical way. Think of the state value function $v(s)$ or the action value function $q(s, a)$ we mentioned before. If the problem has a really large state space, then it would take a lot of memory to store each value function. Instead of recording each value function, we can actually use a model to approximate the actual value function, which means given the current state, we want to predict the value of the state. There are three types of value function approximation:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Input current state, output the state value&lt;/li&gt;
+  &lt;li&gt;Input current state and an action, out put the action value&lt;/li&gt;
+  &lt;li&gt;Input current state, output all possible action’s action value&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This can be reviewed as a classical supervised learning problem if we &lt;strong&gt;know the actual value function&lt;/strong&gt;, and more accurately speaking, its a regression problem. In the regression problem, we are trying to fit a model which will output some real number that matches the our input label as much as possible. In the regression problem, the loss is defined using mean-square error. In order to get a model, we need first to do some feature engineering and represent each state using the &lt;strong&gt;feature vector&lt;/strong&gt; $x(S)$, this is going to be the input into our model. And then we try to minimize&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;L(w) = E_{\pi}[(v_{\pi}(S) - v(S, w))^2]&lt;/script&gt;
+
+&lt;p&gt;Here $w$ is our model’s parameter and is what we are going to improve. $v_{\pi}(S)$ is the actual value (label) and $v(S, w)$ is the output from our model (predict). In order to minimize this loss, we use stochastic gradient decrease to update $w$, which we have:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\Delta w = \alpha (v_{\pi}(S) - v(S, w)) \nabla_w v(S, w)&lt;/script&gt;
+
+&lt;p&gt;Here $\alpha$ is a learning rate controlling how fast we improve $w$, and $\nabla_w v(S, w)$ is the derivate of our model toward the parameter, for example, if we choose a linear model, where $v(S, w) = x(S)^T * w$, then we would have&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\Delta w = \alpha (v_{\pi}(S) - v(S, w))x(S)&lt;/script&gt;
+
+&lt;p&gt;However, we could only obtain this update when we really &lt;strong&gt;know the actual value function&lt;/strong&gt;, which is the case of supervised learning. However, in reinforcement learning, we are lack of such information. So we have to use some target to replacement them. We can actually combining it with the algorithm we have introduced before. For example the MC algorithm, In each episode, we will get a series of the state and corresponding return $&amp;lt;S_t, G_t&amp;gt;$, we can actually use this return as our target and train our model on it. The process would be like use our model to compute the state value, and use some policy to go through the process, then we would have $&amp;lt;S_1, G_1&amp;gt;, &amp;lt;S_2, G_2&amp;gt;, …, &amp;lt;S_T, G_T&amp;gt;$. Then use these as our training data and update our model. This training is &lt;strong&gt;on-policy&lt;/strong&gt; (because we are learning as well as behaving) and &lt;strong&gt;incremental&lt;/strong&gt; (episode by episode). Similar things can be applied to TD(0) and TD($\lambda$), where we use TD target and $G_t^\lambda$. Good news to use TD target is that is needs less steps for model to converge (since TD target is less variance), but it might not converge in some cases, for example, if we choose Neural Network as our model, then the model will blow up.&lt;/p&gt;
+
+&lt;p&gt;Besides the incremental method, there is also &lt;strong&gt;batch&lt;/strong&gt; method, which we record all experience of the agent in $D$, and sample from it to get the training sample, then we update our model parameter using the same method above. &lt;strong&gt;Batch&lt;/strong&gt; method is more sample efficient and tries to find the best fit of all value functions available. While in the &lt;strong&gt;incremental&lt;/strong&gt; one, we are generate training sample one by one which is not very efficient, and we only use it once after update the parameter. A more detailed example is Deep Q-Networks (DQN), you can think of it as using NN model along with Q learning method. The algorithm is as follow:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Take action $a_t$ according to $\epsilon$-greedy policy&lt;/li&gt;
+  &lt;li&gt;Store transition $(s_t, a_t, r_{t+1}, s_{t+1})$ in replay memory $D$&lt;/li&gt;
+  &lt;li&gt;Sample random mini-batch of transitions $(s, a, r, s^,)$ from $D$&lt;/li&gt;
+  &lt;li&gt;Compute Q learning target with an old, fixed parameter $w^-$&lt;/li&gt;
+  &lt;li&gt;Optimize MSE between Q target and Q learning Network&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;L_i(w_i) = E_{s,a,r,s^, ~ D}[(r + \gamma max_{a^,}Q(s^,,a^,; w^-) - Q(s, a; w_i))^2]&lt;/script&gt;
+
+&lt;p&gt;The key method that stabilize the model is experience reply and Q target. For the experience reply, it helps decouple the relationship between each step since we are randomly sampling. For the Q target, we are using the model several steps ago, not the model we just updated. You can think of this as avoid oscillation.&lt;/p&gt;
+</description>
+        <pubDate>Fri, 08 Sep 2017 00:00:00 -0700</pubDate>
+        <link>https://pyemma.github.io//Reinforcement-Learning-Lesson-5/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//Reinforcement-Learning-Lesson-5/</guid>
+      </item>
+    
+      <item>
+        <title>Reinforcement Learning Lesson 4</title>
+        <description>&lt;p&gt;In this lecture, we learn how to solve an unknown MDP. In the last lecture, we introduced how to calculate the value function given a policy. In this one, we will try to find the optimize policy by ourselves.&lt;/p&gt;
+
+&lt;h4 id=&quot;mento-calro-policy-iteration&quot;&gt;Mento Calro Policy Iteration&lt;/h4&gt;
+&lt;p&gt;In the &lt;a href=&quot;http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-2&quot;&gt;Lesson 2&lt;/a&gt;, we mentioned how to solve a MDP when we have full information about the MDP. One method is called &lt;strong&gt;Policy Iteration&lt;/strong&gt;. It can be divided into two components: &lt;em&gt;policy iterative evaluation&lt;/em&gt; and &lt;em&gt;policy improvement&lt;/em&gt;. For the evaluation part, we can use the methods in &lt;a href=&quot;http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-3&quot;&gt;last lesson&lt;/a&gt;, nominally MC and TD. However, we could not directly use the state value function, cause in the policy improvement step (e.g. greedy), we need to know the \( R \) and \( P \) to find the best action (recall the &lt;a href=&quot;http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-1&quot;&gt;Bellman Optimality Function&lt;/a&gt;). However, action value function does not need the model of the MDP while in greedy policy improvement:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_*(s) = argmax_a q(s, a)&lt;/script&gt;
+
+&lt;p&gt;For the policy improvement part. If we stick to the greedy method, it will not be good for us to explore all possible states. So we use another method which is called \( \epsilon \)-greedy. We will have \( 1-\epsilon \) probability to perform greedily (choose the current best action), and have \( \epsilon \) probability to random choose an action:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\pi(s|a) = \begin{cases}
+\frac{\epsilon}{m} + 1 - \epsilon, &amp; \text{if $a^\star = argmax_a Q(s, a)$} \\
+\frac{\epsilon}{m}, &amp; \text{otherwise}
+\end{cases} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;We have the final Mento Calro Policy Iteration as:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Sample the kth episode \( S_1, A_1, …, S_T \) from policy  \( \pi \)&lt;/li&gt;
+  &lt;li&gt;For each state \( S_t \) and \( A_t \) in the episode&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;N(S_t, A_t) = N(S_t, A_t) + 1 \\
+Q(S_t, A_t) = Q(S_t, A_t) + \frac{1}{N(S_t, A_t)}((G_t - Q(S_t, A_t))) \\&lt;/script&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Update the \( \epsilon \) and policy:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\epsilon = 1/k \\
+\pi = \epsilon\text{-greedy}(Q)&lt;/script&gt;
+
+&lt;h4 id=&quot;sarsa-algorithm&quot;&gt;Sarsa Algorithm&lt;/h4&gt;
+&lt;p&gt;If we use the logic in TD for the evaluation part, then we would have the sarsa algorithm. The main difference is that, in original TD, we use the value state function of the successor state, however, we need the action value function right now. We can obtain that by run our current policy again (remember, TD does not need the complete sequence of experience, we can generate the state and action along the way). Following is the algorithm:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initialize \( Q \) for each state and action pair arbitrarily, set \( Q(terminate, *) \) to 0&lt;/li&gt;
+  &lt;li&gt;Repeat for each episode
+    &lt;ul&gt;
+      &lt;li&gt;Initialize \( S \), choose \( A \) from the current policy derived from \( Q \)&lt;/li&gt;
+      &lt;li&gt;Repeat for each step in the episode until we hit terminal
+        &lt;ul&gt;
+          &lt;li&gt;Take action \( A \), observe \ (R \) and \( S^\prime \)&lt;/li&gt;
+          &lt;li&gt;Choose \( A^\prime \) from \( S^\prime \) from the current policy derived from \( Q \)&lt;/li&gt;
+          &lt;li&gt;Update &lt;script type=&quot;math/tex&quot;&gt;Q(S, A) = Q(S, A) + \alpha(R + \gamma Q(S^\prime, A^\prime) - Q(S, A))&lt;/script&gt;&lt;/li&gt;
+          &lt;li&gt;Update (( S = S^\prime, A = A^\prime \)&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Similarly, we can also use Eligibility Trace for the sarsa algorithm and result in sarsa(\(\lambda \) ) algorithm. The algorithm is as follow:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initialize \( Q \) for each state and action pair arbitrarily, set \( Q(terminate, *) \) to 0
+    &lt;ul&gt;
+      &lt;li&gt;Repeat for each episode&lt;/li&gt;
+      &lt;li&gt;Initialize \( E \) for each \( s, a \) pair to 0&lt;/li&gt;
+      &lt;li&gt;Initialize \( S \), choose \( A \) from the current policy derived from Q&lt;/li&gt;
+      &lt;li&gt;Repeat for each step in the episode until we hit terminal
+        &lt;ul&gt;
+          &lt;li&gt;Take action \( A \), observe \( R \) and \( S^\prime \)&lt;/li&gt;
+          &lt;li&gt;Choose \( A^\prime \) from \( S^\prime \) from the current policy derived from Q&lt;/li&gt;
+          &lt;li&gt;Calculate \( \delta = R + \gamma Q(S^\prime, A^\prime) - Q(S, A) \)&lt;/li&gt;
+          &lt;li&gt;Update \( E(S, A) = E(S, A) + 1 \)&lt;/li&gt;
+          &lt;li&gt;For each \( s \) and \( a \) pair&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;Q(s, a) = Q(s, a) + \alpha\delta E(s, a) \\
+E(s, a) = \gamma\lambda E(s, a)&lt;/script&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Update \( S = S^\prime, A = A^\prime \)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;q-learning&quot;&gt;Q Learning&lt;/h4&gt;
+&lt;p&gt;Both MC policy iteration and sarsa algorithm are &lt;strong&gt;online learning&lt;/strong&gt; method, which means that they are observing there own policy, learning along the process. There is another category which is called &lt;strong&gt;offline learning&lt;/strong&gt;, in which we learn from other policy, not the policy we are trying to improving. Example is that a robots learns walking by observing human. Q learning falls in this category. It is pretty similar to the sarsa algorithm, the only difference is that when we get the action for successor state, we replace the \( \epsilon \)-greedy to greedy policy. The Q learning method is as follow:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initialize Q for each state and action pair arbitrarily, set \( Q(terminate, *) \) to 0&lt;/li&gt;
+  &lt;li&gt;Repeat for each episode
+    &lt;ul&gt;
+      &lt;li&gt;Initialize \( S \), choose \( A \) from the current policy derived from Q&lt;/li&gt;
+      &lt;li&gt;Repeat for each step in the episode until we hit terminal
+        &lt;ul&gt;
+          &lt;li&gt;Take action \( A \), observe \( R \) and \( S^\prime \)&lt;/li&gt;
+          &lt;li&gt;Update &lt;script type=&quot;math/tex&quot;&gt;Q(S, A) = Q(S, A) + \alpha(R + \gamma max_a Q(S^\prime, a) - Q(S, A))&lt;/script&gt;&lt;/li&gt;
+          &lt;li&gt;Update \( S = S^\prime \)&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Sat, 19 Aug 2017 00:00:00 -0700</pubDate>
+        <link>https://pyemma.github.io//Reinforcement-Learning-Lesson-4/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//Reinforcement-Learning-Lesson-4/</guid>
+      </item>
+    
+      <item>
+        <title>Reinforcement Learning Lesson 3</title>
+        <description>&lt;p&gt;In this lesson, we will learn about what to do when we have no knowledge about the MDP. In the last lesson, we learnt about how to solve a MDP when we have full information about it (e.g. $P$, $R$). When we don’t have enough information, the Bellman Equation won’t work. The only way is to learn from experience, where we run the process once, and obtain a $S_1, R_1, …, S_T$ sequence and improve our value function with it. This is called model free. In this lesson, we learn about when given a policy $\pi$, how do we calculate the state value function (which is called model free predicting). And in the next one, we will learn how to come up with the policy (which is called model free control).&lt;/p&gt;
+
+&lt;h4 id=&quot;monte-carlo-reinforcement-learning&quot;&gt;Monte-Carlo Reinforcement Learning&lt;/h4&gt;
+&lt;p&gt;The first method is called Mento-Carlo Reinforcement Learning. The idea behind this method is to use empirical mean to measure the value. The algorithm is as follow:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initialize $N(s)$ to all zero, copying the value function from last one&lt;/li&gt;
+  &lt;li&gt;Given an episode $S_1, R_1, …, S_T$&lt;/li&gt;
+  &lt;li&gt;For each $S_t$ with return $G_t$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;N(S_t) = N(S_t) + 1&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;V(S_t) = V(S_t) + \frac{1}{N(S_t)}(G_t - V(S_t))&lt;/script&gt;
+
+&lt;p&gt;Here $N(S_t)$ counts the number of our visit to $S_t$. The update function is using running mean to update the value of the current state, by moving it towards the return in this episode (G_t) a little bit. Here we can replace $\frac{1}{N(S_t)}$ to a small number $\alpha$, this is functioning as a learning rate to control how quick we update our value function. When we increase the counter, we can increase it either by first visit within the episode or every visit within the episode.&lt;/p&gt;
+
+&lt;p&gt;Mento-Carlo Reinforcement Learning can only works with episode experience, which means the MDP must has a terminate state and the experience must be complete.&lt;/p&gt;
+
+&lt;p&gt;In this method, we are &lt;strong&gt;sampling&lt;/strong&gt; from the policy distribution because for each state, we are only considering one possible successor state. The learning method in last lesson is using dynamic programming, and it is not based on sampling, it actually takes all possible successor states into consideration.&lt;/p&gt;
+
+&lt;h4 id=&quot;td0-learning&quot;&gt;TD(0) Learning&lt;/h4&gt;
+&lt;p&gt;The second method is called Temporal Difference Learning. As its naming suggested, in this method we are not using the actual return in the episode but using an temporal estimation to update the value function. The algorithm is:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;For each $S_t$ within the episode&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;V(S_t) = V(S_t) + \alpha(R_{t+1} + \gamma V(S_{t+1}) - V(S_t))&lt;/script&gt;
+
+&lt;p&gt;Here, $R_{t+1} + \gamma V(S_{t+1})$ is called TD target, and $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$ is called the TD error. The main logic here is bootstrapping, which means we are not directly making each value function to the most accurate value it should be given this episode. We are making it slightly better based on our current estimate on the successor state. The benefit of the doing so is that we can learn from incomplete experience, and MDP without a terminal state.&lt;/p&gt;
+
+&lt;p&gt;In this method, we are also &lt;strong&gt;sampling&lt;/strong&gt; from the policy distribution, as well as bootstrapping. Dynamic programming also uses bootstrapping similar to TD(0) learning (recall the Bellman Equation).&lt;/p&gt;
+
+&lt;h4 id=&quot;tdlambda-learning&quot;&gt;TD($\lambda$) Learning&lt;/h4&gt;
+&lt;p&gt;In both MC and TD(0) Learning, we are looking forward to the future rewards. In MC, we are looking until we reach the end, while in TD(0) we only look at next step. Instead of looking forward, we can also looking backward. However, this involves how to assign the current timestamp rewards to pervious states. This is called credit assignment problem. And the method we overcome it is to use &lt;strong&gt;Eligibility Traces&lt;/strong&gt;, which fusion both assigning credit to the most recent state and most frequent states. Here we introduce the TD($\lambda$) algorithm (back view version):&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initialize Eligibility Traces $E_0(s) = 0$&lt;/li&gt;
+  &lt;li&gt;Given an experience, for each state $s$:&lt;/li&gt;
+  &lt;li&gt;Update the Eligibility Traces by: $E_t(s) = \gamma \lambda E_{t-1}(s) + 1(S_t = s)$&lt;/li&gt;
+  &lt;li&gt;Calculate the update step by: $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$&lt;/li&gt;
+  &lt;li&gt;Update &lt;strong&gt;each&lt;/strong&gt; state by: $V(s) = V(s) + \alpha \delta_t E_t(s)$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If we use $\lambda = 0$, then the Eligibility Traces will fall to $1(S_t = s)$ and replace it in the update function, we will see that its the exact same update function as TD(0). If we choose $\lambda = 1$, then it is actually equals to every visit MC. We can prove it as follow:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Suppose in our experience, $s$ is visited at timestamp $k$, then the $E_t(s)$ will be like&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+E_t(s) = \begin{cases}
+0, &amp; \text{if $t &lt; k$} \\
+\gamma^{t - k}, &amp; \text{if $t \ge k$} \\
+\end{cases} %]]&gt;&lt;/script&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The accumulated online update for $s$ is&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align}
+\sum_{t=1}^{T-1}\alpha\delta_t E_t(s) &amp; = \sum_{t=k}^{T-1}\gamma^{t-k}\delta_t \\
+&amp; = \delta_k + \gamma\delta_{k+1} + ... + \gamma^{T-1-k}\delta_{T-1} \\
+&amp; = R_{k+1} + \gamma V(S_{k+1}) - V(S_k) + \gamma R_{k+2} + \gamma^2 V(S_{k+2}) - \gamma V(S_{k+1}) + ... \\
+&amp; + \gamma^{T-1-k} R_{T-1} + \gamma^{T-k} V(S_T) - \gamma^{T-1-k} V(S_{T-1}) \\
+&amp; = R_{k+1} + \gamma R_{k+2} + \gamma^2 R_{k+3} + ... + \gamma^{T-1-k} R_{T-1} - V(S_k) \\
+&amp; = G_k - V(S_k)
+\end{align} %]]&gt;&lt;/script&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Thus the update function for TD(1) is the same as the one in every visit MC (where we use $\alpha$ as a learning rate instead of the original one).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The good thing for TD($lambda$) is that it can learn with incomplete experience. And the update is performed &lt;em&gt;online&lt;/em&gt;, &lt;em&gt;step by step&lt;/em&gt; within the episode. MC is updated via offline, cause it needs to wait until the end and calculate the update for each state and update them in batch.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 17 Aug 2017 00:00:00 -0700</pubDate>
+        <link>https://pyemma.github.io//Reinforcement-Learning-Lession-3/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//Reinforcement-Learning-Lession-3/</guid>
+      </item>
+    
+      <item>
+        <title>Reinforcement Learning Lesson 2</title>
+        <description>&lt;p&gt;In the last post, we introduced the definition of Markov Decision Process and Bellman Equation. Now, if you are given the states \( S \), action $A$, transition matrix $P$, rewards $R$ and discounting ratio \( \gamma \), how would you come up with a solution for this MDP? i.e. how would you calculate the value function and come up with an optimal policy for it?&lt;/p&gt;
+
+&lt;h4 id=&quot;value-iteration&quot;&gt;Value Iteration&lt;/h4&gt;
+&lt;p&gt;This first method is to apply the Bellman Optimality Equation repeatedly. The idea is that we continue update the best estimation for each state value function, and once all $s^\prime$ reachable from $s$ achieve its optimal value function, then $v(s)$ can also achieve the optimal value. The algorithm is as follow:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initiate $v(s)$ to 0 for all $s\in S$&lt;/li&gt;
+  &lt;li&gt;Apply
+&lt;script type=&quot;math/tex&quot;&gt;v(s) = max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av(s))&lt;/script&gt;
+to update each state value function to a better estimation&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Why this algorithm guarantee to find the optimal state value function (thus optimal policy)? Its because the Bellman Optimality Equation can be regarded as a contraction. We can image in a value function space, where its dimension is $|S|$, each point in this space determine a value state function. A contraction is an operation that can make two points in this space closer.&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;(Contraction Mapping Theory) For any metric space that is complete under an operator that is a contraction, the operator will converge to a unique fixed point.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;According to the Contraction Mapping Theory, we know that $v^\ast=Tv^\ast$ has a unique solution. And based on value iteration converge, we know that $v_{t}=Tv_{t-1}$. Then we could have&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;||v_t - v\ast||_\infty = ||Tv_{t-1} - Tv\ast||_\infty \le \gamma ||v_{t-1} - v\ast||_\infty&lt;/script&gt;
+
+&lt;p&gt;By applying the operator repeatedly, we are bringing our estimated value function closer and closer to the fixed point, thus we are achieving the optimal value function gradually.&lt;/p&gt;
+
+&lt;p&gt;To prove Bellman Optimality Operator is a contraction, we can have:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align}
+|Tv_1(s) - Tv_2(s)|
+&amp; = |max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
+&amp; \le max_a|(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - (R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
+&amp; = max_a|\gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s) - \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s)| \\
+&amp; \le \gamma max_s|v_1(s) - v_2(s)|\\
+\end{align} %]]&gt;&lt;/script&gt;
+
+&lt;h4 id=&quot;policy-iteration&quot;&gt;Policy Iteration&lt;/h4&gt;
+&lt;p&gt;Compared with value iteration which focus on computing the optimal value function. Policy iteration evaluate a policy and improve the policy gradually, and finally converge to the optimal policy, the algorithm is as follow:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initialize a random policy $\pi$&lt;/li&gt;
+  &lt;li&gt;Apply Bellman Expectation Equation to all state $s$ to get the current value function $v^\pi$&lt;/li&gt;
+  &lt;li&gt;Improve the current policy greedily by:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\pi^\prime = argmax_a (R_s^a + \gamma \sum_{s^\prime\in S}P_{ss^\prime}^av^\pi(s))&lt;/script&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Repeat until the policy does not change&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Why policy iteration guarantee to converge to optimal policy? First, we can also proof that the Bellman Expectation Operator(Equation) is also a contraction. Thus given a policy $\pi$, we know that the value function will converge to $v^\pi$. Then, we only need to prove the policy can be improved by our greedy selection.&lt;/p&gt;
+
+&lt;p&gt;Suppose a deterministic policy $a = \pi(s)$. We can improve it by acting greedily by&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\pi^\prime(s) = argmax_aq_\pi(s, a)&lt;/script&gt;
+
+&lt;p&gt;according to the current action value function(remember the relationship between action value function and state value function, they can be transformed each other). It can improve the value function for any state&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_\pi(s, \pi^\prime(s)) = argmax_a q_\pi(s, a) \ge q_\pi(s, \pi(s)) = v_\pi(s)&lt;/script&gt;
+
+&lt;p&gt;And thus we can improves the value function $v_{\pi^\prime}(s) \ge v_\pi(s)$ (this can be proved by expanding the return and recursively substitute the above function).&lt;/p&gt;
+
+&lt;p&gt;Policy iteration is pretty similar to Expectation Maximization (EM). In EM, we first evaluate the data using the current parameters, and then update the parameters to maximize the quantity.&lt;/p&gt;
+
+&lt;p&gt;More detailed proof is available &lt;a href=&quot;http://www.cs.cmu.edu/afs/cs/academic/class/15780-s16/www/slides/mdps.pdf&quot;&gt;here&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 14 Aug 2017 00:00:00 -0700</pubDate>
+        <link>https://pyemma.github.io//Reinforcement-Learning-Lesson-2/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//Reinforcement-Learning-Lesson-2/</guid>
+      </item>
+    
+      <item>
+        <title>Reinforcement Learning Lesson 1</title>
+        <description>&lt;p&gt;This is the first post for the series reinforcement learning. The main source for the entire series is &lt;a href=&quot;http://www0.cs.ucl.ac.uk/staff/D.Silver/web/Teaching.html&quot;&gt;here&lt;/a&gt;. The post mainly focus on summarizing the content introduced in the video and slides, as well as some of my own understanding. Any feedback is welcomed.&lt;/p&gt;
+
+&lt;p&gt;In this post, we will talk about Markov Decision Process (MDP), which is a pretty fundamental model in many reinforcement learning cases.&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Almost all RL problems can be formalized as MDP&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&quot;markov-process&quot;&gt;Markov Process&lt;/h4&gt;
+&lt;p&gt;In order to learn about MDP, we need to first know what is Markov Process (MP). This introduces the following two concept:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Markov Property&lt;/li&gt;
+  &lt;li&gt;State Transition Matrix&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In the most simple word, &lt;strong&gt;Markov Property&lt;/strong&gt; means that the future state is independent on the history given the current state. It can be formalized using following statement:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbb{P}[S_{t+1}|S_{t}] = \mathbb{P}[S_{t+1}|S_1, ..., S_t]&lt;/script&gt;
+
+&lt;p&gt;This means that the current state contains all they necessary information for the future, and we can discard all history information.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;State Transition Matrix&lt;/strong&gt; contains the probability we go from on state to another one. Given a state \( s \) and its successor state \( s^\prime \), the probability from \( s \) goes to \( s^\prime \) is given by&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;P_{ss\prime} = \mathbb{P}[S_{t+1}=s\prime|S_{t}=s]&lt;/script&gt;
+
+&lt;p&gt;And the State Transition Matrix is by&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+P =
+\begin{Bmatrix}
+P_{11} &amp; ... &amp; P_{1n} \\
+\vdots &amp; ... &amp; \vdots \\
+P_{n1} &amp; ... &amp; P_{nn}
+\end{Bmatrix} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;From the above two concept, we can notice two things and these are also the constraint for MDP:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;The state is finite (otherwise the definition of State Transition Matrix is problematic)&lt;/li&gt;
+  &lt;li&gt;The environment is fully observable, no hidden state exists&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We can obtain a definition for MP as a tuple \( &amp;lt;S, P&amp;gt; \):&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;\( S \) is a finite state set&lt;/li&gt;
+  &lt;li&gt;\( P \) is a state transition matrix&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;An example of MP:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/mdp.png&quot; alt=&quot;Markov Process&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;markov-reward-process&quot;&gt;Markov Reward Process&lt;/h4&gt;
+&lt;p&gt;Markov Process combined with values, then we have Markov Reward Process (MRP), defined by a tuple \( &amp;lt;S, P, R, \gamma&amp;gt; \):&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;\( S \) is a finite state set&lt;/li&gt;
+  &lt;li&gt;\( P \) is a state transition matrix&lt;/li&gt;
+  &lt;li&gt;\( R \) is a reward function,
+&lt;script type=&quot;math/tex&quot;&gt;R_{s} = \mathbb{E}[R_{t+1}|S_{t}=s]&lt;/script&gt;&lt;/li&gt;
+  &lt;li&gt;\( \gamma \) is a discounting ratio&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;As we have introduced reward, we can measure how many rewards we can get in each state. We define return \( G_t \) as the discounted rewards we can get from timestamp  \( t \), and state value function \( v(s) \) the expected return we can get starting from state \( s \):&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;G_t = R_{t+1} + \gamma R_{t+2} + ... = \sum_{k=1}^{\infty}\gamma^{k}R_{t+k+1}&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;v(s) = \mathbb{E}[G_t|S_t=s]&lt;/script&gt;
+
+&lt;p&gt;Note that the return is accumulated with discounting. This is important is:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Avoid infinity loop that might exist in MDP (e.g. self loop)&lt;/li&gt;
+  &lt;li&gt;Model the uncertainty about the future&lt;/li&gt;
+  &lt;li&gt;From common sense, human prefer immediate reward than long term ones&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We can breakdown the state value function into two parts, immediate and long term. Using recurse, we have the Bellman Equation for MRP:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;v(s) = \mathbb{E}[R_{t+1} + \gamma v(S_{t+1})|S_t=s]&lt;/script&gt;
+
+&lt;p&gt;By expanding the above expectation and using sum to replace expectation operator, we have:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;v(s) = R_s + \gamma\sum_{s^\prime\in S}P_{ss^\prime}v(s^\prime)&lt;/script&gt;
+
+&lt;h4 id=&quot;markov-decision-process&quot;&gt;Markov Decision Process&lt;/h4&gt;
+&lt;p&gt;Adding the actions we can make among the state, we finally have the definition for MDP, which is \( &amp;lt;S, A, P, R, \gamma&amp;gt; \):&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;\( S \) is a finite state set&lt;/li&gt;
+  &lt;li&gt;\( A \) is a finite action set&lt;/li&gt;
+  &lt;li&gt;\( P \) is a state transition matrix,
+&lt;script type=&quot;math/tex&quot;&gt;P_{ss^\prime}^a = \mathbb{P}[S_{t+1}=s^\prime|S_{t}=s, A_t=a]&lt;/script&gt;&lt;/li&gt;
+  &lt;li&gt;\( R \) is a reward function,
+&lt;script type=&quot;math/tex&quot;&gt;R_{s}^a = \mathbb{E}[R_{t+1}|S_{t}=s, A_t=a]&lt;/script&gt;&lt;/li&gt;
+  &lt;li&gt;\( \gamma\) is a discounting ratio&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Notice the change on the state transition matrix, before we only have a single matrix, and now we have one for each action \( a \) we can think of in the pervious case, we have only single action). Under different action \( a \), the transition probability can be different between the two state. We can now regard the new state transition matrix as a tensor with three dimension.&lt;/p&gt;
+
+&lt;p&gt;As we have actions to now, we need to make decision how to take actions. A &lt;strong&gt;policy&lt;/strong&gt; is a distribution over actions given a state:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\pi(a|s) = \mathbb{P}[A_t=a|S_t=s]&lt;/script&gt;
+
+&lt;p&gt;A policy fully determines how an agent would act, and it does not depend on the history. Similar to MRP, we have state value function for MDP as the expected return starting from \( s \), following the policy \( \pi \):&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_{\pi}(s) = \mathbb{E}_{\pi}[G_t|S_t=s]&lt;/script&gt;
+
+&lt;p&gt;We can also define an action value function, which is the expected return we get starting from state \( s \), taking action \( a \) and following policy \( \pi \):&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_{\pi}(s, a) = \mathbb{E}_{\pi}[G_t|S_t=s, A_t=a]&lt;/script&gt;
+
+&lt;p&gt;These two functions have relationship and can be transformed to each other easily, to get state value function, we can summation over all the action value function for the action that state we could get, weight by the policy:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_\pi(s) = \sum_{a\in A}\pi(a|s)q_{\pi}(s, a)&lt;/script&gt;
+
+&lt;p&gt;And the action value function can be obtained by summation overall all state we can transition to, weighted by the state transition matrix:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_\pi(s, a) = R_s^a + \gamma\sum_{s^\prime}P_{ss^\prime}^a v(s^\prime)&lt;/script&gt;
+
+&lt;p&gt;Combine the above equations, we can obtain the Bellman Exception Equation as:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_\pi(s) = \sum_{a\in A}\pi(a|s)(R_s^a + \gamma\sum_{s^\prime}P_{ss^\prime}^a v(s^\prime))&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_\pi(s, a) = R_s^a + \gamma\sum_{s^\prime}P_{ss^\prime}^a \sum_{a\in A}\pi(a|s^\prime)q_{\pi}(s^\prime, a)&lt;/script&gt;
+
+&lt;p&gt;Given a MDP, if we want to solve it (to know what’s the best performance we can get, e.g. What’s the maximum rewards we can get in the terminate state), we need to find the optimal value function for it. As long as we have obtain the optimal value function, we can compose an optimal policy easily:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\pi_{*}(a|s) =
+\begin{cases}
+1,  &amp; \text{if $a = argmax_{a\in A} q(s, a)$} \\
+0, &amp; \text{otherwise}
+\end{cases} %]]&gt;&lt;/script&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;There exists an optimal policy \( \pi_{*} \) that is better than or equal to all other policy for any MDP. All optimal policy achieve optimal state value function and optimal action value function&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Following this policy, we can change our Bellman Exception Equation to Bellman Optimality Equation:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_*(s)=max_{a}(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^a v_*(s^\prime))&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_*(s, a)=R_s^a + \gamma\sum_{s^\prime\in S} argmax_{a} P_{ss^\prime}^a v_*(s^\prime)&lt;/script&gt;
+
+&lt;p&gt;Bellman Optimality Equation is non-linear, there is no closed form solution for it. However, we can solve it by some iterative methods (will introduce in later lectures):&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Policy Iteration&lt;/li&gt;
+  &lt;li&gt;Value Iteration&lt;/li&gt;
+  &lt;li&gt;Q-learning&lt;/li&gt;
+  &lt;li&gt;Sarsa&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Sun, 13 Aug 2017 00:00:00 -0700</pubDate>
+        <link>https://pyemma.github.io//Reinforcement-Learning-Lesson-1/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//Reinforcement-Learning-Lesson-1/</guid>
+      </item>
+    
+      <item>
+        <title>Math Equation</title>
+        <description>&lt;p&gt;Use &lt;code class=&quot;highlighter-rouge&quot;&gt;$$&lt;/code&gt; to write math equation&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\sum_{n=1}^\infty 1/n^2 = \frac{\pi^2}{6}&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\textbf{A}\textbf{B} = \textbf{C}&lt;/script&gt;
+
+&lt;p&gt;Use &lt;code class=&quot;highlighter-rouge&quot;&gt;\begin{equation}&lt;/code&gt; to write math equation
+\begin{equation}
+\sum_{n=1}^\infty 1/n^2 = \frac{\pi^2}{6}
+\end{equation}&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+  &amp; \phi(x,y) = \phi \left(\sum_{i=1}^n x_ie_i, \sum_{j=1}^n y_je_j \right)
+  = \sum_{i=1}^n \sum_{j=1}^n x_i y_j \phi(e_i, e_j) = \\
+  &amp; (x_1, \ldots, x_n) \left( \begin{array}{ccc}
+      \phi(e_1, e_1) &amp; \cdots &amp; \phi(e_1, e_n) \\
+      \vdots &amp; \ddots &amp; \vdots \\
+      \phi(e_n, e_1) &amp; \cdots &amp; \phi(e_n, e_n)
+    \end{array} \right)
+  \left( \begin{array}{c}
+      y_1 \\
+      \vdots \\
+      y_n
+    \end{array} \right)
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+f(n) =
+\begin{cases}
+n/2,  &amp; \text{if $n$ is even} \\
+3n+1, &amp; \text{if $n$ is odd}
+\end{cases} %]]&gt;&lt;/script&gt;
+</description>
+        <pubDate>Sat, 12 Aug 2017 00:00:00 -0700</pubDate>
+        <link>https://pyemma.github.io//Math-Equation/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//Math-Equation/</guid>
       </item>
     
   </channel>
