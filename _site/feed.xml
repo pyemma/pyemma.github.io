@@ -7,6 +7,41 @@
     <atom:link href="https://pyemma.github.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>[WIP] Simple Review of Model Regularization Techniques</title>
+        <description>&lt;h2 id=&quot;why-do-we-need-regularization&quot;&gt;Why do we need regularization&lt;/h2&gt;
+
+&lt;h2 id=&quot;regularization-common-techniques&quot;&gt;Regularization common techniques&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Weight decay (L2 Regularization)&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Dropout&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Batch Normalization&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Mulittask Learning&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;reference&quot;&gt;Reference&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;Droput: https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf&lt;/li&gt;
+  &lt;li&gt;Batch Normalization: https://arxiv.org/pdf/1502.03167.pdf&lt;/li&gt;
+  &lt;li&gt;Batch Normalization Implementation: https://kevinzakka.github.io/2016/09/14/batch_normalization/&lt;/li&gt;
+  &lt;li&gt;Understanding Batch Normalization: https://papers.nips.cc/paper/7996-understanding-batch-normalization.pdf&lt;/li&gt;
+  &lt;li&gt;How does Batch Normalization Help Optimization: https://arxiv.org/pdf/1805.11604.pdf&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Sun, 22 Dec 2019 00:00:00 -0800</pubDate>
+        <link>https://pyemma.github.io//Model-Regularization/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//Model-Regularization/</guid>
+      </item>
+    
+      <item>
         <title>DQN In Practice</title>
         <description>&lt;p&gt;Recently I have been working on Deep-Q-Learning and apply it to some interesting AI games. In this post, I would like to give a brief introduction to how I implemented the Deep-Q-Learning, as well as lots of learning along the way.&lt;/p&gt;
 
@@ -635,7 +670,7 @@ to update each state value function to a better estimation&lt;/li&gt;
   &lt;p&gt;Almost all RL problems can be formalized as MDP&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h4 id=&quot;markov-process&quot;&gt;Markov Process&lt;/h4&gt;
+&lt;h3 id=&quot;markov-process&quot;&gt;Markov Process&lt;/h3&gt;
 &lt;p&gt;In order to learn about MDP, we need to first know what is Markov Process (MP). This introduces the following two concept:&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;Markov Property&lt;/li&gt;
@@ -678,7 +713,7 @@ P_{n1} &amp; ... &amp; P_{nn}
 
 &lt;p&gt;&lt;img src=&quot;/assets/mdp.png&quot; alt=&quot;Markov Process&quot; /&gt;&lt;/p&gt;
 
-&lt;h4 id=&quot;markov-reward-process&quot;&gt;Markov Reward Process&lt;/h4&gt;
+&lt;h3 id=&quot;markov-reward-process&quot;&gt;Markov Reward Process&lt;/h3&gt;
 &lt;p&gt;Markov Process combined with values, then we have Markov Reward Process (MRP), defined by a tuple \( &amp;lt;S, P, R, \gamma&amp;gt; \):&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;\( S \) is a finite state set&lt;/li&gt;
@@ -709,7 +744,7 @@ P_{n1} &amp; ... &amp; P_{nn}
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;v(s) = R_s + \gamma\sum_{s^\prime\in S}P_{ss^\prime}v(s^\prime)&lt;/script&gt;
 
-&lt;h4 id=&quot;markov-decision-process&quot;&gt;Markov Decision Process&lt;/h4&gt;
+&lt;h3 id=&quot;markov-decision-process&quot;&gt;Markov Decision Process&lt;/h3&gt;
 &lt;p&gt;Adding the actions we can make among the state, we finally have the definition for MDP, which is \( &amp;lt;S, A, P, R, \gamma&amp;gt; \):&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;\( S \) is a finite state set&lt;/li&gt;
@@ -779,47 +814,6 @@ P_{n1} &amp; ... &amp; P_{nn}
         <pubDate>Sun, 13 Aug 2017 00:00:00 -0700</pubDate>
         <link>https://pyemma.github.io//Reinforcement-Learning-Lesson-1/</link>
         <guid isPermaLink="true">https://pyemma.github.io//Reinforcement-Learning-Lesson-1/</guid>
-      </item>
-    
-      <item>
-        <title>Math Equation</title>
-        <description>&lt;p&gt;Use &lt;code class=&quot;highlighter-rouge&quot;&gt;$$&lt;/code&gt; to write math equation&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\sum_{n=1}^\infty 1/n^2 = \frac{\pi^2}{6}&lt;/script&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\textbf{A}\textbf{B} = \textbf{C}&lt;/script&gt;
-
-&lt;p&gt;Use &lt;code class=&quot;highlighter-rouge&quot;&gt;\begin{equation}&lt;/code&gt; to write math equation
-\begin{equation}
-\sum_{n=1}^\infty 1/n^2 = \frac{\pi^2}{6}
-\end{equation}&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-  &amp; \phi(x,y) = \phi \left(\sum_{i=1}^n x_ie_i, \sum_{j=1}^n y_je_j \right)
-  = \sum_{i=1}^n \sum_{j=1}^n x_i y_j \phi(e_i, e_j) = \\
-  &amp; (x_1, \ldots, x_n) \left( \begin{array}{ccc}
-      \phi(e_1, e_1) &amp; \cdots &amp; \phi(e_1, e_n) \\
-      \vdots &amp; \ddots &amp; \vdots \\
-      \phi(e_n, e_1) &amp; \cdots &amp; \phi(e_n, e_n)
-    \end{array} \right)
-  \left( \begin{array}{c}
-      y_1 \\
-      \vdots \\
-      y_n
-    \end{array} \right)
-\end{align*} %]]&gt;&lt;/script&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-f(n) =
-\begin{cases}
-n/2,  &amp; \text{if $n$ is even} \\
-3n+1, &amp; \text{if $n$ is odd}
-\end{cases} %]]&gt;&lt;/script&gt;
-</description>
-        <pubDate>Sat, 12 Aug 2017 00:00:00 -0700</pubDate>
-        <link>https://pyemma.github.io//Math-Equation/</link>
-        <guid isPermaLink="true">https://pyemma.github.io//Math-Equation/</guid>
       </item>
     
   </channel>

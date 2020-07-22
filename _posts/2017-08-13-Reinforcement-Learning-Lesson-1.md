@@ -7,7 +7,7 @@ This is the first post for the series reinforcement learning. The main source fo
 In this post, we will talk about Markov Decision Process (MDP), which is a pretty fundamental model in many reinforcement learning cases.
 > Almost all RL problems can be formalized as MDP
 
-#### Markov Process
+### Markov Process
 In order to learn about MDP, we need to first know what is Markov Process (MP). This introduces the following two concept:
 * Markov Property
 * State Transition Matrix
@@ -45,7 +45,7 @@ An example of MP:
 
 ![Markov Process](/assets/mdp.png)
 
-#### Markov Reward Process
+### Markov Reward Process
 Markov Process combined with values, then we have Markov Reward Process (MRP), defined by a tuple \\( <S, P, R, \gamma> \\):
 * \\( S \\) is a finite state set
 * \\( P \\) is a state transition matrix
@@ -72,7 +72,7 @@ By expanding the above expectation and using sum to replace expectation operator
 
 $$v(s) = R_s + \gamma\sum_{s^\prime\in S}P_{ss^\prime}v(s^\prime)$$
 
-#### Markov Decision Process
+### Markov Decision Process
 Adding the actions we can make among the state, we finally have the definition for MDP, which is \\( <S, A, P, R, \gamma> \\):
 * \\( S \\) is a finite state set
 * \\( A \\) is a finite action set
