@@ -3,6 +3,7 @@ layout: single
 title:  "[WIP] Simple Review of Model Regularization Techniques"
 tags:
 - machine learning
+published: false
 ---
 
 ## Why do we need regularization

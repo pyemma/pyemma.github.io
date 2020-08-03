@@ -99,8 +99,8 @@ var store = [{
         "tags": [],
         "url": "https://pyemma.github.io/DQN-In-Practice/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
-        "title": "[WIP] Simple Review of Model Regularization Techniques",
-        "excerpt":"Why do we need regularizationRegularization common techniques      Weight decay (L2 Regularization)        Dropout        Batch Normalization        Mulittask Learning  Reference  Droput: https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf  Batch Normalization: https://arxiv.org/pdf/1502.03167.pdf  Batch Normalization Implementation: https://kevinzakka.github.io/2016/09/14/batch_normalization/  Understanding Batch Normalization: https://papers.nips.cc/paper/7996-understanding-batch-normalization.pdf  How does Batch Normalization Help Optimization: https://arxiv.org/pdf/1805.11604.pdf","categories": [],
-        "tags": ["machine learning"],
-        "url": "https://pyemma.github.io/Model-Regularization/",
+        "title": "MIT Distributed System Course - MapReduce",
+        "excerpt":"IntroductionThis is going to be a series of posts to record my learning of MIT 6.824 Distributed System. The post would focus on the course assignments which is to build some distributed systems from scratch using Go language. I would discuss some of the basic ideas that these assignments touched,...","categories": [],
+        "tags": ["distributed system"],
+        "url": "https://pyemma.github.io/Distributed-System-Map-Reduce/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"}]
