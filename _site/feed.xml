@@ -10,7 +10,7 @@
         <title>MIT Distributed System Course - Raft I</title>
         <description>&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
 
-&lt;p&gt;In the following serious of post, we are going to implement Raft consensus algorithm, which is used to manage replicated log. And on top of that, we would implement a failure tolerance key-value store. This type of failure tolerant system is called replicated state machine. Replicated state machine operates on a collection of servers and makes them acting like a single server to the outside. The service would still be alive as long as majority of servers are still working.&lt;/p&gt;
+&lt;p&gt;In the following series of post, we are going to implement Raft consensus algorithm, which is used to manage replicated log. And on top of that, we would implement a failure tolerance key-value store. This type of failure tolerant system is called replicated state machine. Replicated state machine operates on a collection of servers and makes them acting like a single server to the outside. The service would still be alive as long as majority of servers are still working.&lt;/p&gt;
 
 &lt;h2 id=&quot;raft&quot;&gt;Raft&lt;/h2&gt;
 

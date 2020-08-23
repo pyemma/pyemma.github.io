@@ -105,7 +105,7 @@ var store = [{
         "url": "https://pyemma.github.io/Distributed-System-Map-Reduce/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
         "title": "MIT Distributed System Course - Raft I",
-        "excerpt":"IntroductionIn the following serious of post, we are going to implement Raft consensus algorithm, which is used to manage replicated log. And on top of that, we would implement a failure tolerance key-value store. This type of failure tolerant system is called replicated state machine. Replicated state machine operates on...","categories": [],
+        "excerpt":"IntroductionIn the following series of post, we are going to implement Raft consensus algorithm, which is used to manage replicated log. And on top of that, we would implement a failure tolerance key-value store. This type of failure tolerant system is called replicated state machine. Replicated state machine operates on...","categories": [],
         "tags": ["distributed system"],
         "url": "https://pyemma.github.io/Distributed-System-RAFT/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"}]
