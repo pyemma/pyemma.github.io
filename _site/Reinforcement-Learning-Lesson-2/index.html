@@ -119,11 +119,6 @@
         <a class="site-title" href="https://pyemma.github.io/">Coding Monkey</a>
         <ul class="visible-links">
           
-            
-            <li class="masthead__menu-item">
-              <a href="https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/" >Quick-Start Guide</a>
-            </li>
-          
         </ul>
         
         <button class="greedy-nav__toggle hidden" type="button">
@@ -253,7 +248,7 @@
 
 
 
-  2 minute read
+  3 minute read
 </p>
           
         </header>
@@ -268,7 +263,7 @@
 <ul>
   <li>Initiate $v(s)$ to 0 for all $s\in S$</li>
   <li>Apply
-<script type="math/tex">v(s) = max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av(s))</script>
+\(v(s) = max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av(s))\)
 to update each state value function to a better estimation</li>
 </ul>
 
@@ -279,20 +274,19 @@ to update each state value function to a better estimation</li>
 
 <p>According to the Contraction Mapping Theory, we know that $v^\ast=Tv^\ast$ has a unique solution. And based on value iteration converge, we know that $v_{t}=Tv_{t-1}$. Then we could have</p>
 
-<script type="math/tex; mode=display">||v_t - v\ast||_\infty = ||Tv_{t-1} - Tv\ast||_\infty \le \gamma ||v_{t-1} - v\ast||_\infty</script>
+\[||v_t - v\ast||_\infty = ||Tv_{t-1} - Tv\ast||_\infty \le \gamma ||v_{t-1} - v\ast||_\infty\]
 
 <p>By applying the operator repeatedly, we are bringing our estimated value function closer and closer to the fixed point, thus we are achieving the optimal value function gradually.</p>
 
 <p>To prove Bellman Optimality Operator is a contraction, we can have:</p>
 
-<script type="math/tex; mode=display">% <![CDATA[
-\begin{align}
+\[\begin{align}
 |Tv_1(s) - Tv_2(s)|
-& = |max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
-& \le max_a|(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - (R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
-& = max_a|\gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s) - \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s)| \\
-& \le \gamma max_s|v_1(s) - v_2(s)|\\
-\end{align} %]]></script>
+&amp; = |max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
+&amp; \le max_a|(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - (R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
+&amp; = max_a|\gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s) - \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s)| \\
+&amp; \le \gamma max_s|v_1(s) - v_2(s)|\\
+\end{align}\]
 
 <h4 id="policy-iteration">Policy Iteration</h4>
 <p>Compared with value iteration which focus on computing the optimal value function. Policy iteration evaluate a policy and improve the policy gradually, and finally converge to the optimal policy, the algorithm is as follow:</p>
@@ -302,7 +296,7 @@ to update each state value function to a better estimation</li>
   <li>Improve the current policy greedily by:</li>
 </ul>
 
-<script type="math/tex; mode=display">\pi^\prime = argmax_a (R_s^a + \gamma \sum_{s^\prime\in S}P_{ss^\prime}^av^\pi(s))</script>
+\[\pi^\prime = argmax_a (R_s^a + \gamma \sum_{s^\prime\in S}P_{ss^\prime}^av^\pi(s))\]
 
 <ul>
   <li>Repeat until the policy does not change</li>
@@ -312,11 +306,11 @@ to update each state value function to a better estimation</li>
 
 <p>Suppose a deterministic policy $a = \pi(s)$. We can improve it by acting greedily by</p>
 
-<script type="math/tex; mode=display">\pi^\prime(s) = argmax_aq_\pi(s, a)</script>
+\[\pi^\prime(s) = argmax_aq_\pi(s, a)\]
 
 <p>according to the current action value function(remember the relationship between action value function and state value function, they can be transformed each other). It can improve the value function for any state</p>
 
-<script type="math/tex; mode=display">q_\pi(s, \pi^\prime(s)) = argmax_a q_\pi(s, a) \ge q_\pi(s, \pi(s)) = v_\pi(s)</script>
+\[q_\pi(s, \pi^\prime(s)) = argmax_a q_\pi(s, a) \ge q_\pi(s, \pi(s)) = v_\pi(s)\]
 
 <p>And thus we can improves the value function $v_{\pi^\prime}(s) \ge v_\pi(s)$ (this can be proved by expanding the return and recursively substitute the above function).</p>
 

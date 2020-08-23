@@ -119,11 +119,6 @@
         <a class="site-title" href="https://pyemma.github.io/">Coding Monkey</a>
         <ul class="visible-links">
           
-            
-            <li class="masthead__menu-item">
-              <a href="https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/" >Quick-Start Guide</a>
-            </li>
-          
         </ul>
         
         <button class="greedy-nav__toggle hidden" type="button">
@@ -442,7 +437,7 @@
   <li>Read in the file content</li>
   <li>Pass all content into mapf function, which is the users’ map function</li>
   <li>Shard the output according to the num of reduce tasks</li>
-  <li>Write all content into a temp file and then atomically rename it following the convention of <code class="highlighter-rouge">out-X-Y</code>, where X is the map task id and Y is the reduce task id
+  <li>Write all content into a temp file and then atomically rename it following the convention of <code class="language-plaintext highlighter-rouge">out-X-Y</code>, where X is the map task id and Y is the reduce task id
     <ul>
       <li>The reason that we write into a temp file is that we don’t want to expose any partially written file. Only when all content is flushed into the file, we would formally rename it to the acceptable intermediate filename.</li>
     </ul>
@@ -481,7 +476,7 @@
   <li>Read all intermediate files content</li>
   <li>Sort all keys</li>
   <li>Pass to reducef. This part of logic is provided by the assignment example</li>
-  <li>Flush result into temp file and once everything is done rename it to <code class="highlighter-rouge">out-X</code> where X is the reduce task id</li>
+  <li>Flush result into temp file and once everything is done rename it to <code class="language-plaintext highlighter-rouge">out-X</code> where X is the reduce task id</li>
 </ul>
 
 <figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="k">case</span> <span class="n">Reduce</span><span class="o">:</span>
@@ -584,7 +579,8 @@
 ">Previous</a>
     
     
-      <a href="#" class="pagination--pager disabled">Next</a>
+      <a href="https://pyemma.github.io/Distributed-System-RAFT/" class="pagination--pager" title="MIT Distributed System Course - Raft I
+">Next</a>
     
   </nav>
 

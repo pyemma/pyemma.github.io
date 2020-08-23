@@ -119,11 +119,6 @@
         <a class="site-title" href="https://pyemma.github.io/">Coding Monkey</a>
         <ul class="visible-links">
           
-            
-            <li class="masthead__menu-item">
-              <a href="https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/" >Quick-Start Guide</a>
-            </li>
-          
         </ul>
         
         <button class="greedy-nav__toggle hidden" type="button">
@@ -253,7 +248,7 @@
 
 
 
-  3 minute read
+  4 minute read
 </p>
           
         </header>
@@ -266,15 +261,14 @@
 <h4 id="mento-calro-policy-iteration">Mento Calro Policy Iteration</h4>
 <p>In the <a href="http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-2">Lesson 2</a>, we mentioned how to solve a MDP when we have full information about the MDP. One method is called <strong>Policy Iteration</strong>. It can be divided into two components: <em>policy iterative evaluation</em> and <em>policy improvement</em>. For the evaluation part, we can use the methods in <a href="http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-3">last lesson</a>, nominally MC and TD. However, we could not directly use the state value function, cause in the policy improvement step (e.g. greedy), we need to know the \( R \) and \( P \) to find the best action (recall the <a href="http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-1">Bellman Optimality Function</a>). However, action value function does not need the model of the MDP while in greedy policy improvement:</p>
 
-<script type="math/tex; mode=display">v_*(s) = argmax_a q(s, a)</script>
+\[v_*(s) = argmax_a q(s, a)\]
 
 <p>For the policy improvement part. If we stick to the greedy method, it will not be good for us to explore all possible states. So we use another method which is called \( \epsilon \)-greedy. We will have \( 1-\epsilon \) probability to perform greedily (choose the current best action), and have \( \epsilon \) probability to random choose an action:</p>
 
-<script type="math/tex; mode=display">% <![CDATA[
-\pi(s|a) = \begin{cases}
-\frac{\epsilon}{m} + 1 - \epsilon, & \text{if $a^\star = argmax_a Q(s, a)$} \\
-\frac{\epsilon}{m}, & \text{otherwise}
-\end{cases} %]]></script>
+\[\pi(s|a) = \begin{cases}
+\frac{\epsilon}{m} + 1 - \epsilon, &amp; \text{if $a^\star = argmax_a Q(s, a)$} \\
+\frac{\epsilon}{m}, &amp; \text{otherwise}
+\end{cases}\]
 
 <p>We have the final Mento Calro Policy Iteration as:</p>
 <ul>
@@ -282,15 +276,15 @@
   <li>For each state \( S_t \) and \( A_t \) in the episode</li>
 </ul>
 
-<script type="math/tex; mode=display">N(S_t, A_t) = N(S_t, A_t) + 1 \\
-Q(S_t, A_t) = Q(S_t, A_t) + \frac{1}{N(S_t, A_t)}((G_t - Q(S_t, A_t))) \\</script>
+\[N(S_t, A_t) = N(S_t, A_t) + 1 \\
+Q(S_t, A_t) = Q(S_t, A_t) + \frac{1}{N(S_t, A_t)}((G_t - Q(S_t, A_t))) \\\]
 
 <ul>
   <li>Update the \( \epsilon \) and policy:</li>
 </ul>
 
-<script type="math/tex; mode=display">\epsilon = 1/k \\
-\pi = \epsilon\text{-greedy}(Q)</script>
+\[\epsilon = 1/k \\
+\pi = \epsilon\text{-greedy}(Q)\]
 
 <h4 id="sarsa-algorithm">Sarsa Algorithm</h4>
 <p>If we use the logic in TD for the evaluation part, then we would have the sarsa algorithm. The main difference is that, in original TD, we use the value state function of the successor state, however, we need the action value function right now. We can obtain that by run our current policy again (remember, TD does not need the complete sequence of experience, we can generate the state and action along the way). Following is the algorithm:</p>
@@ -303,7 +297,7 @@ Q(S_t, A_t) = Q(S_t, A_t) + \frac{1}{N(S_t, A_t)}((G_t - Q(S_t, A_t))) \\</scrip
         <ul>
           <li>Take action \( A \), observe \ (R \) and \( S^\prime \)</li>
           <li>Choose \( A^\prime \) from \( S^\prime \) from the current policy derived from \( Q \)</li>
-          <li>Update <script type="math/tex">Q(S, A) = Q(S, A) + \alpha(R + \gamma Q(S^\prime, A^\prime) - Q(S, A))</script></li>
+          <li>Update \(Q(S, A) = Q(S, A) + \alpha(R + \gamma Q(S^\prime, A^\prime) - Q(S, A))\)</li>
           <li>Update (( S = S^\prime, A = A^\prime \)</li>
         </ul>
       </li>
@@ -331,8 +325,8 @@ Q(S_t, A_t) = Q(S_t, A_t) + \frac{1}{N(S_t, A_t)}((G_t - Q(S_t, A_t))) \\</scrip
   </li>
 </ul>
 
-<script type="math/tex; mode=display">Q(s, a) = Q(s, a) + \alpha\delta E(s, a) \\
-E(s, a) = \gamma\lambda E(s, a)</script>
+\[Q(s, a) = Q(s, a) + \alpha\delta E(s, a) \\
+E(s, a) = \gamma\lambda E(s, a)\]
 
 <ul>
   <li>Update \( S = S^\prime, A = A^\prime \)</li>
@@ -348,7 +342,7 @@ E(s, a) = \gamma\lambda E(s, a)</script>
       <li>Repeat for each step in the episode until we hit terminal
         <ul>
           <li>Take action \( A \), observe \( R \) and \( S^\prime \)</li>
-          <li>Update <script type="math/tex">Q(S, A) = Q(S, A) + \alpha(R + \gamma max_a Q(S^\prime, a) - Q(S, A))</script></li>
+          <li>Update \(Q(S, A) = Q(S, A) + \alpha(R + \gamma max_a Q(S^\prime, a) - Q(S, A))\)</li>
           <li>Update \( S = S^\prime \)</li>
         </ul>
       </li>

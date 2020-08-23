@@ -119,11 +119,6 @@
         <a class="site-title" href="https://pyemma.github.io/">Coding Monkey</a>
         <ul class="visible-links">
           
-            
-            <li class="masthead__menu-item">
-              <a href="https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/" >Quick-Start Guide</a>
-            </li>
-          
         </ul>
         
         <button class="greedy-nav__toggle hidden" type="button">
@@ -263,11 +258,11 @@
         
         <p>This is a simple document introducing how to write the build.xml of Ant for your projects.</p>
 
-<p>Each Ant build.xml has a <code class="highlighter-rouge">&lt;project&gt;</code> element as the root element, this element can have a <code class="highlighter-rouge">name</code> attribute, which specify the name of this project; a <code class="highlighter-rouge">basedir</code> element, which determines the root path during the sequential path calculation, a <code class="highlighter-rouge">default</code> element, which is the default <code class="highlighter-rouge">target</code> to run.</p>
+<p>Each Ant build.xml has a <code class="language-plaintext highlighter-rouge">&lt;project&gt;</code> element as the root element, this element can have a <code class="language-plaintext highlighter-rouge">name</code> attribute, which specify the name of this project; a <code class="language-plaintext highlighter-rouge">basedir</code> element, which determines the root path during the sequential path calculation, a <code class="language-plaintext highlighter-rouge">default</code> element, which is the default <code class="language-plaintext highlighter-rouge">target</code> to run.</p>
 
-<p>Each <code class="highlighter-rouge">&lt;project&gt;</code> can be constructed with several <code class="highlighter-rouge">&lt;target&gt;</code>,  <code class="highlighter-rouge">&lt;target&gt;</code> can be think of as each state of our application. For example, in my project, I need to first create several dictionaries, and then compile some java class, and encapsulate the compiled class into jar file, and then run some test. All these can be regarded as individual <code class="highlighter-rouge">&lt;target&gt;</code>. <code class="highlighter-rouge">&lt;target&gt;</code>  also has <code class="highlighter-rouge">name</code> attribute and it can also be specified with <code class="highlighter-rouge">depends</code> attribute which is other <code class="highlighter-rouge">&lt;target&gt;</code> that this depends on.</p>
+<p>Each <code class="language-plaintext highlighter-rouge">&lt;project&gt;</code> can be constructed with several <code class="language-plaintext highlighter-rouge">&lt;target&gt;</code>,  <code class="language-plaintext highlighter-rouge">&lt;target&gt;</code> can be think of as each state of our application. For example, in my project, I need to first create several dictionaries, and then compile some java class, and encapsulate the compiled class into jar file, and then run some test. All these can be regarded as individual <code class="language-plaintext highlighter-rouge">&lt;target&gt;</code>. <code class="language-plaintext highlighter-rouge">&lt;target&gt;</code>  also has <code class="language-plaintext highlighter-rouge">name</code> attribute and it can also be specified with <code class="language-plaintext highlighter-rouge">depends</code> attribute which is other <code class="language-plaintext highlighter-rouge">&lt;target&gt;</code> that this depends on.</p>
 
-<p>Each <code class="highlighter-rouge">&lt;target&gt;</code> is composed of several <code class="highlighter-rouge">task</code>. The <code class="highlighter-rouge">task</code> is in the format like <code class="highlighter-rouge">&lt;task_name attr1=val1 attr2=val2 /&gt;</code>. Several <code class="highlighter-rouge">task</code> that I have used is</p>
+<p>Each <code class="language-plaintext highlighter-rouge">&lt;target&gt;</code> is composed of several <code class="language-plaintext highlighter-rouge">task</code>. The <code class="language-plaintext highlighter-rouge">task</code> is in the format like <code class="language-plaintext highlighter-rouge">&lt;task_name attr1=val1 attr2=val2 /&gt;</code>. Several <code class="language-plaintext highlighter-rouge">task</code> that I have used is</p>
 
 <ul>
   <li><strong>mkdir</strong>: create dictionaries</li>
@@ -278,16 +273,16 @@
   <li><strong>exec</strong>: run a executable binary file</li>
 </ul>
 
-<p>Sometimes, we need the same value multiple times in different places, like the name of dictionaries. We can use <code class="highlighter-rouge">&lt;property&gt;</code> to hold this value and use the <code class="highlighter-rouge">&lt;property&gt;</code> in other place. For example, <code class="highlighter-rouge">&lt;property name="build.dir" value="build" /&gt;</code>, then we can use it like <code class="highlighter-rouge">&lt;java srcdir="${src.dir}" dstdir="${build.dir}" /&gt;</code>.</p>
+<p>Sometimes, we need the same value multiple times in different places, like the name of dictionaries. We can use <code class="language-plaintext highlighter-rouge">&lt;property&gt;</code> to hold this value and use the <code class="language-plaintext highlighter-rouge">&lt;property&gt;</code> in other place. For example, <code class="language-plaintext highlighter-rouge">&lt;property name="build.dir" value="build" /&gt;</code>, then we can use it like <code class="language-plaintext highlighter-rouge">&lt;java srcdir="${src.dir}" dstdir="${build.dir}" /&gt;</code>.</p>
 
-<p>When compile or run java class, we sometimes need external libraries, we can use <code class="highlighter-rouge">&lt;path&gt;</code> or <code class="highlighter-rouge">&lt;classpath&gt;</code> to hold them. For example</p>
+<p>When compile or run java class, we sometimes need external libraries, we can use <code class="language-plaintext highlighter-rouge">&lt;path&gt;</code> or <code class="language-plaintext highlighter-rouge">&lt;classpath&gt;</code> to hold them. For example</p>
 
 <figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;path</span> <span class="na">id=</span><span class="s">"classpath"</span><span class="nt">&gt;</span>
 	<span class="nt">&lt;pathelement</span> <span class="na">path=</span><span class="s">"${classpath}"</span> <span class="nt">/&gt;</span>
     <span class="nt">&lt;fileset</span> <span class="na">dir=</span><span class="s">"${lib.dir}"</span> <span class="na">includes=</span><span class="s">"**/*.jar"</span><span class="nt">/&gt;</span>
 <span class="nt">&lt;/path&gt;</span></code></pre></figure>
 
-<p>Here we assigned an id to this <code class="highlighter-rouge">&lt;path&gt;</code> element, we can later reference this id. And there can be multiple <code class="highlighter-rouge">&lt;pathelement&gt;</code>, the <code class="highlighter-rouge">path</code> attribute is  usually used with predefined path and <code class="highlighter-rouge">location</code> specify a path relative to the base path.</p>
+<p>Here we assigned an id to this <code class="language-plaintext highlighter-rouge">&lt;path&gt;</code> element, we can later reference this id. And there can be multiple <code class="language-plaintext highlighter-rouge">&lt;pathelement&gt;</code>, the <code class="language-plaintext highlighter-rouge">path</code> attribute is  usually used with predefined path and <code class="language-plaintext highlighter-rouge">location</code> specify a path relative to the base path.</p>
 
 <figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;target</span> <span class="na">name=</span><span class="s">"run"</span> <span class="na">depends=</span><span class="s">"jar"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;java</span> <span class="na">fork=</span><span class="s">"true"</span> <span class="na">classname=</span><span class="s">"${main-class}"</span><span class="nt">&gt;</span>
@@ -298,7 +293,7 @@
     <span class="nt">&lt;/java&gt;</span>
 <span class="nt">&lt;/target&gt;</span></code></pre></figure>
 
-<p>We can use <code class="highlighter-rouge">&lt;echo&gt;</code> in <code class="highlighter-rouge">&lt;target&gt;</code> to output some information.</p>
+<p>We can use <code class="language-plaintext highlighter-rouge">&lt;echo&gt;</code> in <code class="language-plaintext highlighter-rouge">&lt;target&gt;</code> to output some information.</p>
 
 <blockquote>
   <p>Useful link: <a href="https://ant.apache.org/manual/">Ant manual</a></p>

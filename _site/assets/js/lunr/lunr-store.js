@@ -50,7 +50,7 @@ var store = [{
         "url": "https://pyemma.github.io/Clean-Code-Summarize/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
         "title": "Math Equation",
-        "excerpt":"Use $$ to write math equationUse \\begin{equation} to write math equation\\begin{equation}\\sum_{n=1}^\\infty 1/n^2 = \\frac{\\pi^2}{6}\\end{equation}","categories": [],
+        "excerpt":"Use $$ to write math equation\\[\\sum_{n=1}^\\infty 1/n^2 = \\frac{\\pi^2}{6}\\]\\[\\textbf{A}\\textbf{B} = \\textbf{C}\\]Use \\begin{equation} to write math equation\\begin{equation}\\sum_{n=1}^\\infty 1/n^2 = \\frac{\\pi^2}{6}\\end{equation}\\[\\begin{align*} &amp; \\phi(x,y) = \\phi \\left(\\sum_{i=1}^n x_ie_i, \\sum_{j=1}^n y_je_j \\right) = \\sum_{i=1}^n \\sum_{j=1}^n x_i y_j \\phi(e_i, e_j) = \\\\ &amp; (x_1, \\ldots, x_n) \\left( \\begin{array}{ccc} \\phi(e_1, e_1) &amp; \\cdots &amp; \\phi(e_1, e_n)...","categories": [],
         "tags": [],
         "url": "https://pyemma.github.io/Math-Equation/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
@@ -80,7 +80,7 @@ var store = [{
         "url": "https://pyemma.github.io/Reinforcement-Learning-Lesson-5/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
         "title": "Reinforcement Learning Lesson 6",
-        "excerpt":"In the pervious we use a model to approximate the state value/action value function. In this post, we are going to learn how to directly parameterize a policy, which means we would directly get the probability of each action given a state:In this case, we are not going to have...","categories": [],
+        "excerpt":"In the pervious we use a model to approximate the state value/action value function. In this post, we are going to learn how to directly parameterize a policy, which means we would directly get the probability of each action given a state:\\[\\pi_{\\theta}(s ,a) = P[a|s, \\theta]\\]In this case, we are...","categories": [],
         "tags": ["reinforcement learning"],
         "url": "https://pyemma.github.io/Reinforcment-Learning-Lesson-6/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
@@ -103,4 +103,9 @@ var store = [{
         "excerpt":"IntroductionThis is going to be a series of posts to record my learning of MIT 6.824 Distributed System. The post would focus on the course assignments which is to build some distributed systems from scratch using Go language. I would discuss some of the basic ideas that these assignments touched,...","categories": [],
         "tags": ["distributed system"],
         "url": "https://pyemma.github.io/Distributed-System-Map-Reduce/",
+        "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
+        "title": "MIT Distributed System Course - Raft I",
+        "excerpt":"IntroductionIn the following serious of post, we are going to implement Raft consensus algorithm, which is used to manage replicated log. And on top of that, we would implement a failure tolerance key-value store. This type of failure tolerant system is called replicated state machine. Replicated state machine operates on...","categories": [],
+        "tags": ["distributed system"],
+        "url": "https://pyemma.github.io/Distributed-System-RAFT/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"}]

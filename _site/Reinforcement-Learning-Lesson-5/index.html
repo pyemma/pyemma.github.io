@@ -119,11 +119,6 @@
         <a class="site-title" href="https://pyemma.github.io/">Coding Monkey</a>
         <ul class="visible-links">
           
-            
-            <li class="masthead__menu-item">
-              <a href="https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/" >Quick-Start Guide</a>
-            </li>
-          
         </ul>
         
         <button class="greedy-nav__toggle hidden" type="button">
@@ -270,15 +265,15 @@
 
 <p>This can be reviewed as a classical supervised learning problem if we <strong>know the actual value function</strong>, and more accurately speaking, its a regression problem. In the regression problem, we are trying to fit a model which will output some real number that matches the our input label as much as possible. In the regression problem, the loss is defined using mean-square error. In order to get a model, we need first to do some feature engineering and represent each state using the <strong>feature vector</strong> $x(S)$, this is going to be the input into our model. And then we try to minimize</p>
 
-<script type="math/tex; mode=display">L(w) = E_{\pi}[(v_{\pi}(S) - v(S, w))^2]</script>
+\[L(w) = E_{\pi}[(v_{\pi}(S) - v(S, w))^2]\]
 
 <p>Here $w$ is our model’s parameter and is what we are going to improve. $v_{\pi}(S)$ is the actual value (label) and $v(S, w)$ is the output from our model (predict). In order to minimize this loss, we use stochastic gradient decrease to update $w$, which we have:</p>
 
-<script type="math/tex; mode=display">\Delta w = \alpha (v_{\pi}(S) - v(S, w)) \nabla_w v(S, w)</script>
+\[\Delta w = \alpha (v_{\pi}(S) - v(S, w)) \nabla_w v(S, w)\]
 
 <p>Here $\alpha$ is a learning rate controlling how fast we improve $w$, and $\nabla_w v(S, w)$ is the derivate of our model toward the parameter, for example, if we choose a linear model, where $v(S, w) = x(S)^T * w$, then we would have</p>
 
-<script type="math/tex; mode=display">\Delta w = \alpha (v_{\pi}(S) - v(S, w))x(S)</script>
+\[\Delta w = \alpha (v_{\pi}(S) - v(S, w))x(S)\]
 
 <p>However, we could only obtain this update when we really <strong>know the actual value function</strong>, which is the case of supervised learning. However, in reinforcement learning, we are lack of such information. So we have to use some target to replacement them. We can actually combining it with the algorithm we have introduced before. For example the MC algorithm, In each episode, we will get a series of the state and corresponding return $&lt;S_t, G_t&gt;$, we can actually use this return as our target and train our model on it. The process would be like use our model to compute the state value, and use some policy to go through the process, then we would have $&lt;S_1, G_1&gt;, &lt;S_2, G_2&gt;, …, &lt;S_T, G_T&gt;$. Then use these as our training data and update our model. This training is <strong>on-policy</strong> (because we are learning as well as behaving) and <strong>incremental</strong> (episode by episode). Similar things can be applied to TD(0) and TD($\lambda$), where we use TD target and $G_t^\lambda$. Good news to use TD target is that is needs less steps for model to converge (since TD target is less variance), but it might not converge in some cases, for example, if we choose Neural Network as our model, then the model will blow up.</p>
 
@@ -291,7 +286,7 @@
   <li>Optimize MSE between Q target and Q learning Network</li>
 </ul>
 
-<script type="math/tex; mode=display">L_i(w_i) = E_{s,a,r,s^, ~ D}[(r + \gamma max_{a^,}Q(s^,,a^,; w^-) - Q(s, a; w_i))^2]</script>
+\[L_i(w_i) = E_{s,a,r,s^, ~ D}[(r + \gamma max_{a^,}Q(s^,,a^,; w^-) - Q(s, a; w_i))^2]\]
 
 <p>The key method that stabilize the model is experience reply and Q target. For the experience reply, it helps decouple the relationship between each step since we are randomly sampling. For the Q target, we are using the model several steps ago, not the model we just updated. You can think of this as avoid oscillation.</p>
 

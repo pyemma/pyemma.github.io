@@ -119,11 +119,6 @@
         <a class="site-title" href="https://pyemma.github.io/">Coding Monkey</a>
         <ul class="visible-links">
           
-            
-            <li class="masthead__menu-item">
-              <a href="https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/" >Quick-Start Guide</a>
-            </li>
-          
         </ul>
         
         <button class="greedy-nav__toggle hidden" type="button">
@@ -253,7 +248,7 @@
 
 
 
-  2 minute read
+  3 minute read
 </p>
           
         </header>
@@ -263,7 +258,7 @@
         
         <p>In the pervious we use a model to approximate the state value/action value function. In this post, we are going to learn how to directly parameterize a policy, which means we would directly get the probability of each action given a state:</p>
 
-<script type="math/tex; mode=display">\pi_{\theta}(s ,a) = P[a|s, \theta]</script>
+\[\pi_{\theta}(s ,a) = P[a|s, \theta]\]
 
 <p>In this case, we are not going to have any value function. A slight variance of this method is called <strong>Actor-Critic</strong>, in which both value function and policy are modeled and learnt.</p>
 
@@ -280,14 +275,14 @@
   <li>In episode environment we can use the start value</li>
 </ul>
 
-<script type="math/tex; mode=display">J_1(\theta) = V^{\pi_\theta}(s_1) = E_{\pi_\theta}[v_1]</script>
+\[J_1(\theta) = V^{\pi_\theta}(s_1) = E_{\pi_\theta}[v_1]\]
 
 <ul>
   <li>In continuous environment we can use average value or average reward pre time-step</li>
 </ul>
 
-<script type="math/tex; mode=display">J_{avV}(\theta) = \sum_{s}d^{\pi_\theta}(s)V^{\pi_\theta}(s) \\
-J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a</script>
+\[J_{avV}(\theta) = \sum_{s}d^{\pi_\theta}(s)V^{\pi_\theta}(s) \\
+J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a\]
 
 <p>where \( d^{\pi_\theta}(s) \) is stationary distribution of Markov chain for \( \pi_\theta \).</p>
 
@@ -296,11 +291,10 @@ J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a</script
 <h4 id="score-function">Score Function</h4>
 <p>In order to compute the policy gradient analytically, we introduced the <strong>score function</strong>. Assume policy $\pi_{\theta}$ is differentiable whenever it is non-zero and we know the gradient $\nabla_\theta \pi_\theta (s, a)$. Then using some tricky we have:</p>
 
-<script type="math/tex; mode=display">% <![CDATA[
-\begin{align}
-\nabla_\theta \pi_\theta (s, a) & = \pi_\theta (s, a) \frac{\nabla_\theta \pi_\theta (s, a) }{\pi_\theta (s, a)} \\
-& = \pi_\theta (s, a) \nabla_\theta log \pi_\theta (s, a)
-\end{align} %]]></script>
+\[\begin{align}
+\nabla_\theta \pi_\theta (s, a) &amp; = \pi_\theta (s, a) \frac{\nabla_\theta \pi_\theta (s, a) }{\pi_\theta (s, a)} \\
+&amp; = \pi_\theta (s, a) \nabla_\theta log \pi_\theta (s, a)
+\end{align}\]
 
 <p>Here, $\nabla_\theta log \pi_\theta (s, a)$ is the <strong>score function</strong>.</p>
 
@@ -309,7 +303,7 @@ J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a</script
   <p>For any differentiable policy $\pi_\theta (s, a)$, for any of the policy objective functions $J_1, J_{avV}, J_{avR}$, the policy gradient is</p>
 </blockquote>
 
-<script type="math/tex; mode=display">\nabla_\theta J(\theta) = E_{\pi_\theta}[\nabla_\theta log \pi_\theta (s, a) Q^{\pi_\theta} (s, a)]</script>
+\[\nabla_\theta J(\theta) = E_{\pi_\theta}[\nabla_\theta log \pi_\theta (s, a) Q^{\pi_\theta} (s, a)]\]
 
 <h4 id="monte-carlo-policy-gradient">Monte-Carlo Policy Gradient</h4>
 <p>Use return as an unbiased sample of $Q^{\pi_\theta} (s, a)$, the algorithm is as follow:</p>

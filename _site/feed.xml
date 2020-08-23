@@ -7,6 +7,323 @@
     <atom:link href="https://pyemma.github.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>MIT Distributed System Course - Raft I</title>
+        <description>&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
+
+&lt;p&gt;In the following serious of post, we are going to implement Raft consensus algorithm, which is used to manage replicated log. And on top of that, we would implement a failure tolerance key-value store. This type of failure tolerant system is called replicated state machine. Replicated state machine operates on a collection of servers and makes them acting like a single server to the outside. The service would still be alive as long as majority of servers are still working.&lt;/p&gt;
+
+&lt;h2 id=&quot;raft&quot;&gt;Raft&lt;/h2&gt;
+
+&lt;p&gt;The original paper is available &lt;a href=&quot;https://raft.github.io/raft.pdf&quot;&gt;here&lt;/a&gt; and there is an official &lt;a href=&quot;https://raft.github.io/&quot;&gt;website&lt;/a&gt;. In this post, we would first introduce some basic concepts/abstractions in Raft. Then we would move to the Leader Election part, which is cover by the 5.1, 5.2 and 5.4 section in the original paper.&lt;/p&gt;
+
+&lt;p&gt;The below figure in the original paper is a decent summarization of the Raft algorithm, which is recommend to read carefully words by words.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/raft.png&quot; alt=&quot;Summary of Raft consensus algorithm&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;There are several essential concepts in Raft&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Raft works on a group of machines, or servers, by managing a replicated log. Applications are built on top of these Raft servers.&lt;/li&gt;
+  &lt;li&gt;There are in total 3 different state for Raft servers: &lt;strong&gt;follower&lt;/strong&gt;, &lt;strong&gt;candidate&lt;/strong&gt; and &lt;strong&gt;leader&lt;/strong&gt;.
+    &lt;ul&gt;
+      &lt;li&gt;The job for &lt;strong&gt;follower&lt;/strong&gt; is pretty simple, it responses to RPC call scheduled by &lt;strong&gt;candidate&lt;/strong&gt; or &lt;strong&gt;leader&lt;/strong&gt;.&lt;/li&gt;
+      &lt;li&gt;The job for &lt;strong&gt;candidate&lt;/strong&gt; is to initiate leader election by voting itself and collecting votes from other servers.&lt;/li&gt;
+      &lt;li&gt;The job for &lt;strong&gt;leader&lt;/strong&gt; is to replicate its log to &lt;strong&gt;follower&lt;/strong&gt; and send heartbeats to maintain its &lt;strong&gt;leader&lt;/strong&gt; state.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Raft use a sequence of &lt;strong&gt;term&lt;/strong&gt; to represent the entire process instead of using absolute time. Each &lt;strong&gt;term&lt;/strong&gt; is uniquely identified by a number, which is monotonically increasing.&lt;/li&gt;
+  &lt;li&gt;Regarding to the lifetime of each &lt;strong&gt;term&lt;/strong&gt;, they all start with &lt;em&gt;leader election&lt;/em&gt;. Once a &lt;strong&gt;leader&lt;/strong&gt; is elected, the &lt;strong&gt;leader&lt;/strong&gt; repeatedly replicates its log onto all other servers, this process would continue as long as the &lt;strong&gt;leader&lt;/strong&gt; could still send heartbeats to all &lt;strong&gt;followers&lt;/strong&gt;. Otherwise, a new &lt;strong&gt;term&lt;/strong&gt; would start.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Term&lt;/strong&gt; number is passed during each RPC request and reply. It is used to identify if the request is from staled servers and reject their requests. This information is also used by staled servers to reset their status to the right one.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;For the leader election procedure, here are some highlights&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;As shown in the figure, we would have a RequestVote RPC to do the job. Within the RequestVote handler, we would check if the request is a legit one by comparing term number, term number of last entry and index number of last entry. This part is covered in section 5.4.1. It is mainly used for checking which server is more up to date.&lt;/li&gt;
+  &lt;li&gt;If the request is smaller than the server, we would reject the vote. Otherwise, we would check if we have voted in the current term.&lt;/li&gt;
+  &lt;li&gt;Once we grant vote, we would need to reset the election timeout.&lt;/li&gt;
+  &lt;li&gt;Once election timeout is triggered. As long as the server is not &lt;strong&gt;leader&lt;/strong&gt;, it will first convert itself to &lt;strong&gt;candidate&lt;/strong&gt; state, vote for itself, reset election timeout and then start election.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Candidate&lt;/strong&gt; would send RequestVote RPC to all servers to collect votes in parallel and wait for response&lt;/li&gt;
+  &lt;li&gt;There are 3 potential outcomes for leader election:
+    &lt;ul&gt;
+      &lt;li&gt;The &lt;strong&gt;candidate&lt;/strong&gt; collects majority of votes. It would convert itself to &lt;strong&gt;leader&lt;/strong&gt; and start to send heartbeats to all others.&lt;/li&gt;
+      &lt;li&gt;The &lt;strong&gt;candidate&lt;/strong&gt; receives a heartbeat from other server that has &lt;strong&gt;term&lt;/strong&gt; not smaller than its term, it would convert itself to &lt;strong&gt;follower&lt;/strong&gt;.&lt;/li&gt;
+      &lt;li&gt;The &lt;strong&gt;candidates&lt;/strong&gt; could not collect enough votes and in this case the term ended with no &lt;strong&gt;leader&lt;/strong&gt;. Election timeout would trigger and the &lt;strong&gt;candidate&lt;/strong&gt; would start an election with a new term.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;The reason that &lt;strong&gt;candidates&lt;/strong&gt; could not get majority is due to “vote splits”. Raft use randomization to avoid this issue as much as possible. During the init and reset of election timeout, we would generate a new random number instead of using some fixed one.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Leader&lt;/strong&gt; would periodically send heartbeats to each server. It uses the AppendEntries RPC to do the job. By sending RPC request with an empty log, it means that this is a heartbeats. Once a follower receive a heartbeat, it would reset its election timeout.&lt;/p&gt;
+
+&lt;h2 id=&quot;implementation&quot;&gt;Implementation&lt;/h2&gt;
+
+&lt;p&gt;This is the first time that I work on concurrency programming and it is really challenging to get everything right. There are several suggestions on the &lt;a href=&quot;https://pdos.csail.mit.edu/6.824/labs/raft-structure.txt&quot;&gt;structure of Raft&lt;/a&gt; as well as how to &lt;a href=&quot;https://pdos.csail.mit.edu/6.824/labs/raft-locking.txt&quot;&gt;correctly use lock&lt;/a&gt;, which is super beneficial on understanding Raft behavior and the design. Below are some hints that I think is critical to get Raft correct:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;There are several long-running processes in Raft, such as sending heartbeats and monitoring election timeout. It is better to use some long-running threads(goroutines in Go) to do these jobs.&lt;/li&gt;
+  &lt;li&gt;Since we need to send RPC in parallel, it is better to schedule the RPC calls within a thread and use a shared counters among these threads to collect the result.&lt;/li&gt;
+  &lt;li&gt;Since we are sending each RPC within separate threads, we don’t know when would the thread going to be executed and what would be the status of the server at that time. So it is critical for us to check if the &lt;em&gt;server still matches our assumption when we step into the function&lt;/em&gt;, such as if the term still matches or the state is still &lt;strong&gt;candidates&lt;/strong&gt; etc.&lt;/li&gt;
+  &lt;li&gt;Avoid using lock around RPC calls, it is easy to cause dead lock.&lt;/li&gt;
+  &lt;li&gt;Use “print-to-console” style debugging is pretty efficient actually. Log the event out and see if the server is behaving abnormally.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The overall code is available &lt;a href=&quot;https://github.com/pyemma/mit-distributed-system/tree/master/src/raft&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;leader-election&quot;&gt;Leader election&lt;/h3&gt;
+
+&lt;p&gt;For the leader election part, there are in total three pieces of work:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;RequestVote RPC handler&lt;/li&gt;
+  &lt;li&gt;Function to start election for &lt;strong&gt;candidate&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;Background thread to monitor election timeout and start election&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Here is the code of RequestVote RPC handler&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Raft&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RequestVote&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RequestVoteArgs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RequestVoteReply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;defer&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Unlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;DPrintf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;%d receive request vote from %d on term %d, current term %d&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;me&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CandidateId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+	&lt;span class=&quot;c&quot;&gt;// if candidate term is smaller than current term, directly reject&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;VoteGranted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;c&quot;&gt;// if candidate term is larger than current term, convert to follower first&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;convertToFollower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+	&lt;span class=&quot;c&quot;&gt;// not vote or the vote is the same as pervious candidate&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;votedFor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;votedFor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CandidateId&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;c&quot;&gt;// check if is more up to date&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;isCandidateUpdateToDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;VoteGranted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
+			&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+		&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+		&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;votedFor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CandidateId&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;// candidate is more up to date, vote for it&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resetElectionTimer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;        &lt;span class=&quot;c&quot;&gt;// whenever we make a vote, we need to reset the election timeout&lt;/span&gt;
+
+		&lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;VoteGranted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+	&lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;VoteGranted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;In the RequestVote handler, since we don’t need to schedule any other RPC calls but change some shared variables, we acquire the lock from the entrance of the function. The first step is to check if the term in the request is outdated or not. If the term is outdated, then we directly reject the vote. Next step is to check if ourself is outdated or not. If our term is smaller, then we would immediately convert to &lt;strong&gt;follower&lt;/strong&gt;. This has no effect for a &lt;strong&gt;follower&lt;/strong&gt; but would make staled &lt;strong&gt;candidate&lt;/strong&gt; change to the correct status. When covert to &lt;strong&gt;follower&lt;/strong&gt;, we also reset the voted for variable. Although this step is not explicitly shown in the paper, this should be the correct behavior as we are in a new term and haven’t vote for anyone yet.&lt;/p&gt;
+
+&lt;p&gt;Then we check if the &lt;strong&gt;candidate’s&lt;/strong&gt; logging is more up to date. This is described in section 5.4.1 as a restriction on the election. We put this part into a dedicated function below. The logic overall is exactly reproducing what the paper describes.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span class=&quot;c&quot;&gt;// Check if the candidate is more up to date&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Raft&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;isCandidateUpdateToDate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RequestVoteArgs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;logEntries&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;// there is some log entries on the server&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;myLastLogEntry&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;logEntries&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;logEntries&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;myLastLogEntry&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LastLogTerm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;myLastLogEntry&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LastLogTerm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;logEntries&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LastLogIndex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+			&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
+		&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Once we have voted for the candidate, we need to reset the election timeout. Here is the piece of code doing this job&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span class=&quot;c&quot;&gt;// Reset election timer&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Raft&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;resetElectionTimer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;electionTime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Now&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;electionTimeout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rand&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Intn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ElectionTimeOutRange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ElectionTimeOutBase&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Millisecond&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;The way we implement timeout is to first record the start time and then regularly check if the current time minus the start time has exceed the timeout threshold or not. When we reset, we would use the current time to overwrite the start time, and assign a new timeout. This randomization is to help avoid split vote issues mentioned above.&lt;/p&gt;
+
+&lt;p&gt;Once we have finished the RequestVote RPC handler part (the sending RPC function is pretty simple and we would skip it), we need to implement the function that &lt;strong&gt;candidates&lt;/strong&gt; use to start election. The entire logic is within the function &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;startElection&lt;/code&gt;. The overall logic of it could be separate into three part: change status, send rpc and collect vote. Let’s breakdown the function and look at it step by step.&lt;/p&gt;
+
+&lt;p&gt;The first part is to require the lock and update necessary status. The main logic is to change to &lt;strong&gt;candidate&lt;/strong&gt;, increase term and vote for itself.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;DPrintf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;%d start election, pervious state %s&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;me&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;// change to candidate and increase term&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Candidate&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;votedFor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;me&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resetElectionTimer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;// need to reset election timeout since we start a new election&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;// parameters to schedule RequestVote&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;term&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;lastLogTerm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;// placeholder&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;lastLogIndex&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;// placeholder&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Unlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;The next part is to send RPC calls to all servers. Since we are sending RPC calls here, we release the lock. We send each RPC within a goroutine. There are two important things to remember here:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Information about the status of the current server such as term, lastLogTerm are passed into the goroutines as parameters. The reason is that at this particular timestamp the server matches our criteria and we need to create a snapshot to record it for later check due to the fact that other concurrency threads might change the status before the goroutines actually got scheduled.&lt;/li&gt;
+  &lt;li&gt;Similarly, we need to double check if the current status still matches our assumption when we start election. This is done by acquire the lock within the goroutine and compare the current status with the passed in status.&lt;/li&gt;
+  &lt;li&gt;We user 2 parameters to record the total number of RPC finished and the number of votes we collected. We also use a cond as a signal to wake up the thread that is waiting on some conditions to be satisfied.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span class=&quot;n&quot;&gt;cond&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sync&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NewCond&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;// counter to check the number of vote&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;finished&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;// start send RequestVote in parallel&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;peer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;range&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;peers&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;peer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;me&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;continue&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;go&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;term&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastLogTerm&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastLogIndex&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;c&quot;&gt;// server is still candidate and current term matches the term when we plan to request vote&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Candidate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;term&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Unlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+        &lt;span class=&quot;n&quot;&gt;DPrintf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;%d send request vote to %d on term %d&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;me&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RequestVoteArgs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;term&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;CandidateId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;me&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;LastLogTerm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;lastLogTerm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;LastLogIndex&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastLogIndex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+        &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RequestVoteReply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{}&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Unlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+        &lt;span class=&quot;n&quot;&gt;ok&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sendRequestVote&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+        &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;defer&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Unlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;finished&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ok&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;DPrintf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;%d got reply from %d on term %d with %t&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;me&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;VoteGranted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;convertToFollower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+            &lt;span class=&quot;c&quot;&gt;// vote is granted, and the term matches the current term, and server is still candidate&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;VoteGranted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Candidate&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;cond&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Broadcast&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+    &lt;span class=&quot;p&quot;&gt;}(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;peer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;term&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastLogTerm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastLogIndex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;The last part is to check if we have collected majority number of votes. If we haven’t collect majority votes, or if the RPC call is not all finished yet, we would wait on the cond variable. This cond variable is also used in the goroutine we send RPC calls. The thread would be waked up in the goroutine when RPC call is finished, and the current thread would re-acquire the lock and check if the condition has matched or not. If we collect majority votes, we would convert to leader and start sending heartbeats.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;    &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+	&lt;span class=&quot;c&quot;&gt;// wait for enough vote or all request has returned&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;peers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;majority&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;majority&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;finished&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;cond&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;majority&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;DPrintf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;%d collect majority of votes&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;me&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+		&lt;span class=&quot;c&quot;&gt;// change to leader and send the initial batch of heartbeats&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Leader&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sendHeartbeat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Unlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;After we have a working function to start election, the next step, as well as the final part of leader election, is to have a background thread to periodically check the status of election timeout and trigger &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;startElection&lt;/code&gt; at the right time. We check if the current state is not &lt;strong&gt;leader&lt;/strong&gt; and if the time elapsed is greater than the timeout. If true then we start election, otherwise we would sleep 25ms and then check again.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span class=&quot;k&quot;&gt;go&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;killed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Unlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;c&quot;&gt;// follower or candidate could start election upon election timeout&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Leader&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Now&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Sub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;electionTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;electionTimeout&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Unlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;startElection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Unlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Sleep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;25&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Millisecond&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}()&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Above is all of the code related to leader election. Next, we would take a look at how heartbeats is implemented.&lt;/p&gt;
+
+&lt;h3 id=&quot;heartbeats&quot;&gt;Heartbeats&lt;/h3&gt;
+
+&lt;p&gt;Compared with leader election, heartbeat is relatively simple. Heartbeat is implemented via AppendEntries RPC call. This RPC call is used by &lt;strong&gt;leader&lt;/strong&gt; to send entires to &lt;strong&gt;followers&lt;/strong&gt; to update their log. If the entries sent is empty, then it would be a heartbeat signal, which its pure function is to reset &lt;strong&gt;follower’s&lt;/strong&gt; election timeout so that the &lt;strong&gt;leader&lt;/strong&gt; could maintain its status.&lt;/p&gt;
+
+&lt;p&gt;Similar to leader election, the work is also separated into 3 parts: AppendEntires RPC handler, function to send heartbeats and background thread to repeatedly send heartbeats.&lt;/p&gt;
+
+&lt;p&gt;The AppendEntries RPC handler is pretty straight forward. It checks if the request is legal (a.k.a request term is not smaller than its current term) and covert itself to follower if its term is outdated. And then reset the election timeout.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Raft&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AppendEntries&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AppendEntriesArgs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AppendEntriesReply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;c&quot;&gt;// This is a heartbeat&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Entries&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;defer&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Unlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Success&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
+			&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+		&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+		&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;convertToFollower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+		&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Candidate&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;convertToFollower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+		&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+		&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resetElectionTimer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+		&lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Term&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTerm&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Success&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;The sending heartbeats part is also a simplified version of request votes and don’t have too much to talk about. The background thread to periodically send heartbeats shares similar structure with the one to check election timeout.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span class=&quot;k&quot;&gt;go&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;killed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Unlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Leader&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Now&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Sub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;heartbeatTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;HeartbeatTimeout&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sendHeartbeat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;rf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Unlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Sleep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;10&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Millisecond&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}()&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h2 id=&quot;future-work&quot;&gt;Future work&lt;/h2&gt;
+
+&lt;p&gt;In the following posts, we would implement the AppendEntires RPC call to be able to replicate &lt;strong&gt;leader’s&lt;/strong&gt; log onto &lt;strong&gt;followers&lt;/strong&gt;.&lt;/p&gt;
+</description>
+        <pubDate>Sun, 09 Aug 2020 00:00:00 -0700</pubDate>
+        <link>https://pyemma.github.io//Distributed-System-RAFT/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//Distributed-System-RAFT/</guid>
+      </item>
+    
+      <item>
         <title>MIT Distributed System Course - MapReduce</title>
         <description>&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
 
@@ -189,7 +506,7 @@
   &lt;li&gt;Read in the file content&lt;/li&gt;
   &lt;li&gt;Pass all content into mapf function, which is the users’ map function&lt;/li&gt;
   &lt;li&gt;Shard the output according to the num of reduce tasks&lt;/li&gt;
-  &lt;li&gt;Write all content into a temp file and then atomically rename it following the convention of &lt;code class=&quot;highlighter-rouge&quot;&gt;out-X-Y&lt;/code&gt;, where X is the map task id and Y is the reduce task id
+  &lt;li&gt;Write all content into a temp file and then atomically rename it following the convention of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;out-X-Y&lt;/code&gt;, where X is the map task id and Y is the reduce task id
     &lt;ul&gt;
       &lt;li&gt;The reason that we write into a temp file is that we don’t want to expose any partially written file. Only when all content is flushed into the file, we would formally rename it to the acceptable intermediate filename.&lt;/li&gt;
     &lt;/ul&gt;
@@ -228,7 +545,7 @@
   &lt;li&gt;Read all intermediate files content&lt;/li&gt;
   &lt;li&gt;Sort all keys&lt;/li&gt;
   &lt;li&gt;Pass to reducef. This part of logic is provided by the assignment example&lt;/li&gt;
-  &lt;li&gt;Flush result into temp file and once everything is done rename it to &lt;code class=&quot;highlighter-rouge&quot;&gt;out-X&lt;/code&gt; where X is the reduce task id&lt;/li&gt;
+  &lt;li&gt;Flush result into temp file and once everything is done rename it to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;out-X&lt;/code&gt; where X is the reduce task id&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Reduce&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
@@ -306,7 +623,7 @@
 
 &lt;ol&gt;
   &lt;li&gt;We have a \( Q(s, a) \) to record for each state and action pair, what is the expected reward we can get from them&lt;/li&gt;
-  &lt;li&gt;We update this estimation by finding what is the &lt;strong&gt;max&lt;/strong&gt; reward we can get from the next state leaded by our current state and action, update it by &lt;script type=&quot;math/tex&quot;&gt;Q(S, A) = Q(S, A) + \alpha(R + \gamma max_a Q(S^\prime, a) - Q(S, A))&lt;/script&gt;&lt;/li&gt;
+  &lt;li&gt;We update this estimation by finding what is the &lt;strong&gt;max&lt;/strong&gt; reward we can get from the next state leaded by our current state and action, update it by \(Q(S, A) = Q(S, A) + \alpha(R + \gamma max_a Q(S^\prime, a) - Q(S, A))\)&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;If we have limited number of state and action, we can hold these information into a simple lookup table. However, in reality we usually deal with unlimited number of state and action. In this case, a lookup table is not scalable, we use a model to simulate this part: describe the state with some features, tell the model and the model will tell us what \( Q(s, a) \) would be, the model would be trained and updated along the way with the examples we have.&lt;/p&gt;
@@ -328,25 +645,25 @@
     Args:
         epsiode:        Number of epsiode to train
     &quot;&quot;&quot;&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;epsilon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;epsilon_start&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;epsilon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;epsilon_start&lt;/span&gt;
 
     &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ep&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;epsiode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;env&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
         &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;action&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_action&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_norm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;epsilon&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;next_state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;env&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;step&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;action&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;action&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_action&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_norm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;epsilon&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;next_state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;step&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;action&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
             &lt;span class=&quot;n&quot;&gt;reward&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;
-            &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_remember&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;action&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;next_state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_remember&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;action&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;next_state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
             &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;next_state&lt;/span&gt;
 
-        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_learn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_learn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
 
-        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ep&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;step_to_copy_graph&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-            &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_copy_graph&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ep&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;step_to_copy_graph&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_copy_graph&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
 
-        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;epsilon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;epsilon_end&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;epsilon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;epsilon_decay&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;epsilon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;epsilon_end&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;epsilon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;epsilon_decay&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;p&gt;For each episode, we first initialize the state, and before the game terminate, we take a action based on our model and policy, then get the reward and next state for that action. We then put this as an experience into our memory pool. After the game is terminated, we update our model, and check if we should update q-target network. We also decrease the epsilon as we play. Here we are using \( \epsilon \)-greedy policy, and this parameter is the tradeoff between explore and exploit.&lt;/p&gt;
 
@@ -355,24 +672,24 @@
 &lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_learn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Use Experience Replay and Target Value Network to learn
     &quot;&quot;&quot;&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;memory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;batch_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;memory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;batch_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;sample_idx&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;choice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;memory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;memory_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;batch_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;samples&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;memory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;idx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;idx&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sample_idx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;sample_idx&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;choice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;memory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;memory_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;batch_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;samples&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;memory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;idx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;idx&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sample_idx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
 
     &lt;span class=&quot;n&quot;&gt;q_X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target_X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;actions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rewards&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dones&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[],&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[],&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[],&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[],&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;action&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;next_state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;samples&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;q_X&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;target_X&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;next_state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;actions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;action&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;rewards&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;dones&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;q_X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;target_X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;next_state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;actions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;action&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;rewards&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;dones&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-    &lt;span class=&quot;n&quot;&gt;q_labels&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target_labels&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q_model&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;predict&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q_X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target_model&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;predict&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target_X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;q_target&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q_labels&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;copy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;q_target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;batch_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;actions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rewards&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gamma&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target_labels&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dones&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;q_labels&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target_labels&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;predict&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q_X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;predict&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target_X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;q_target&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q_labels&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;copy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;q_target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;batch_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;actions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rewards&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gamma&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target_labels&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dones&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
 
-    &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q_model&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q_X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q_target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+    &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q_X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q_target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;p&gt;Here, we sample a batch of experience from our memory pool. Then prepare it into the right format. Our goal is to train our model’s prediction (in this case, the prediction is the value of each action) is the same as the actual reward + q-target. In the code, we first get the model prediction for all actions. We also get q-target prediction for each action. We then update the value for the action we take to the target value. Then we train our model using this updated value. Since we only updated the value of action we took, the model will only learn from these updated value, all other is the same as before and model would not learn from them.&lt;/p&gt;
 
@@ -399,15 +716,15 @@
 &lt;h4 id=&quot;regret&quot;&gt;Regret&lt;/h4&gt;
 &lt;p&gt;We can measure the goodness of our action use &lt;strong&gt;regret&lt;/strong&gt;. Suppose the action value is the mean reward for an action \( a \)&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;Q(a) = E[r|a]&lt;/script&gt;
+\[Q(a) = E[r|a]\]
 
 &lt;p&gt;and the optimal value \( V^\star \) is the max mean reward we can get&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;V^\star = Q(a^\star) = max_{a\in A}Q(a)&lt;/script&gt;
+\[V^\star = Q(a^\star) = max_{a\in A}Q(a)\]
 
 &lt;p&gt;Then maximize the cumulative reward is equivalent to minimize the total regret, which is&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;L_t = E[\sum_{i=1}^t (V^\star - Q(a_i))]&lt;/script&gt;
+\[L_t = E[\sum_{i=1}^t (V^\star - Q(a_i))]\]
 
 &lt;h4 id=&quot;upper-confidence-bound&quot;&gt;Upper Confidence Bound&lt;/h4&gt;
 &lt;p&gt;We can try to solve this problem in the face of uncertainty. The best action we should try is the one that would on one hand has a high mean reward, and on the other hand have a high uncertainty. We might get a higher reward, which is good. While we can also get a worse reward, but that does not matter, since we can reduce our uncertainty about that action, and prefer other action which might have higher reward. A more formal description is as follow:&lt;/p&gt;
@@ -417,26 +734,26 @@
   &lt;li&gt;Select action maximize Upper Confidence Bound (UCB)&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;a_t = argmax_{a\in A} \hat{Q_t}(a) + \hat{U_t}(a)&lt;/script&gt;
+\[a_t = argmax_{a\in A} \hat{Q_t}(a) + \hat{U_t}(a)\]
 
 &lt;p&gt;We need to come up with some method to calculate the upper bound. Here, we bring &lt;em&gt;Hoeffding’s Inequality&lt;/em&gt; for help&lt;/p&gt;
 &lt;blockquote&gt;
   &lt;p&gt;Let \( X_1,…, X_t \) be i.i.d. random variables in \( [0, 1] \), and let \( \bar{X_t} = \frac{1}{i} \sum_{i=1}^t X_i \) be the sample mean. Then&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;P[E[X] &gt; \bar{X}_t + u] \le e^{-2tu^2}&lt;/script&gt;
+\[P[E[X] &amp;gt; \bar{X}_t + u] \le e^{-2tu^2}\]
 
 &lt;p&gt;With this we can have&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;P[Q(a) &gt; \hat{Q_t}(a) + \hat{U_t}] \le e^{-2N_t(a)U_t(a)^2}&lt;/script&gt;
+\[P[Q(a) &amp;gt; \hat{Q_t}(a) + \hat{U_t}] \le e^{-2N_t(a)U_t(a)^2}\]
 
 &lt;p&gt;where \( N_t(a) \) is the expected number of \( a \) is selected. We then can pick a probability \( p \) that true value exceeds UCB, and reduce $p$ as we observer more rewards, e.g. \( p = t^{-4} \). Then we could obtain the upper bound as:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;U_t(a) = \sqrt{\frac{2logt}{N_t(a)}}&lt;/script&gt;
+\[U_t(a) = \sqrt{\frac{2logt}{N_t(a)}}\]
 
 &lt;p&gt;And finally we have the UCB1 algorithm&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;a_t = argmax_{a\in A} (Q(a) + \sqrt{\frac{2logt}{N_t(a)}})&lt;/script&gt;
+\[a_t = argmax_{a\in A} (Q(a) + \sqrt{\frac{2logt}{N_t(a)}})\]
 </description>
         <pubDate>Wed, 13 Sep 2017 00:00:00 -0700</pubDate>
         <link>https://pyemma.github.io//Reinforcement-Learning-Lesson-8/</link>
@@ -449,8 +766,8 @@
 
 &lt;p&gt;From &lt;a href=&quot;http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-1&quot;&gt;Lesson 1&lt;/a&gt; we know that a MDP can be represent by \( &amp;lt;S, A, P, R&amp;gt; \), and our model is going to understand and simulate this. We will only introduce the simple version here, in which we assume that the \( S \) and \( A \) is known, and thus we only need to model \( P \) and \( R \). We can formulate it as:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;S_{t+1} ~ P_\eta(S_{t+1}|S_t, A_t) \\
-R_{t+1} = R_\eta(R_{t+1}|S_t, A_t)&lt;/script&gt;
+\[S_{t+1} ~ P_\eta(S_{t+1}|S_t, A_t) \\
+R_{t+1} = R_\eta(R_{t+1}|S_t, A_t)\]
 
 &lt;p&gt;where the prediction of next state is a density estimation problem and the reward is a regression problem.&lt;/p&gt;
 
@@ -488,7 +805,7 @@ R_{t+1} = R_\eta(R_{t+1}|S_t, A_t)&lt;/script&gt;
   &lt;li&gt;Simulate $K$ episodes from current state $s_t$ using current simulation policy \( \pi \)&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;{s_t, A_t^k, R_{t+1}^k, S_{t+1}^k, ..., S_T^k} ~ M_v, \pi&lt;/script&gt;
+\[{s_t, A_t^k, R_{t+1}^k, S_{t+1}^k, ..., S_T^k} ~ M_v, \pi\]
 
 &lt;ul&gt;
   &lt;li&gt;Build a search tree containing visited states and actions&lt;/li&gt;
@@ -526,7 +843,7 @@ R_{t+1} = R_\eta(R_{t+1}|S_t, A_t)&lt;/script&gt;
         <title>Reinforcement Learning Lesson 6</title>
         <description>&lt;p&gt;In the pervious we use a model to approximate the state value/action value function. In this post, we are going to learn how to directly parameterize a policy, which means we would directly get the probability of each action given a state:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\pi_{\theta}(s ,a) = P[a|s, \theta]&lt;/script&gt;
+\[\pi_{\theta}(s ,a) = P[a|s, \theta]\]
 
 &lt;p&gt;In this case, we are not going to have any value function. A slight variance of this method is called &lt;strong&gt;Actor-Critic&lt;/strong&gt;, in which both value function and policy are modeled and learnt.&lt;/p&gt;
 
@@ -543,14 +860,14 @@ R_{t+1} = R_\eta(R_{t+1}|S_t, A_t)&lt;/script&gt;
   &lt;li&gt;In episode environment we can use the start value&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;J_1(\theta) = V^{\pi_\theta}(s_1) = E_{\pi_\theta}[v_1]&lt;/script&gt;
+\[J_1(\theta) = V^{\pi_\theta}(s_1) = E_{\pi_\theta}[v_1]\]
 
 &lt;ul&gt;
   &lt;li&gt;In continuous environment we can use average value or average reward pre time-step&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;J_{avV}(\theta) = \sum_{s}d^{\pi_\theta}(s)V^{\pi_\theta}(s) \\
-J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a&lt;/script&gt;
+\[J_{avV}(\theta) = \sum_{s}d^{\pi_\theta}(s)V^{\pi_\theta}(s) \\
+J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a\]
 
 &lt;p&gt;where \( d^{\pi_\theta}(s) \) is stationary distribution of Markov chain for \( \pi_\theta \).&lt;/p&gt;
 
@@ -559,11 +876,10 @@ J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a&lt;/scr
 &lt;h4 id=&quot;score-function&quot;&gt;Score Function&lt;/h4&gt;
 &lt;p&gt;In order to compute the policy gradient analytically, we introduced the &lt;strong&gt;score function&lt;/strong&gt;. Assume policy $\pi_{\theta}$ is differentiable whenever it is non-zero and we know the gradient $\nabla_\theta \pi_\theta (s, a)$. Then using some tricky we have:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align}
-\nabla_\theta \pi_\theta (s, a) &amp; = \pi_\theta (s, a) \frac{\nabla_\theta \pi_\theta (s, a) }{\pi_\theta (s, a)} \\
-&amp; = \pi_\theta (s, a) \nabla_\theta log \pi_\theta (s, a)
-\end{align} %]]&gt;&lt;/script&gt;
+\[\begin{align}
+\nabla_\theta \pi_\theta (s, a) &amp;amp; = \pi_\theta (s, a) \frac{\nabla_\theta \pi_\theta (s, a) }{\pi_\theta (s, a)} \\
+&amp;amp; = \pi_\theta (s, a) \nabla_\theta log \pi_\theta (s, a)
+\end{align}\]
 
 &lt;p&gt;Here, $\nabla_\theta log \pi_\theta (s, a)$ is the &lt;strong&gt;score function&lt;/strong&gt;.&lt;/p&gt;
 
@@ -572,7 +888,7 @@ J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a&lt;/scr
   &lt;p&gt;For any differentiable policy $\pi_\theta (s, a)$, for any of the policy objective functions $J_1, J_{avV}, J_{avR}$, the policy gradient is&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\nabla_\theta J(\theta) = E_{\pi_\theta}[\nabla_\theta log \pi_\theta (s, a) Q^{\pi_\theta} (s, a)]&lt;/script&gt;
+\[\nabla_\theta J(\theta) = E_{\pi_\theta}[\nabla_\theta log \pi_\theta (s, a) Q^{\pi_\theta} (s, a)]\]
 
 &lt;h4 id=&quot;monte-carlo-policy-gradient&quot;&gt;Monte-Carlo Policy Gradient&lt;/h4&gt;
 &lt;p&gt;Use return as an unbiased sample of $Q^{\pi_\theta} (s, a)$, the algorithm is as follow:&lt;/p&gt;
@@ -635,15 +951,15 @@ J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a&lt;/scr
 
 &lt;p&gt;This can be reviewed as a classical supervised learning problem if we &lt;strong&gt;know the actual value function&lt;/strong&gt;, and more accurately speaking, its a regression problem. In the regression problem, we are trying to fit a model which will output some real number that matches the our input label as much as possible. In the regression problem, the loss is defined using mean-square error. In order to get a model, we need first to do some feature engineering and represent each state using the &lt;strong&gt;feature vector&lt;/strong&gt; $x(S)$, this is going to be the input into our model. And then we try to minimize&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;L(w) = E_{\pi}[(v_{\pi}(S) - v(S, w))^2]&lt;/script&gt;
+\[L(w) = E_{\pi}[(v_{\pi}(S) - v(S, w))^2]\]
 
 &lt;p&gt;Here $w$ is our model’s parameter and is what we are going to improve. $v_{\pi}(S)$ is the actual value (label) and $v(S, w)$ is the output from our model (predict). In order to minimize this loss, we use stochastic gradient decrease to update $w$, which we have:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\Delta w = \alpha (v_{\pi}(S) - v(S, w)) \nabla_w v(S, w)&lt;/script&gt;
+\[\Delta w = \alpha (v_{\pi}(S) - v(S, w)) \nabla_w v(S, w)\]
 
 &lt;p&gt;Here $\alpha$ is a learning rate controlling how fast we improve $w$, and $\nabla_w v(S, w)$ is the derivate of our model toward the parameter, for example, if we choose a linear model, where $v(S, w) = x(S)^T * w$, then we would have&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\Delta w = \alpha (v_{\pi}(S) - v(S, w))x(S)&lt;/script&gt;
+\[\Delta w = \alpha (v_{\pi}(S) - v(S, w))x(S)\]
 
 &lt;p&gt;However, we could only obtain this update when we really &lt;strong&gt;know the actual value function&lt;/strong&gt;, which is the case of supervised learning. However, in reinforcement learning, we are lack of such information. So we have to use some target to replacement them. We can actually combining it with the algorithm we have introduced before. For example the MC algorithm, In each episode, we will get a series of the state and corresponding return $&amp;lt;S_t, G_t&amp;gt;$, we can actually use this return as our target and train our model on it. The process would be like use our model to compute the state value, and use some policy to go through the process, then we would have $&amp;lt;S_1, G_1&amp;gt;, &amp;lt;S_2, G_2&amp;gt;, …, &amp;lt;S_T, G_T&amp;gt;$. Then use these as our training data and update our model. This training is &lt;strong&gt;on-policy&lt;/strong&gt; (because we are learning as well as behaving) and &lt;strong&gt;incremental&lt;/strong&gt; (episode by episode). Similar things can be applied to TD(0) and TD($\lambda$), where we use TD target and $G_t^\lambda$. Good news to use TD target is that is needs less steps for model to converge (since TD target is less variance), but it might not converge in some cases, for example, if we choose Neural Network as our model, then the model will blow up.&lt;/p&gt;
 
@@ -656,7 +972,7 @@ J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a&lt;/scr
   &lt;li&gt;Optimize MSE between Q target and Q learning Network&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;L_i(w_i) = E_{s,a,r,s^, ~ D}[(r + \gamma max_{a^,}Q(s^,,a^,; w^-) - Q(s, a; w_i))^2]&lt;/script&gt;
+\[L_i(w_i) = E_{s,a,r,s^, ~ D}[(r + \gamma max_{a^,}Q(s^,,a^,; w^-) - Q(s, a; w_i))^2]\]
 
 &lt;p&gt;The key method that stabilize the model is experience reply and Q target. For the experience reply, it helps decouple the relationship between each step since we are randomly sampling. For the Q target, we are using the model several steps ago, not the model we just updated. You can think of this as avoid oscillation.&lt;/p&gt;
 </description>
@@ -672,15 +988,14 @@ J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a&lt;/scr
 &lt;h4 id=&quot;mento-calro-policy-iteration&quot;&gt;Mento Calro Policy Iteration&lt;/h4&gt;
 &lt;p&gt;In the &lt;a href=&quot;http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-2&quot;&gt;Lesson 2&lt;/a&gt;, we mentioned how to solve a MDP when we have full information about the MDP. One method is called &lt;strong&gt;Policy Iteration&lt;/strong&gt;. It can be divided into two components: &lt;em&gt;policy iterative evaluation&lt;/em&gt; and &lt;em&gt;policy improvement&lt;/em&gt;. For the evaluation part, we can use the methods in &lt;a href=&quot;http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-3&quot;&gt;last lesson&lt;/a&gt;, nominally MC and TD. However, we could not directly use the state value function, cause in the policy improvement step (e.g. greedy), we need to know the \( R \) and \( P \) to find the best action (recall the &lt;a href=&quot;http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-1&quot;&gt;Bellman Optimality Function&lt;/a&gt;). However, action value function does not need the model of the MDP while in greedy policy improvement:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_*(s) = argmax_a q(s, a)&lt;/script&gt;
+\[v_*(s) = argmax_a q(s, a)\]
 
 &lt;p&gt;For the policy improvement part. If we stick to the greedy method, it will not be good for us to explore all possible states. So we use another method which is called \( \epsilon \)-greedy. We will have \( 1-\epsilon \) probability to perform greedily (choose the current best action), and have \( \epsilon \) probability to random choose an action:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\pi(s|a) = \begin{cases}
-\frac{\epsilon}{m} + 1 - \epsilon, &amp; \text{if $a^\star = argmax_a Q(s, a)$} \\
-\frac{\epsilon}{m}, &amp; \text{otherwise}
-\end{cases} %]]&gt;&lt;/script&gt;
+\[\pi(s|a) = \begin{cases}
+\frac{\epsilon}{m} + 1 - \epsilon, &amp;amp; \text{if $a^\star = argmax_a Q(s, a)$} \\
+\frac{\epsilon}{m}, &amp;amp; \text{otherwise}
+\end{cases}\]
 
 &lt;p&gt;We have the final Mento Calro Policy Iteration as:&lt;/p&gt;
 &lt;ul&gt;
@@ -688,15 +1003,15 @@ J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a&lt;/scr
   &lt;li&gt;For each state \( S_t \) and \( A_t \) in the episode&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;N(S_t, A_t) = N(S_t, A_t) + 1 \\
-Q(S_t, A_t) = Q(S_t, A_t) + \frac{1}{N(S_t, A_t)}((G_t - Q(S_t, A_t))) \\&lt;/script&gt;
+\[N(S_t, A_t) = N(S_t, A_t) + 1 \\
+Q(S_t, A_t) = Q(S_t, A_t) + \frac{1}{N(S_t, A_t)}((G_t - Q(S_t, A_t))) \\\]
 
 &lt;ul&gt;
   &lt;li&gt;Update the \( \epsilon \) and policy:&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\epsilon = 1/k \\
-\pi = \epsilon\text{-greedy}(Q)&lt;/script&gt;
+\[\epsilon = 1/k \\
+\pi = \epsilon\text{-greedy}(Q)\]
 
 &lt;h4 id=&quot;sarsa-algorithm&quot;&gt;Sarsa Algorithm&lt;/h4&gt;
 &lt;p&gt;If we use the logic in TD for the evaluation part, then we would have the sarsa algorithm. The main difference is that, in original TD, we use the value state function of the successor state, however, we need the action value function right now. We can obtain that by run our current policy again (remember, TD does not need the complete sequence of experience, we can generate the state and action along the way). Following is the algorithm:&lt;/p&gt;
@@ -709,7 +1024,7 @@ Q(S_t, A_t) = Q(S_t, A_t) + \frac{1}{N(S_t, A_t)}((G_t - Q(S_t, A_t))) \\&lt;/sc
         &lt;ul&gt;
           &lt;li&gt;Take action \( A \), observe \ (R \) and \( S^\prime \)&lt;/li&gt;
           &lt;li&gt;Choose \( A^\prime \) from \( S^\prime \) from the current policy derived from \( Q \)&lt;/li&gt;
-          &lt;li&gt;Update &lt;script type=&quot;math/tex&quot;&gt;Q(S, A) = Q(S, A) + \alpha(R + \gamma Q(S^\prime, A^\prime) - Q(S, A))&lt;/script&gt;&lt;/li&gt;
+          &lt;li&gt;Update \(Q(S, A) = Q(S, A) + \alpha(R + \gamma Q(S^\prime, A^\prime) - Q(S, A))\)&lt;/li&gt;
           &lt;li&gt;Update (( S = S^\prime, A = A^\prime \)&lt;/li&gt;
         &lt;/ul&gt;
       &lt;/li&gt;
@@ -737,8 +1052,8 @@ Q(S_t, A_t) = Q(S_t, A_t) + \frac{1}{N(S_t, A_t)}((G_t - Q(S_t, A_t))) \\&lt;/sc
   &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;Q(s, a) = Q(s, a) + \alpha\delta E(s, a) \\
-E(s, a) = \gamma\lambda E(s, a)&lt;/script&gt;
+\[Q(s, a) = Q(s, a) + \alpha\delta E(s, a) \\
+E(s, a) = \gamma\lambda E(s, a)\]
 
 &lt;ul&gt;
   &lt;li&gt;Update \( S = S^\prime, A = A^\prime \)&lt;/li&gt;
@@ -754,7 +1069,7 @@ E(s, a) = \gamma\lambda E(s, a)&lt;/script&gt;
       &lt;li&gt;Repeat for each step in the episode until we hit terminal
         &lt;ul&gt;
           &lt;li&gt;Take action \( A \), observe \( R \) and \( S^\prime \)&lt;/li&gt;
-          &lt;li&gt;Update &lt;script type=&quot;math/tex&quot;&gt;Q(S, A) = Q(S, A) + \alpha(R + \gamma max_a Q(S^\prime, a) - Q(S, A))&lt;/script&gt;&lt;/li&gt;
+          &lt;li&gt;Update \(Q(S, A) = Q(S, A) + \alpha(R + \gamma max_a Q(S^\prime, a) - Q(S, A))\)&lt;/li&gt;
           &lt;li&gt;Update \( S = S^\prime \)&lt;/li&gt;
         &lt;/ul&gt;
       &lt;/li&gt;
@@ -779,9 +1094,9 @@ E(s, a) = \gamma\lambda E(s, a)&lt;/script&gt;
   &lt;li&gt;For each $S_t$ with return $G_t$&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;N(S_t) = N(S_t) + 1&lt;/script&gt;
+\[N(S_t) = N(S_t) + 1\]
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;V(S_t) = V(S_t) + \frac{1}{N(S_t)}(G_t - V(S_t))&lt;/script&gt;
+\[V(S_t) = V(S_t) + \frac{1}{N(S_t)}(G_t - V(S_t))\]
 
 &lt;p&gt;Here $N(S_t)$ counts the number of our visit to $S_t$. The update function is using running mean to update the value of the current state, by moving it towards the return in this episode (G_t) a little bit. Here we can replace $\frac{1}{N(S_t)}$ to a small number $\alpha$, this is functioning as a learning rate to control how quick we update our value function. When we increase the counter, we can increase it either by first visit within the episode or every visit within the episode.&lt;/p&gt;
 
@@ -795,7 +1110,7 @@ E(s, a) = \gamma\lambda E(s, a)&lt;/script&gt;
   &lt;li&gt;For each $S_t$ within the episode&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;V(S_t) = V(S_t) + \alpha(R_{t+1} + \gamma V(S_{t+1}) - V(S_t))&lt;/script&gt;
+\[V(S_t) = V(S_t) + \alpha(R_{t+1} + \gamma V(S_{t+1}) - V(S_t))\]
 
 &lt;p&gt;Here, $R_{t+1} + \gamma V(S_{t+1})$ is called TD target, and $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$ is called the TD error. The main logic here is bootstrapping, which means we are not directly making each value function to the most accurate value it should be given this episode. We are making it slightly better based on our current estimate on the successor state. The benefit of the doing so is that we can learn from incomplete experience, and MDP without a terminal state.&lt;/p&gt;
 
@@ -816,25 +1131,23 @@ E(s, a) = \gamma\lambda E(s, a)&lt;/script&gt;
   &lt;li&gt;Suppose in our experience, $s$ is visited at timestamp $k$, then the $E_t(s)$ will be like&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-E_t(s) = \begin{cases}
-0, &amp; \text{if $t &lt; k$} \\
-\gamma^{t - k}, &amp; \text{if $t \ge k$} \\
-\end{cases} %]]&gt;&lt;/script&gt;
+\[E_t(s) = \begin{cases}
+0, &amp;amp; \text{if $t &amp;lt; k$} \\
+\gamma^{t - k}, &amp;amp; \text{if $t \ge k$} \\
+\end{cases}\]
 
 &lt;ul&gt;
   &lt;li&gt;The accumulated online update for $s$ is&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align}
-\sum_{t=1}^{T-1}\alpha\delta_t E_t(s) &amp; = \sum_{t=k}^{T-1}\gamma^{t-k}\delta_t \\
-&amp; = \delta_k + \gamma\delta_{k+1} + ... + \gamma^{T-1-k}\delta_{T-1} \\
-&amp; = R_{k+1} + \gamma V(S_{k+1}) - V(S_k) + \gamma R_{k+2} + \gamma^2 V(S_{k+2}) - \gamma V(S_{k+1}) + ... \\
-&amp; + \gamma^{T-1-k} R_{T-1} + \gamma^{T-k} V(S_T) - \gamma^{T-1-k} V(S_{T-1}) \\
-&amp; = R_{k+1} + \gamma R_{k+2} + \gamma^2 R_{k+3} + ... + \gamma^{T-1-k} R_{T-1} - V(S_k) \\
-&amp; = G_k - V(S_k)
-\end{align} %]]&gt;&lt;/script&gt;
+\[\begin{align}
+\sum_{t=1}^{T-1}\alpha\delta_t E_t(s) &amp;amp; = \sum_{t=k}^{T-1}\gamma^{t-k}\delta_t \\
+&amp;amp; = \delta_k + \gamma\delta_{k+1} + ... + \gamma^{T-1-k}\delta_{T-1} \\
+&amp;amp; = R_{k+1} + \gamma V(S_{k+1}) - V(S_k) + \gamma R_{k+2} + \gamma^2 V(S_{k+2}) - \gamma V(S_{k+1}) + ... \\
+&amp;amp; + \gamma^{T-1-k} R_{T-1} + \gamma^{T-k} V(S_T) - \gamma^{T-1-k} V(S_{T-1}) \\
+&amp;amp; = R_{k+1} + \gamma R_{k+2} + \gamma^2 R_{k+3} + ... + \gamma^{T-1-k} R_{T-1} - V(S_k) \\
+&amp;amp; = G_k - V(S_k)
+\end{align}\]
 
 &lt;ul&gt;
   &lt;li&gt;Thus the update function for TD(1) is the same as the one in every visit MC (where we use $\alpha$ as a learning rate instead of the original one).&lt;/li&gt;
@@ -856,7 +1169,7 @@ E_t(s) = \begin{cases}
 &lt;ul&gt;
   &lt;li&gt;Initiate $v(s)$ to 0 for all $s\in S$&lt;/li&gt;
   &lt;li&gt;Apply
-&lt;script type=&quot;math/tex&quot;&gt;v(s) = max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av(s))&lt;/script&gt;
+\(v(s) = max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av(s))\)
 to update each state value function to a better estimation&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -867,20 +1180,19 @@ to update each state value function to a better estimation&lt;/li&gt;
 
 &lt;p&gt;According to the Contraction Mapping Theory, we know that $v^\ast=Tv^\ast$ has a unique solution. And based on value iteration converge, we know that $v_{t}=Tv_{t-1}$. Then we could have&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;||v_t - v\ast||_\infty = ||Tv_{t-1} - Tv\ast||_\infty \le \gamma ||v_{t-1} - v\ast||_\infty&lt;/script&gt;
+\[||v_t - v\ast||_\infty = ||Tv_{t-1} - Tv\ast||_\infty \le \gamma ||v_{t-1} - v\ast||_\infty\]
 
 &lt;p&gt;By applying the operator repeatedly, we are bringing our estimated value function closer and closer to the fixed point, thus we are achieving the optimal value function gradually.&lt;/p&gt;
 
 &lt;p&gt;To prove Bellman Optimality Operator is a contraction, we can have:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align}
+\[\begin{align}
 |Tv_1(s) - Tv_2(s)|
-&amp; = |max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
-&amp; \le max_a|(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - (R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
-&amp; = max_a|\gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s) - \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s)| \\
-&amp; \le \gamma max_s|v_1(s) - v_2(s)|\\
-\end{align} %]]&gt;&lt;/script&gt;
+&amp;amp; = |max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - max_a(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
+&amp;amp; \le max_a|(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s)) - (R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s))| \\
+&amp;amp; = max_a|\gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_1(s) - \gamma\sum_{s^\prime\in S}P_{ss^\prime}^av_2(s)| \\
+&amp;amp; \le \gamma max_s|v_1(s) - v_2(s)|\\
+\end{align}\]
 
 &lt;h4 id=&quot;policy-iteration&quot;&gt;Policy Iteration&lt;/h4&gt;
 &lt;p&gt;Compared with value iteration which focus on computing the optimal value function. Policy iteration evaluate a policy and improve the policy gradually, and finally converge to the optimal policy, the algorithm is as follow:&lt;/p&gt;
@@ -890,7 +1202,7 @@ to update each state value function to a better estimation&lt;/li&gt;
   &lt;li&gt;Improve the current policy greedily by:&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\pi^\prime = argmax_a (R_s^a + \gamma \sum_{s^\prime\in S}P_{ss^\prime}^av^\pi(s))&lt;/script&gt;
+\[\pi^\prime = argmax_a (R_s^a + \gamma \sum_{s^\prime\in S}P_{ss^\prime}^av^\pi(s))\]
 
 &lt;ul&gt;
   &lt;li&gt;Repeat until the policy does not change&lt;/li&gt;
@@ -900,11 +1212,11 @@ to update each state value function to a better estimation&lt;/li&gt;
 
 &lt;p&gt;Suppose a deterministic policy $a = \pi(s)$. We can improve it by acting greedily by&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\pi^\prime(s) = argmax_aq_\pi(s, a)&lt;/script&gt;
+\[\pi^\prime(s) = argmax_aq_\pi(s, a)\]
 
 &lt;p&gt;according to the current action value function(remember the relationship between action value function and state value function, they can be transformed each other). It can improve the value function for any state&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_\pi(s, \pi^\prime(s)) = argmax_a q_\pi(s, a) \ge q_\pi(s, \pi(s)) = v_\pi(s)&lt;/script&gt;
+\[q_\pi(s, \pi^\prime(s)) = argmax_a q_\pi(s, a) \ge q_\pi(s, \pi(s)) = v_\pi(s)\]
 
 &lt;p&gt;And thus we can improves the value function $v_{\pi^\prime}(s) \ge v_\pi(s)$ (this can be proved by expanding the return and recursively substitute the above function).&lt;/p&gt;
 
@@ -915,161 +1227,6 @@ to update each state value function to a better estimation&lt;/li&gt;
         <pubDate>Mon, 14 Aug 2017 00:00:00 -0700</pubDate>
         <link>https://pyemma.github.io//Reinforcement-Learning-Lesson-2/</link>
         <guid isPermaLink="true">https://pyemma.github.io//Reinforcement-Learning-Lesson-2/</guid>
-      </item>
-    
-      <item>
-        <title>Reinforcement Learning Lesson 1</title>
-        <description>&lt;p&gt;This is the first post for the series reinforcement learning. The main source for the entire series is &lt;a href=&quot;http://www0.cs.ucl.ac.uk/staff/D.Silver/web/Teaching.html&quot;&gt;here&lt;/a&gt;. The post mainly focus on summarizing the content introduced in the video and slides, as well as some of my own understanding. Any feedback is welcomed.&lt;/p&gt;
-
-&lt;p&gt;In this post, we will talk about Markov Decision Process (MDP), which is a pretty fundamental model in many reinforcement learning cases.&lt;/p&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;Almost all RL problems can be formalized as MDP&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;markov-process&quot;&gt;Markov Process&lt;/h3&gt;
-&lt;p&gt;In order to learn about MDP, we need to first know what is Markov Process (MP). This introduces the following two concept:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Markov Property&lt;/li&gt;
-  &lt;li&gt;State Transition Matrix&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;In the most simple word, &lt;strong&gt;Markov Property&lt;/strong&gt; means that the future state is independent on the history given the current state. It can be formalized using following statement:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbb{P}[S_{t+1}|S_{t}] = \mathbb{P}[S_{t+1}|S_1, ..., S_t]&lt;/script&gt;
-
-&lt;p&gt;This means that the current state contains all they necessary information for the future, and we can discard all history information.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;State Transition Matrix&lt;/strong&gt; contains the probability we go from on state to another one. Given a state \( s \) and its successor state \( s^\prime \), the probability from \( s \) goes to \( s^\prime \) is given by&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;P_{ss\prime} = \mathbb{P}[S_{t+1}=s\prime|S_{t}=s]&lt;/script&gt;
-
-&lt;p&gt;And the State Transition Matrix is by&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-P =
-\begin{Bmatrix}
-P_{11} &amp; ... &amp; P_{1n} \\
-\vdots &amp; ... &amp; \vdots \\
-P_{n1} &amp; ... &amp; P_{nn}
-\end{Bmatrix} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;From the above two concept, we can notice two things and these are also the constraint for MDP:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;The state is finite (otherwise the definition of State Transition Matrix is problematic)&lt;/li&gt;
-  &lt;li&gt;The environment is fully observable, no hidden state exists&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;We can obtain a definition for MP as a tuple \( &amp;lt;S, P&amp;gt; \):&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;\( S \) is a finite state set&lt;/li&gt;
-  &lt;li&gt;\( P \) is a state transition matrix&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;An example of MP:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/assets/mdp.png&quot; alt=&quot;Markov Process&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;markov-reward-process&quot;&gt;Markov Reward Process&lt;/h3&gt;
-&lt;p&gt;Markov Process combined with values, then we have Markov Reward Process (MRP), defined by a tuple \( &amp;lt;S, P, R, \gamma&amp;gt; \):&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;\( S \) is a finite state set&lt;/li&gt;
-  &lt;li&gt;\( P \) is a state transition matrix&lt;/li&gt;
-  &lt;li&gt;\( R \) is a reward function,
-&lt;script type=&quot;math/tex&quot;&gt;R_{s} = \mathbb{E}[R_{t+1}|S_{t}=s]&lt;/script&gt;&lt;/li&gt;
-  &lt;li&gt;\( \gamma \) is a discounting ratio&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;As we have introduced reward, we can measure how many rewards we can get in each state. We define return \( G_t \) as the discounted rewards we can get from timestamp  \( t \), and state value function \( v(s) \) the expected return we can get starting from state \( s \):&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;G_t = R_{t+1} + \gamma R_{t+2} + ... = \sum_{k=1}^{\infty}\gamma^{k}R_{t+k+1}&lt;/script&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;v(s) = \mathbb{E}[G_t|S_t=s]&lt;/script&gt;
-
-&lt;p&gt;Note that the return is accumulated with discounting. This is important is:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Avoid infinity loop that might exist in MDP (e.g. self loop)&lt;/li&gt;
-  &lt;li&gt;Model the uncertainty about the future&lt;/li&gt;
-  &lt;li&gt;From common sense, human prefer immediate reward than long term ones&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;We can breakdown the state value function into two parts, immediate and long term. Using recurse, we have the Bellman Equation for MRP:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;v(s) = \mathbb{E}[R_{t+1} + \gamma v(S_{t+1})|S_t=s]&lt;/script&gt;
-
-&lt;p&gt;By expanding the above expectation and using sum to replace expectation operator, we have:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;v(s) = R_s + \gamma\sum_{s^\prime\in S}P_{ss^\prime}v(s^\prime)&lt;/script&gt;
-
-&lt;h3 id=&quot;markov-decision-process&quot;&gt;Markov Decision Process&lt;/h3&gt;
-&lt;p&gt;Adding the actions we can make among the state, we finally have the definition for MDP, which is \( &amp;lt;S, A, P, R, \gamma&amp;gt; \):&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;\( S \) is a finite state set&lt;/li&gt;
-  &lt;li&gt;\( A \) is a finite action set&lt;/li&gt;
-  &lt;li&gt;\( P \) is a state transition matrix,
-&lt;script type=&quot;math/tex&quot;&gt;P_{ss^\prime}^a = \mathbb{P}[S_{t+1}=s^\prime|S_{t}=s, A_t=a]&lt;/script&gt;&lt;/li&gt;
-  &lt;li&gt;\( R \) is a reward function,
-&lt;script type=&quot;math/tex&quot;&gt;R_{s}^a = \mathbb{E}[R_{t+1}|S_{t}=s, A_t=a]&lt;/script&gt;&lt;/li&gt;
-  &lt;li&gt;\( \gamma\) is a discounting ratio&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Notice the change on the state transition matrix, before we only have a single matrix, and now we have one for each action \( a \) we can think of in the pervious case, we have only single action). Under different action \( a \), the transition probability can be different between the two state. We can now regard the new state transition matrix as a tensor with three dimension.&lt;/p&gt;
-
-&lt;p&gt;As we have actions to now, we need to make decision how to take actions. A &lt;strong&gt;policy&lt;/strong&gt; is a distribution over actions given a state:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\pi(a|s) = \mathbb{P}[A_t=a|S_t=s]&lt;/script&gt;
-
-&lt;p&gt;A policy fully determines how an agent would act, and it does not depend on the history. Similar to MRP, we have state value function for MDP as the expected return starting from \( s \), following the policy \( \pi \):&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_{\pi}(s) = \mathbb{E}_{\pi}[G_t|S_t=s]&lt;/script&gt;
-
-&lt;p&gt;We can also define an action value function, which is the expected return we get starting from state \( s \), taking action \( a \) and following policy \( \pi \):&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_{\pi}(s, a) = \mathbb{E}_{\pi}[G_t|S_t=s, A_t=a]&lt;/script&gt;
-
-&lt;p&gt;These two functions have relationship and can be transformed to each other easily, to get state value function, we can summation over all the action value function for the action that state we could get, weight by the policy:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_\pi(s) = \sum_{a\in A}\pi(a|s)q_{\pi}(s, a)&lt;/script&gt;
-
-&lt;p&gt;And the action value function can be obtained by summation overall all state we can transition to, weighted by the state transition matrix:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_\pi(s, a) = R_s^a + \gamma\sum_{s^\prime}P_{ss^\prime}^a v(s^\prime)&lt;/script&gt;
-
-&lt;p&gt;Combine the above equations, we can obtain the Bellman Exception Equation as:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_\pi(s) = \sum_{a\in A}\pi(a|s)(R_s^a + \gamma\sum_{s^\prime}P_{ss^\prime}^a v(s^\prime))&lt;/script&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_\pi(s, a) = R_s^a + \gamma\sum_{s^\prime}P_{ss^\prime}^a \sum_{a\in A}\pi(a|s^\prime)q_{\pi}(s^\prime, a)&lt;/script&gt;
-
-&lt;p&gt;Given a MDP, if we want to solve it (to know what’s the best performance we can get, e.g. What’s the maximum rewards we can get in the terminate state), we need to find the optimal value function for it. As long as we have obtain the optimal value function, we can compose an optimal policy easily:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\pi_{*}(a|s) =
-\begin{cases}
-1,  &amp; \text{if $a = argmax_{a\in A} q(s, a)$} \\
-0, &amp; \text{otherwise}
-\end{cases} %]]&gt;&lt;/script&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;There exists an optimal policy \( \pi_{*} \) that is better than or equal to all other policy for any MDP. All optimal policy achieve optimal state value function and optimal action value function&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Following this policy, we can change our Bellman Exception Equation to Bellman Optimality Equation:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;v_*(s)=max_{a}(R_s^a + \gamma\sum_{s^\prime\in S}P_{ss^\prime}^a v_*(s^\prime))&lt;/script&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;q_*(s, a)=R_s^a + \gamma\sum_{s^\prime\in S} argmax_{a} P_{ss^\prime}^a v_*(s^\prime)&lt;/script&gt;
-
-&lt;p&gt;Bellman Optimality Equation is non-linear, there is no closed form solution for it. However, we can solve it by some iterative methods (will introduce in later lectures):&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Policy Iteration&lt;/li&gt;
-  &lt;li&gt;Value Iteration&lt;/li&gt;
-  &lt;li&gt;Q-learning&lt;/li&gt;
-  &lt;li&gt;Sarsa&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Sun, 13 Aug 2017 00:00:00 -0700</pubDate>
-        <link>https://pyemma.github.io//Reinforcement-Learning-Lesson-1/</link>
-        <guid isPermaLink="true">https://pyemma.github.io//Reinforcement-Learning-Lesson-1/</guid>
       </item>
     
   </channel>

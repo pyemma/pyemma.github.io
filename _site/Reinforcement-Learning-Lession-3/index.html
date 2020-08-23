@@ -119,11 +119,6 @@
         <a class="site-title" href="https://pyemma.github.io/">Coding Monkey</a>
         <ul class="visible-links">
           
-            
-            <li class="masthead__menu-item">
-              <a href="https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/" >Quick-Start Guide</a>
-            </li>
-          
         </ul>
         
         <button class="greedy-nav__toggle hidden" type="button">
@@ -271,9 +266,9 @@
   <li>For each $S_t$ with return $G_t$</li>
 </ul>
 
-<script type="math/tex; mode=display">N(S_t) = N(S_t) + 1</script>
+\[N(S_t) = N(S_t) + 1\]
 
-<script type="math/tex; mode=display">V(S_t) = V(S_t) + \frac{1}{N(S_t)}(G_t - V(S_t))</script>
+\[V(S_t) = V(S_t) + \frac{1}{N(S_t)}(G_t - V(S_t))\]
 
 <p>Here $N(S_t)$ counts the number of our visit to $S_t$. The update function is using running mean to update the value of the current state, by moving it towards the return in this episode (G_t) a little bit. Here we can replace $\frac{1}{N(S_t)}$ to a small number $\alpha$, this is functioning as a learning rate to control how quick we update our value function. When we increase the counter, we can increase it either by first visit within the episode or every visit within the episode.</p>
 
@@ -287,7 +282,7 @@
   <li>For each $S_t$ within the episode</li>
 </ul>
 
-<script type="math/tex; mode=display">V(S_t) = V(S_t) + \alpha(R_{t+1} + \gamma V(S_{t+1}) - V(S_t))</script>
+\[V(S_t) = V(S_t) + \alpha(R_{t+1} + \gamma V(S_{t+1}) - V(S_t))\]
 
 <p>Here, $R_{t+1} + \gamma V(S_{t+1})$ is called TD target, and $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$ is called the TD error. The main logic here is bootstrapping, which means we are not directly making each value function to the most accurate value it should be given this episode. We are making it slightly better based on our current estimate on the successor state. The benefit of the doing so is that we can learn from incomplete experience, and MDP without a terminal state.</p>
 
@@ -308,25 +303,23 @@
   <li>Suppose in our experience, $s$ is visited at timestamp $k$, then the $E_t(s)$ will be like</li>
 </ul>
 
-<script type="math/tex; mode=display">% <![CDATA[
-E_t(s) = \begin{cases}
-0, & \text{if $t < k$} \\
-\gamma^{t - k}, & \text{if $t \ge k$} \\
-\end{cases} %]]></script>
+\[E_t(s) = \begin{cases}
+0, &amp; \text{if $t &lt; k$} \\
+\gamma^{t - k}, &amp; \text{if $t \ge k$} \\
+\end{cases}\]
 
 <ul>
   <li>The accumulated online update for $s$ is</li>
 </ul>
 
-<script type="math/tex; mode=display">% <![CDATA[
-\begin{align}
-\sum_{t=1}^{T-1}\alpha\delta_t E_t(s) & = \sum_{t=k}^{T-1}\gamma^{t-k}\delta_t \\
-& = \delta_k + \gamma\delta_{k+1} + ... + \gamma^{T-1-k}\delta_{T-1} \\
-& = R_{k+1} + \gamma V(S_{k+1}) - V(S_k) + \gamma R_{k+2} + \gamma^2 V(S_{k+2}) - \gamma V(S_{k+1}) + ... \\
-& + \gamma^{T-1-k} R_{T-1} + \gamma^{T-k} V(S_T) - \gamma^{T-1-k} V(S_{T-1}) \\
-& = R_{k+1} + \gamma R_{k+2} + \gamma^2 R_{k+3} + ... + \gamma^{T-1-k} R_{T-1} - V(S_k) \\
-& = G_k - V(S_k)
-\end{align} %]]></script>
+\[\begin{align}
+\sum_{t=1}^{T-1}\alpha\delta_t E_t(s) &amp; = \sum_{t=k}^{T-1}\gamma^{t-k}\delta_t \\
+&amp; = \delta_k + \gamma\delta_{k+1} + ... + \gamma^{T-1-k}\delta_{T-1} \\
+&amp; = R_{k+1} + \gamma V(S_{k+1}) - V(S_k) + \gamma R_{k+2} + \gamma^2 V(S_{k+2}) - \gamma V(S_{k+1}) + ... \\
+&amp; + \gamma^{T-1-k} R_{T-1} + \gamma^{T-k} V(S_T) - \gamma^{T-1-k} V(S_{T-1}) \\
+&amp; = R_{k+1} + \gamma R_{k+2} + \gamma^2 R_{k+3} + ... + \gamma^{T-1-k} R_{T-1} - V(S_k) \\
+&amp; = G_k - V(S_k)
+\end{align}\]
 
 <ul>
   <li>Thus the update function for TD(1) is the same as the one in every visit MC (where we use $\alpha$ as a learning rate instead of the original one).</li>

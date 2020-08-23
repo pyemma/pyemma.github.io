@@ -119,11 +119,6 @@
         <a class="site-title" href="https://pyemma.github.io/">Coding Monkey</a>
         <ul class="visible-links">
           
-            
-            <li class="masthead__menu-item">
-              <a href="https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/" >Quick-Start Guide</a>
-            </li>
-          
         </ul>
         
         <button class="greedy-nav__toggle hidden" type="button">
@@ -261,7 +256,7 @@
 
       <section class="page__content" itemprop="text">
         
-        <p>Here is just some tips I think is most useful for guiding me to write better code from book <code class="highlighter-rouge">Clean Code: A Handbook of Agile Software Craftsmanship</code>.</p>
+        <p>Here is just some tips I think is most useful for guiding me to write better code from book <code class="language-plaintext highlighter-rouge">Clean Code: A Handbook of Agile Software Craftsmanship</code>.</p>
 
 <p>##Naming
 We cannot avoid naming things well we are writing code, a good name can considerably increase the readability of the code. We even does not need to write comment in code since the code itself has already been revealing itself and everyone can easily get what you want to do just from the name you given to some variables.</p>
@@ -270,7 +265,7 @@ We cannot avoid naming things well we are writing code, a good name can consider
   <li>Use intention revealing names, this can be some single words or some combination of words. Some may argue that using intention revealing names can lead to a lonnnnnnnnng name, but I think with some proper abbreviation, this is not a big problem.</li>
   <li>Avoid use wrong words which provide wrong information. Use pronounceable names, which is helpful during discussion, and searchable names, which is helpful during debugging and refactoring.</li>
   <li>Class and objects should have noun or noun phrase names, methods should have verb or verb phrase names.</li>
-  <li>Keep one world per concept, <code class="highlighter-rouge">get</code>, <code class="highlighter-rouge">fetch</code>, <code class="highlighter-rouge">retrieve</code> all referring to take something out, but keep use only one words throughout your code and keep consistence.</li>
+  <li>Keep one world per concept, <code class="language-plaintext highlighter-rouge">get</code>, <code class="language-plaintext highlighter-rouge">fetch</code>, <code class="language-plaintext highlighter-rouge">retrieve</code> all referring to take something out, but keep use only one words throughout your code and keep consistence.</li>
 </ol>
 
 <p>##Function
@@ -289,7 +284,7 @@ We will write a lot functions to help us fulfill all kinds of tasks. Write good 
 <p>##Objects and Data Structures
 Data structures expose data and no meaningful functions. Objects hide data and provide operation on data.
 Procedural code makes it hard to add new data structures because all the functions must change. OO code makes it hard to add new functions because all the classes must change.
-<code class="highlighter-rouge">Law of Demeter</code> says that a method <code class="highlighter-rouge">f</code> of a class <code class="highlighter-rouge">C</code> should only call the methods of these: <code class="highlighter-rouge">C</code>, an object created by <code class="highlighter-rouge">f</code>, an object passed as an argument of <code class="highlighter-rouge">f</code>, an object held in an instance variable of <code class="highlighter-rouge">C</code>.</p>
+<code class="language-plaintext highlighter-rouge">Law of Demeter</code> says that a method <code class="language-plaintext highlighter-rouge">f</code> of a class <code class="language-plaintext highlighter-rouge">C</code> should only call the methods of these: <code class="language-plaintext highlighter-rouge">C</code>, an object created by <code class="language-plaintext highlighter-rouge">f</code>, an object passed as an argument of <code class="language-plaintext highlighter-rouge">f</code>, an object held in an instance variable of <code class="language-plaintext highlighter-rouge">C</code>.</p>
 
 <p>##Boundaries
 In our code, we might use third party library, this kinds of code create a boundary in our system. We need to protect our code to not effected when the third party library has changed. Use some design pattern like adapter can avoid these kinds of bad effect.

@@ -1,0 +1,679 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.9.0 by Michael Rose
+  Copyright 2013-2018 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE.txt
+-->
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>MIT Distributed System Course - Raft I - Coding Monkey</title>
+<meta name="description" content="Introduction">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Coding Monkey">
+<meta property="og:title" content="MIT Distributed System Course - Raft I">
+<meta property="og:url" content="https://pyemma.github.io/Distributed-System-RAFT/">
+
+
+  <meta property="og:description" content="Introduction">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2020-08-09T00:00:00-07:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://pyemma.github.io/Distributed-System-RAFT/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Person",
+      "name" : "Yang Pei",
+      "url" : "https://pyemma.github.io",
+      "sameAs" : null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://pyemma.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="Coding Monkey Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://pyemma.github.io/assets/css/main.css">
+
+<!--[if lte IE 9]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use http://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    <div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        <a class="site-title" href="https://pyemma.github.io/">Coding Monkey</a>
+        <ul class="visible-links">
+          
+        </ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle Menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Yang Pei</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        I am a Coding Monkey
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="http://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Mountain View</span>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+    <meta itemprop="headline" content="MIT Distributed System Course - Raft I">
+    <meta itemprop="description" content="Introduction">
+    <meta itemprop="datePublished" content="August 09, 2020">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 class="page__title" itemprop="headline">MIT Distributed System Course - Raft I
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  12 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h2 id="introduction">Introduction</h2>
+
+<p>In the following serious of post, we are going to implement Raft consensus algorithm, which is used to manage replicated log. And on top of that, we would implement a failure tolerance key-value store. This type of failure tolerant system is called replicated state machine. Replicated state machine operates on a collection of servers and makes them acting like a single server to the outside. The service would still be alive as long as majority of servers are still working.</p>
+
+<h2 id="raft">Raft</h2>
+
+<p>The original paper is available <a href="https://raft.github.io/raft.pdf">here</a> and there is an official <a href="https://raft.github.io/">website</a>. In this post, we would first introduce some basic concepts/abstractions in Raft. Then we would move to the Leader Election part, which is cover by the 5.1, 5.2 and 5.4 section in the original paper.</p>
+
+<p>The below figure in the original paper is a decent summarization of the Raft algorithm, which is recommend to read carefully words by words.</p>
+
+<p><img src="/assets/raft.png" alt="Summary of Raft consensus algorithm" /></p>
+
+<p>There are several essential concepts in Raft</p>
+
+<ul>
+  <li>Raft works on a group of machines, or servers, by managing a replicated log. Applications are built on top of these Raft servers.</li>
+  <li>There are in total 3 different state for Raft servers: <strong>follower</strong>, <strong>candidate</strong> and <strong>leader</strong>.
+    <ul>
+      <li>The job for <strong>follower</strong> is pretty simple, it responses to RPC call scheduled by <strong>candidate</strong> or <strong>leader</strong>.</li>
+      <li>The job for <strong>candidate</strong> is to initiate leader election by voting itself and collecting votes from other servers.</li>
+      <li>The job for <strong>leader</strong> is to replicate its log to <strong>follower</strong> and send heartbeats to maintain its <strong>leader</strong> state.</li>
+    </ul>
+  </li>
+  <li>Raft use a sequence of <strong>term</strong> to represent the entire process instead of using absolute time. Each <strong>term</strong> is uniquely identified by a number, which is monotonically increasing.</li>
+  <li>Regarding to the lifetime of each <strong>term</strong>, they all start with <em>leader election</em>. Once a <strong>leader</strong> is elected, the <strong>leader</strong> repeatedly replicates its log onto all other servers, this process would continue as long as the <strong>leader</strong> could still send heartbeats to all <strong>followers</strong>. Otherwise, a new <strong>term</strong> would start.</li>
+  <li><strong>Term</strong> number is passed during each RPC request and reply. It is used to identify if the request is from staled servers and reject their requests. This information is also used by staled servers to reset their status to the right one.</li>
+</ul>
+
+<p>For the leader election procedure, here are some highlights</p>
+
+<ul>
+  <li>As shown in the figure, we would have a RequestVote RPC to do the job. Within the RequestVote handler, we would check if the request is a legit one by comparing term number, term number of last entry and index number of last entry. This part is covered in section 5.4.1. It is mainly used for checking which server is more up to date.</li>
+  <li>If the request is smaller than the server, we would reject the vote. Otherwise, we would check if we have voted in the current term.</li>
+  <li>Once we grant vote, we would need to reset the election timeout.</li>
+  <li>Once election timeout is triggered. As long as the server is not <strong>leader</strong>, it will first convert itself to <strong>candidate</strong> state, vote for itself, reset election timeout and then start election.</li>
+  <li><strong>Candidate</strong> would send RequestVote RPC to all servers to collect votes in parallel and wait for response</li>
+  <li>There are 3 potential outcomes for leader election:
+    <ul>
+      <li>The <strong>candidate</strong> collects majority of votes. It would convert itself to <strong>leader</strong> and start to send heartbeats to all others.</li>
+      <li>The <strong>candidate</strong> receives a heartbeat from other server that has <strong>term</strong> not smaller than its term, it would convert itself to <strong>follower</strong>.</li>
+      <li>The <strong>candidates</strong> could not collect enough votes and in this case the term ended with no <strong>leader</strong>. Election timeout would trigger and the <strong>candidate</strong> would start an election with a new term.</li>
+    </ul>
+  </li>
+  <li>The reason that <strong>candidates</strong> could not get majority is due to “vote splits”. Raft use randomization to avoid this issue as much as possible. During the init and reset of election timeout, we would generate a new random number instead of using some fixed one.</li>
+</ul>
+
+<p><strong>Leader</strong> would periodically send heartbeats to each server. It uses the AppendEntries RPC to do the job. By sending RPC request with an empty log, it means that this is a heartbeats. Once a follower receive a heartbeat, it would reset its election timeout.</p>
+
+<h2 id="implementation">Implementation</h2>
+
+<p>This is the first time that I work on concurrency programming and it is really challenging to get everything right. There are several suggestions on the <a href="https://pdos.csail.mit.edu/6.824/labs/raft-structure.txt">structure of Raft</a> as well as how to <a href="https://pdos.csail.mit.edu/6.824/labs/raft-locking.txt">correctly use lock</a>, which is super beneficial on understanding Raft behavior and the design. Below are some hints that I think is critical to get Raft correct:</p>
+
+<ul>
+  <li>There are several long-running processes in Raft, such as sending heartbeats and monitoring election timeout. It is better to use some long-running threads(goroutines in Go) to do these jobs.</li>
+  <li>Since we need to send RPC in parallel, it is better to schedule the RPC calls within a thread and use a shared counters among these threads to collect the result.</li>
+  <li>Since we are sending each RPC within separate threads, we don’t know when would the thread going to be executed and what would be the status of the server at that time. So it is critical for us to check if the <em>server still matches our assumption when we step into the function</em>, such as if the term still matches or the state is still <strong>candidates</strong> etc.</li>
+  <li>Avoid using lock around RPC calls, it is easy to cause dead lock.</li>
+  <li>Use “print-to-console” style debugging is pretty efficient actually. Log the event out and see if the server is behaving abnormally.</li>
+</ul>
+
+<p>The overall code is available <a href="https://github.com/pyemma/mit-distributed-system/tree/master/src/raft">here</a>.</p>
+
+<h3 id="leader-election">Leader election</h3>
+
+<p>For the leader election part, there are in total three pieces of work:</p>
+
+<ul>
+  <li>RequestVote RPC handler</li>
+  <li>Function to start election for <strong>candidate</strong></li>
+  <li>Background thread to monitor election timeout and start election</li>
+</ul>
+
+<p>Here is the code of RequestVote RPC handler</p>
+
+<figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="k">func</span> <span class="p">(</span><span class="n">rf</span> <span class="o">*</span><span class="n">Raft</span><span class="p">)</span> <span class="n">RequestVote</span><span class="p">(</span><span class="n">args</span> <span class="o">*</span><span class="n">RequestVoteArgs</span><span class="p">,</span> <span class="n">reply</span> <span class="o">*</span><span class="n">RequestVoteReply</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+	<span class="n">DPrintf</span><span class="p">(</span><span class="s">"%d receive request vote from %d on term %d, current term %d"</span><span class="p">,</span> <span class="n">rf</span><span class="o">.</span><span class="n">me</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">CandidateId</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">Term</span><span class="p">,</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span><span class="p">)</span>
+
+	<span class="c">// if candidate term is smaller than current term, directly reject</span>
+	<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">Term</span> <span class="o">&lt;</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span> <span class="p">{</span>
+		<span class="n">reply</span><span class="o">.</span><span class="n">Term</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span>
+		<span class="n">reply</span><span class="o">.</span><span class="n">VoteGranted</span> <span class="o">=</span> <span class="no">false</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="c">// if candidate term is larger than current term, convert to follower first</span>
+	<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">Term</span> <span class="o">&gt;</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span> <span class="p">{</span>
+		<span class="n">rf</span><span class="o">.</span><span class="n">convertToFollower</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">Term</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c">// not vote or the vote is the same as pervious candidate</span>
+	<span class="k">if</span> <span class="n">rf</span><span class="o">.</span><span class="n">votedFor</span> <span class="o">==</span> <span class="o">-</span><span class="m">1</span> <span class="o">||</span> <span class="n">rf</span><span class="o">.</span><span class="n">votedFor</span> <span class="o">==</span> <span class="n">args</span><span class="o">.</span><span class="n">CandidateId</span> <span class="p">{</span>
+		<span class="c">// check if is more up to date</span>
+		<span class="k">if</span> <span class="n">rf</span><span class="o">.</span><span class="n">isCandidateUpdateToDate</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="no">false</span> <span class="p">{</span>
+			<span class="n">reply</span><span class="o">.</span><span class="n">Term</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span>
+			<span class="n">reply</span><span class="o">.</span><span class="n">VoteGranted</span> <span class="o">=</span> <span class="no">false</span>
+			<span class="k">return</span>
+		<span class="p">}</span>
+
+		<span class="n">rf</span><span class="o">.</span><span class="n">votedFor</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">CandidateId</span> <span class="c">// candidate is more up to date, vote for it</span>
+		<span class="n">rf</span><span class="o">.</span><span class="n">resetElectionTimer</span><span class="p">()</span>        <span class="c">// whenever we make a vote, we need to reset the election timeout</span>
+
+		<span class="n">reply</span><span class="o">.</span><span class="n">Term</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span>
+		<span class="n">reply</span><span class="o">.</span><span class="n">VoteGranted</span> <span class="o">=</span> <span class="no">true</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+
+	<span class="n">reply</span><span class="o">.</span><span class="n">Term</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span>
+	<span class="n">reply</span><span class="o">.</span><span class="n">VoteGranted</span> <span class="o">=</span> <span class="no">false</span>
+	<span class="k">return</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>In the RequestVote handler, since we don’t need to schedule any other RPC calls but change some shared variables, we acquire the lock from the entrance of the function. The first step is to check if the term in the request is outdated or not. If the term is outdated, then we directly reject the vote. Next step is to check if ourself is outdated or not. If our term is smaller, then we would immediately convert to <strong>follower</strong>. This has no effect for a <strong>follower</strong> but would make staled <strong>candidate</strong> change to the correct status. When covert to <strong>follower</strong>, we also reset the voted for variable. Although this step is not explicitly shown in the paper, this should be the correct behavior as we are in a new term and haven’t vote for anyone yet.</p>
+
+<p>Then we check if the <strong>candidate’s</strong> logging is more up to date. This is described in section 5.4.1 as a restriction on the election. We put this part into a dedicated function below. The logic overall is exactly reproducing what the paper describes.</p>
+
+<figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="c">// Check if the candidate is more up to date</span>
+<span class="k">func</span> <span class="p">(</span><span class="n">rf</span> <span class="o">*</span><span class="n">Raft</span><span class="p">)</span> <span class="n">isCandidateUpdateToDate</span><span class="p">(</span><span class="n">args</span> <span class="o">*</span><span class="n">RequestVoteArgs</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rf</span><span class="o">.</span><span class="n">logEntries</span><span class="p">)</span> <span class="o">&gt;</span> <span class="m">0</span> <span class="p">{</span> <span class="c">// there is some log entries on the server</span>
+		<span class="n">myLastLogEntry</span> <span class="o">:=</span> <span class="n">rf</span><span class="o">.</span><span class="n">logEntries</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">rf</span><span class="o">.</span><span class="n">logEntries</span><span class="p">)</span><span class="o">-</span><span class="m">1</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">myLastLogEntry</span><span class="o">.</span><span class="n">Term</span> <span class="o">&gt;</span> <span class="n">args</span><span class="o">.</span><span class="n">LastLogTerm</span> <span class="o">||</span> <span class="p">(</span><span class="n">myLastLogEntry</span><span class="o">.</span><span class="n">Term</span> <span class="o">==</span> <span class="n">args</span><span class="o">.</span><span class="n">LastLogTerm</span> <span class="o">&amp;&amp;</span> <span class="nb">len</span><span class="p">(</span><span class="n">rf</span><span class="o">.</span><span class="n">logEntries</span><span class="p">)</span><span class="o">-</span><span class="m">1</span> <span class="o">&gt;</span> <span class="n">args</span><span class="o">.</span><span class="n">LastLogIndex</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="no">false</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="no">true</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Once we have voted for the candidate, we need to reset the election timeout. Here is the piece of code doing this job</p>
+
+<figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="c">// Reset election timer</span>
+<span class="k">func</span> <span class="p">(</span><span class="n">rf</span> <span class="o">*</span><span class="n">Raft</span><span class="p">)</span> <span class="n">resetElectionTimer</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">rf</span><span class="o">.</span><span class="n">electionTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span>
+	<span class="n">rf</span><span class="o">.</span><span class="n">electionTimeout</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">Duration</span><span class="p">(</span><span class="n">rand</span><span class="o">.</span><span class="n">Intn</span><span class="p">(</span><span class="n">ElectionTimeOutRange</span><span class="p">)</span><span class="o">+</span><span class="n">ElectionTimeOutBase</span><span class="p">)</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">Millisecond</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>The way we implement timeout is to first record the start time and then regularly check if the current time minus the start time has exceed the timeout threshold or not. When we reset, we would use the current time to overwrite the start time, and assign a new timeout. This randomization is to help avoid split vote issues mentioned above.</p>
+
+<p>Once we have finished the RequestVote RPC handler part (the sending RPC function is pretty simple and we would skip it), we need to implement the function that <strong>candidates</strong> use to start election. The entire logic is within the function <code class="language-plaintext highlighter-rouge">startElection</code>. The overall logic of it could be separate into three part: change status, send rpc and collect vote. Let’s breakdown the function and look at it step by step.</p>
+
+<p>The first part is to require the lock and update necessary status. The main logic is to change to <strong>candidate</strong>, increase term and vote for itself.</p>
+
+<figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+<span class="n">DPrintf</span><span class="p">(</span><span class="s">"%d start election, pervious state %s"</span><span class="p">,</span> <span class="n">rf</span><span class="o">.</span><span class="n">me</span><span class="p">,</span> <span class="n">rf</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+<span class="c">// change to candidate and increase term</span>
+<span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span><span class="o">++</span>
+<span class="n">rf</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">Candidate</span>
+<span class="n">rf</span><span class="o">.</span><span class="n">votedFor</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">me</span>
+<span class="n">rf</span><span class="o">.</span><span class="n">resetElectionTimer</span><span class="p">()</span> <span class="c">// need to reset election timeout since we start a new election</span>
+<span class="c">// parameters to schedule RequestVote</span>
+<span class="n">term</span> <span class="o">:=</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span>
+<span class="n">lastLogTerm</span> <span class="o">:=</span> <span class="o">-</span><span class="m">1</span>  <span class="c">// placeholder</span>
+<span class="n">lastLogIndex</span> <span class="o">:=</span> <span class="o">-</span><span class="m">1</span> <span class="c">// placeholder</span>
+<span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span></code></pre></figure>
+
+<p>The next part is to send RPC calls to all servers. Since we are sending RPC calls here, we release the lock. We send each RPC within a goroutine. There are two important things to remember here:</p>
+
+<ul>
+  <li>Information about the status of the current server such as term, lastLogTerm are passed into the goroutines as parameters. The reason is that at this particular timestamp the server matches our criteria and we need to create a snapshot to record it for later check due to the fact that other concurrency threads might change the status before the goroutines actually got scheduled.</li>
+  <li>Similarly, we need to double check if the current status still matches our assumption when we start election. This is done by acquire the lock within the goroutine and compare the current status with the passed in status.</li>
+  <li>We user 2 parameters to record the total number of RPC finished and the number of votes we collected. We also use a cond as a signal to wake up the thread that is waiting on some conditions to be satisfied.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="n">cond</span> <span class="o">:=</span> <span class="n">sync</span><span class="o">.</span><span class="n">NewCond</span><span class="p">(</span><span class="o">&amp;</span><span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span>
+
+<span class="n">count</span> <span class="o">:=</span> <span class="m">1</span> <span class="c">// counter to check the number of vote</span>
+<span class="n">finished</span> <span class="o">:=</span> <span class="m">1</span>
+<span class="c">// start send RequestVote in parallel</span>
+<span class="k">for</span> <span class="n">peer</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">rf</span><span class="o">.</span><span class="n">peers</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="n">peer</span> <span class="o">==</span> <span class="n">rf</span><span class="o">.</span><span class="n">me</span> <span class="p">{</span>
+        <span class="k">continue</span>
+    <span class="p">}</span>
+
+    <span class="k">go</span> <span class="k">func</span><span class="p">(</span><span class="n">server</span> <span class="kt">int</span><span class="p">,</span> <span class="n">term</span> <span class="kt">int</span><span class="p">,</span> <span class="n">lastLogTerm</span> <span class="kt">int</span><span class="p">,</span> <span class="n">lastLogIndex</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+        <span class="c">// server is still candidate and current term matches the term when we plan to request vote</span>
+        <span class="k">if</span> <span class="n">rf</span><span class="o">.</span><span class="n">state</span> <span class="o">!=</span> <span class="n">Candidate</span> <span class="o">||</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span> <span class="o">!=</span> <span class="n">term</span> <span class="p">{</span>
+            <span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+
+        <span class="n">DPrintf</span><span class="p">(</span><span class="s">"%d send request vote to %d on term %d"</span><span class="p">,</span> <span class="n">rf</span><span class="o">.</span><span class="n">me</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span><span class="p">)</span>
+        <span class="n">args</span> <span class="o">:=</span> <span class="n">RequestVoteArgs</span><span class="p">{</span>
+            <span class="n">Term</span><span class="o">:</span>         <span class="n">term</span><span class="p">,</span>
+            <span class="n">CandidateId</span><span class="o">:</span>  <span class="n">rf</span><span class="o">.</span><span class="n">me</span><span class="p">,</span>
+            <span class="n">LastLogTerm</span><span class="o">:</span>  <span class="n">lastLogTerm</span><span class="p">,</span>
+            <span class="n">LastLogIndex</span><span class="o">:</span> <span class="n">lastLogIndex</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">reply</span> <span class="o">:=</span> <span class="n">RequestVoteReply</span><span class="p">{}</span>
+        <span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+
+        <span class="n">ok</span> <span class="o">:=</span> <span class="n">rf</span><span class="o">.</span><span class="n">sendRequestVote</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">reply</span><span class="p">)</span>
+
+        <span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+        <span class="k">defer</span> <span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+        <span class="n">finished</span><span class="o">++</span>
+        <span class="k">if</span> <span class="n">ok</span> <span class="p">{</span>
+            <span class="n">DPrintf</span><span class="p">(</span><span class="s">"%d got reply from %d on term %d with %t"</span><span class="p">,</span> <span class="n">rf</span><span class="o">.</span><span class="n">me</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span><span class="p">,</span> <span class="n">reply</span><span class="o">.</span><span class="n">VoteGranted</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">reply</span><span class="o">.</span><span class="n">Term</span> <span class="o">&gt;</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span> <span class="p">{</span>
+                <span class="n">rf</span><span class="o">.</span><span class="n">convertToFollower</span><span class="p">(</span><span class="n">reply</span><span class="o">.</span><span class="n">Term</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="p">}</span>
+            <span class="c">// vote is granted, and the term matches the current term, and server is still candidate</span>
+            <span class="k">if</span> <span class="n">reply</span><span class="o">.</span><span class="n">VoteGranted</span> <span class="o">&amp;&amp;</span> <span class="n">reply</span><span class="o">.</span><span class="n">Term</span> <span class="o">==</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span> <span class="o">&amp;&amp;</span> <span class="n">rf</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">Candidate</span> <span class="p">{</span>
+                <span class="n">count</span><span class="o">++</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">cond</span><span class="o">.</span><span class="n">Broadcast</span><span class="p">()</span>
+
+    <span class="p">}(</span><span class="n">peer</span><span class="p">,</span> <span class="n">term</span><span class="p">,</span> <span class="n">lastLogTerm</span><span class="p">,</span> <span class="n">lastLogIndex</span><span class="p">)</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>The last part is to check if we have collected majority number of votes. If we haven’t collect majority votes, or if the RPC call is not all finished yet, we would wait on the cond variable. This cond variable is also used in the goroutine we send RPC calls. The thread would be waked up in the goroutine when RPC call is finished, and the current thread would re-acquire the lock and check if the condition has matched or not. If we collect majority votes, we would convert to leader and start sending heartbeats.</p>
+
+<figure class="highlight"><pre><code class="language-go" data-lang="go">    <span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+	<span class="c">// wait for enough vote or all request has returned</span>
+	<span class="n">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rf</span><span class="o">.</span><span class="n">peers</span><span class="p">)</span>
+	<span class="n">majority</span> <span class="o">:=</span> <span class="p">(</span><span class="n">n</span> <span class="o">/</span> <span class="m">2</span><span class="p">)</span> <span class="o">+</span> <span class="m">1</span>
+	<span class="k">for</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="n">majority</span> <span class="o">&amp;&amp;</span> <span class="n">finished</span> <span class="o">!=</span> <span class="n">n</span> <span class="p">{</span>
+		<span class="n">cond</span><span class="o">.</span><span class="n">Wait</span><span class="p">()</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="n">majority</span> <span class="p">{</span>
+		<span class="n">DPrintf</span><span class="p">(</span><span class="s">"%d collect majority of votes"</span><span class="p">,</span> <span class="n">rf</span><span class="o">.</span><span class="n">me</span><span class="p">)</span>
+		<span class="c">// change to leader and send the initial batch of heartbeats</span>
+		<span class="n">rf</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">Leader</span>
+		<span class="n">rf</span><span class="o">.</span><span class="n">sendHeartbeat</span><span class="p">()</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span></code></pre></figure>
+
+<p>After we have a working function to start election, the next step, as well as the final part of leader election, is to have a background thread to periodically check the status of election timeout and trigger <code class="language-plaintext highlighter-rouge">startElection</code> at the right time. We check if the current state is not <strong>leader</strong> and if the time elapsed is greater than the timeout. If true then we start election, otherwise we would sleep 25ms and then check again.</p>
+
+<figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="k">go</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">{</span>
+        <span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">rf</span><span class="o">.</span><span class="n">killed</span><span class="p">()</span> <span class="p">{</span>
+            <span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+        <span class="c">// follower or candidate could start election upon election timeout</span>
+        <span class="k">if</span> <span class="n">rf</span><span class="o">.</span><span class="n">state</span> <span class="o">!=</span> <span class="n">Leader</span> <span class="o">&amp;&amp;</span> <span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span><span class="o">.</span><span class="n">Sub</span><span class="p">(</span><span class="n">rf</span><span class="o">.</span><span class="n">electionTime</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">rf</span><span class="o">.</span><span class="n">electionTimeout</span> <span class="p">{</span>
+            <span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+            <span class="n">rf</span><span class="o">.</span><span class="n">startElection</span><span class="p">()</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="m">25</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">Millisecond</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}()</span></code></pre></figure>
+
+<p>Above is all of the code related to leader election. Next, we would take a look at how heartbeats is implemented.</p>
+
+<h3 id="heartbeats">Heartbeats</h3>
+
+<p>Compared with leader election, heartbeat is relatively simple. Heartbeat is implemented via AppendEntries RPC call. This RPC call is used by <strong>leader</strong> to send entires to <strong>followers</strong> to update their log. If the entries sent is empty, then it would be a heartbeat signal, which its pure function is to reset <strong>follower’s</strong> election timeout so that the <strong>leader</strong> could maintain its status.</p>
+
+<p>Similar to leader election, the work is also separated into 3 parts: AppendEntires RPC handler, function to send heartbeats and background thread to repeatedly send heartbeats.</p>
+
+<p>The AppendEntries RPC handler is pretty straight forward. It checks if the request is legal (a.k.a request term is not smaller than its current term) and covert itself to follower if its term is outdated. And then reset the election timeout.</p>
+
+<figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="k">func</span> <span class="p">(</span><span class="n">rf</span> <span class="o">*</span><span class="n">Raft</span><span class="p">)</span> <span class="n">AppendEntries</span><span class="p">(</span><span class="n">args</span> <span class="o">*</span><span class="n">AppendEntriesArgs</span><span class="p">,</span> <span class="n">reply</span> <span class="o">*</span><span class="n">AppendEntriesReply</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c">// This is a heartbeat</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">Entries</span><span class="p">)</span> <span class="o">==</span> <span class="m">0</span> <span class="p">{</span>
+		<span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+		<span class="k">defer</span> <span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">Term</span> <span class="o">&lt;</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span> <span class="p">{</span>
+			<span class="n">reply</span><span class="o">.</span><span class="n">Term</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span>
+			<span class="n">reply</span><span class="o">.</span><span class="n">Success</span> <span class="o">=</span> <span class="no">false</span>
+			<span class="k">return</span>
+		<span class="p">}</span>
+
+		<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">Term</span> <span class="o">&gt;</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span> <span class="p">{</span>
+			<span class="n">rf</span><span class="o">.</span><span class="n">convertToFollower</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">Term</span><span class="p">)</span>
+		<span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">Term</span> <span class="o">==</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span> <span class="o">&amp;&amp;</span> <span class="n">rf</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">Candidate</span> <span class="p">{</span>
+			<span class="n">rf</span><span class="o">.</span><span class="n">convertToFollower</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">Term</span><span class="p">)</span>
+		<span class="p">}</span>
+
+		<span class="n">rf</span><span class="o">.</span><span class="n">resetElectionTimer</span><span class="p">()</span>
+
+		<span class="n">reply</span><span class="o">.</span><span class="n">Term</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span>
+		<span class="n">reply</span><span class="o">.</span><span class="n">Success</span> <span class="o">=</span> <span class="no">true</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>The sending heartbeats part is also a simplified version of request votes and don’t have too much to talk about. The background thread to periodically send heartbeats shares similar structure with the one to check election timeout.</p>
+
+<figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="k">go</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">{</span>
+        <span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">rf</span><span class="o">.</span><span class="n">killed</span><span class="p">()</span> <span class="p">{</span>
+            <span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">rf</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">Leader</span> <span class="o">&amp;&amp;</span> <span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span><span class="o">.</span><span class="n">Sub</span><span class="p">(</span><span class="n">rf</span><span class="o">.</span><span class="n">heartbeatTime</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">HeartbeatTimeout</span> <span class="p">{</span>
+            <span class="n">rf</span><span class="o">.</span><span class="n">sendHeartbeat</span><span class="p">()</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="m">10</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">Millisecond</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}()</span></code></pre></figure>
+
+<h2 id="future-work">Future work</h2>
+
+<p>In the following posts, we would implement the AppendEntires RPC call to be able to replicate <strong>leader’s</strong> log onto <strong>followers</strong>.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="https://pyemma.github.io/tags/#distributed-system" class="page__taxonomy-item" rel="tag">distributed system</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2020-08-09T00:00:00-07:00">August 09, 2020</time></p>
+        
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="https://pyemma.github.io/Distributed-System-Map-Reduce/" class="pagination--pager" title="MIT Distributed System Course - MapReduce
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+</div>
+
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+    
+    
+    
+    
+    
+    <li><a href="https://pyemma.github.io/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2020 Yang Pei. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="https://pyemma.github.io/assets/js/main.min.js"></script>
+  <script src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
+
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://pyemma.github.io/Distributed-System-RAFT/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/Distributed-System-RAFT"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://pyemma.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>
