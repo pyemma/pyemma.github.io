@@ -1,0 +1,574 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.9.0 by Michael Rose
+  Copyright 2013-2018 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE.txt
+-->
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>MIT Distributed System Course - Raft II - Coding Monkey</title>
+<meta name="description" content="Introduction">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Coding Monkey">
+<meta property="og:title" content="MIT Distributed System Course - Raft II">
+<meta property="og:url" content="https://pyemma.github.io/Distributed-System-RAFT-II/">
+
+
+  <meta property="og:description" content="Introduction">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2020-10-10T00:00:00-07:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://pyemma.github.io/Distributed-System-RAFT-II/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Person",
+      "name" : "Yang Pei",
+      "url" : "https://pyemma.github.io",
+      "sameAs" : null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="https://pyemma.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="Coding Monkey Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://pyemma.github.io/assets/css/main.css">
+
+<!--[if lte IE 9]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use http://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    <div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        <a class="site-title" href="https://pyemma.github.io/">Coding Monkey</a>
+        <ul class="visible-links">
+          
+        </ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle Menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Yang Pei</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        I am a Coding Monkey
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="http://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Mountain View</span>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+    <meta itemprop="headline" content="MIT Distributed System Course - Raft II">
+    <meta itemprop="description" content="Introduction">
+    <meta itemprop="datePublished" content="October 10, 2020">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 class="page__title" itemprop="headline">MIT Distributed System Course - Raft II
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  8 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h2 id="introduction">Introduction</h2>
+
+<p>In this post, we continue our work on raft implementation. The focus of this post would be the second part of raft, which is the log replication, and snapshot to optimize the size of the log.</p>
+
+<p>Let’s first go through the high level logic of how log replica works in raft:</p>
+
+<ul>
+  <li>When the leader sends out a log replica request, it is going to also send the new log entries’ pervious entry’s term and index along the request, as well as the current committed entry index</li>
+  <li>Upon receiving the request, followers/candidates would perform the regular check as usual</li>
+  <li>Then, followers would check the pervious entry’s term and index send by the leader to see if there is any conflict with its own log</li>
+  <li>If there is no conflict, then followers would copy over the new entries sent by the leader, otherwise it would reject this request</li>
+  <li>Once the leader receive the reply from a follower, if it success, then it would update its nextIndex (the next index need to be send to a particular server) and matchIndex (the highest index to be known have been replicated on a particular server); if it fails, then the leader would reduce the nextIndex and retry the request</li>
+  <li>Periodically, leader would check the matchIndex and see if there could be new log to be committed</li>
+  <li>If a follower see that the commit index passed from leader is greater than its current commit index, it would update its current commit index as well</li>
+</ul>
+
+<p>From this entire process, leader would never change its own log entries and acts as a dictator to ask followers to replica its authority. Also, leader would never commit log entries from past terms to show respect to former dictators :). It always commits log from its current term, but the entries from past term would be implicitly committed.</p>
+
+<p>The section 5.4.3 has provided a pretty good explanation on the safety guarantee of the raft: <em>Leader Completeness Property</em>. Below is the full list of RAFT properties introduced in the paper.</p>
+
+<p><img src="/assets/raft_property.png" alt="RAFT properties" /></p>
+
+<p>All of the code in this post is available <a href="https://shorturl.at/ciHP3">here(2B)</a> and <a href="https://shorturl.at/A1278">here(2C)</a>.</p>
+
+<h2 id="log-replica">Log Replica</h2>
+
+<p>Two functions plays a key role on Log Replica: updated version of <code class="language-plaintext highlighter-rouge">AppendEntries</code> by followers and <code class="language-plaintext highlighter-rouge">replicaLog</code> by leaders.</p>
+
+<p>We have already provided an implementation of <code class="language-plaintext highlighter-rouge">AppendEntries</code> in the last post so that the leader could use it to send heartbeats to followers. We extend the functionality of <code class="language-plaintext highlighter-rouge">AppendEntries</code> to make it support log replica.</p>
+
+<p>Here is the new implementation of the function (or take a look at (highlight of the change)[https://github.com/pyemma/mit-distributed-system/commit/4ca09b83b23325f14bfceae8161f366a4ddc030d]).</p>
+
+<figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="k">func</span> <span class="p">(</span><span class="n">rf</span> <span class="o">*</span><span class="n">Raft</span><span class="p">)</span> <span class="n">AppendEntries</span><span class="p">(</span><span class="n">args</span> <span class="o">*</span><span class="n">AppendEntriesArgs</span><span class="p">,</span> <span class="n">reply</span> <span class="o">*</span><span class="n">AppendEntriesReply</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+
+	<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">Term</span> <span class="o">&lt;</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span> <span class="p">{</span>
+		<span class="n">reply</span><span class="o">.</span><span class="n">Term</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span>
+		<span class="n">reply</span><span class="o">.</span><span class="n">Success</span> <span class="o">=</span> <span class="no">false</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">Term</span> <span class="o">&gt;</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span> <span class="p">{</span>
+		<span class="n">rf</span><span class="o">.</span><span class="n">convertToFollower</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">Term</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">Term</span> <span class="o">==</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span> <span class="o">&amp;&amp;</span> <span class="n">rf</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">Candidate</span> <span class="p">{</span>
+		<span class="n">rf</span><span class="o">.</span><span class="n">convertToFollower</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">Term</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="n">rf</span><span class="o">.</span><span class="n">resetElectionTimer</span><span class="p">()</span>
+
+	<span class="n">reply</span><span class="o">.</span><span class="n">Success</span> <span class="o">=</span> <span class="no">true</span> <span class="c">// default to true, all the logic below would set it to false</span>
+	<span class="n">reply</span><span class="o">.</span><span class="n">Term</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span>
+
+	<span class="n">DPrintf</span><span class="p">(</span><span class="s">"Server %d, args perv log %d, args perv term %d, my log %v"</span><span class="p">,</span> <span class="n">rf</span><span class="o">.</span><span class="n">me</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">PrevLogIndex</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">PrevLogTerm</span><span class="p">,</span> <span class="n">rf</span><span class="o">.</span><span class="n">logEntries</span><span class="p">)</span>
+	<span class="n">pervCheck</span> <span class="o">:=</span> <span class="n">rf</span><span class="o">.</span><span class="n">checkPerv</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">PrevLogIndex</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">PrevLogTerm</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">pervCheck</span> <span class="o">==</span> <span class="no">false</span> <span class="p">{</span>
+		<span class="n">reply</span><span class="o">.</span><span class="n">Term</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span>
+		<span class="n">reply</span><span class="o">.</span><span class="n">Success</span> <span class="o">=</span> <span class="no">false</span>
+		<span class="n">rf</span><span class="o">.</span><span class="n">updateXInfo</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">PrevLogIndex</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">PrevLogTerm</span><span class="p">,</span> <span class="n">reply</span><span class="p">)</span>
+		<span class="n">DPrintf</span><span class="p">(</span><span class="s">"XTerm %d, XIndex %d, XLen %d"</span><span class="p">,</span> <span class="n">reply</span><span class="o">.</span><span class="n">XTerm</span><span class="p">,</span> <span class="n">reply</span><span class="o">.</span><span class="n">XIndex</span><span class="p">,</span> <span class="n">reply</span><span class="o">.</span><span class="n">XLen</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">Entries</span><span class="p">)</span> <span class="o">==</span> <span class="m">0</span> <span class="p">{</span>
+		<span class="n">rf</span><span class="o">.</span><span class="n">checkCommit</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">LeaderCommit</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+
+	<span class="n">rf</span><span class="o">.</span><span class="n">checkAndCopy</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">PrevLogIndex</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">Entries</span><span class="p">)</span>
+	<span class="n">rf</span><span class="o">.</span><span class="n">checkCommit</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">LeaderCommit</span><span class="p">)</span>
+	<span class="k">return</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>The key new logic we introduced is as follow:</p>
+
+<ul>
+  <li>We introduce a new function, which is <code class="language-plaintext highlighter-rouge">checkPerv</code>. This function is used to check if there is any conflict entry from follower’s current log with the pervious log entry from leader. Note that even if the request is a heartbeat, where there is no new entry sent from leader, we still needs to do this check as described in the algorithm, so that follower could pass some useful information back to the leader to update the leader’s internal state about followers</li>
+  <li>We also introduce a function called <code class="language-plaintext highlighter-rouge">checkCommit</code> to see if the leader has send a commit index that is larger than follower’s current commit index on record</li>
+  <li>Once the pervious entry check is pass, we use the function <code class="language-plaintext highlighter-rouge">checkAndCopy</code> to do the actual copy and overwriting work, where we find the first entry that is different with the new entries sent by leader, and copy-paste from that point.</li>
+</ul>
+
+<p>As we have seen the <code class="language-plaintext highlighter-rouge">AppendEntries</code> RPC call’s logic, let’s take a look at how leader is going to send request to followers and process responses from followers. In the pervious post, we have implemented a function called <code class="language-plaintext highlighter-rouge">sendHeartbeat</code>. We rename it to <code class="language-plaintext highlighter-rouge">replicaLog</code> and extend its functionality, with a parameters to control whether we would love to use it to send heartbeats, or send real log entries. Below is the implementation (or take a look at (highlight of the change)[https://github.com/pyemma/mit-distributed-system/commit/4ca09b83b23325f14bfceae8161f366a4ddc030d]).</p>
+
+<figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="c">// replicaLog is the function used by leader to send log to replica</span>
+<span class="k">func</span> <span class="p">(</span><span class="n">rf</span> <span class="o">*</span><span class="n">Raft</span><span class="p">)</span> <span class="n">replicaLog</span><span class="p">(</span><span class="n">isHeartbeat</span> <span class="kt">bool</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">term</span> <span class="o">:=</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span>
+	<span class="k">if</span> <span class="n">isHeartbeat</span> <span class="o">==</span> <span class="no">true</span> <span class="p">{</span>
+		<span class="n">rf</span><span class="o">.</span><span class="n">heartbeatTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span> <span class="c">// rest the heartbeatTime</span>
+	<span class="p">}</span>
+	<span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+
+	<span class="k">for</span> <span class="n">peer</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">rf</span><span class="o">.</span><span class="n">peers</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="n">peer</span> <span class="o">==</span> <span class="n">rf</span><span class="o">.</span><span class="n">me</span> <span class="p">{</span>
+			<span class="k">continue</span>
+		<span class="p">}</span>
+
+		<span class="k">go</span> <span class="k">func</span><span class="p">(</span><span class="n">server</span> <span class="kt">int</span><span class="p">,</span> <span class="n">term</span> <span class="kt">int</span><span class="p">,</span> <span class="n">isHeartbeat</span> <span class="kt">bool</span><span class="p">)</span> <span class="p">{</span>
+			<span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">rf</span><span class="o">.</span><span class="n">state</span> <span class="o">!=</span> <span class="n">Leader</span> <span class="o">||</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span> <span class="o">!=</span> <span class="n">term</span> <span class="p">{</span>
+				<span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+				<span class="k">return</span>
+			<span class="p">}</span>
+
+			<span class="n">nextIdx</span> <span class="o">:=</span> <span class="n">rf</span><span class="o">.</span><span class="n">nextIndex</span><span class="p">[</span><span class="n">server</span><span class="p">]</span>
+			<span class="n">lastIdx</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rf</span><span class="o">.</span><span class="n">logEntries</span><span class="p">)</span> <span class="o">-</span> <span class="m">1</span>
+			<span class="k">if</span> <span class="n">lastIdx</span> <span class="o">&lt;</span> <span class="n">nextIdx</span> <span class="o">&amp;&amp;</span> <span class="n">isHeartbeat</span> <span class="o">==</span> <span class="no">false</span> <span class="p">{</span> <span class="c">// in this case, we have nothing to update</span>
+				<span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+				<span class="k">return</span>
+			<span class="p">}</span>
+
+			<span class="n">perLogIdx</span> <span class="o">:=</span> <span class="n">nextIdx</span> <span class="o">-</span> <span class="m">1</span>
+			<span class="n">perLogTerm</span> <span class="o">:=</span> <span class="n">rf</span><span class="o">.</span><span class="n">logEntries</span><span class="p">[</span><span class="n">perLogIdx</span><span class="p">]</span><span class="o">.</span><span class="n">Term</span>
+
+			<span class="n">entries</span> <span class="o">:=</span> <span class="n">rf</span><span class="o">.</span><span class="n">logEntries</span><span class="p">[</span><span class="n">nextIdx</span><span class="o">:</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">isHeartbeat</span> <span class="p">{</span>
+				<span class="n">entries</span> <span class="o">=</span> <span class="nb">make</span><span class="p">([]</span><span class="n">LogEntry</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+			<span class="p">}</span>
+
+			<span class="n">args</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">AppendEntriesArgs</span><span class="p">{</span>
+				<span class="n">Term</span><span class="o">:</span>         <span class="n">term</span><span class="p">,</span>
+				<span class="n">LeaderId</span><span class="o">:</span>     <span class="n">rf</span><span class="o">.</span><span class="n">me</span><span class="p">,</span>
+				<span class="n">PrevLogIndex</span><span class="o">:</span> <span class="n">perLogIdx</span><span class="p">,</span>
+				<span class="n">PrevLogTerm</span><span class="o">:</span>  <span class="n">perLogTerm</span><span class="p">,</span>
+				<span class="n">Entries</span><span class="o">:</span>      <span class="n">entries</span><span class="p">,</span>
+				<span class="n">LeaderCommit</span><span class="o">:</span> <span class="n">rf</span><span class="o">.</span><span class="n">commitIndex</span><span class="p">,</span>
+			<span class="p">}</span>
+
+			<span class="n">reply</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">AppendEntriesReply</span><span class="p">{}</span>
+			<span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+
+			<span class="n">ok</span> <span class="o">:=</span> <span class="n">rf</span><span class="o">.</span><span class="n">sendAppendEntries</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">reply</span><span class="p">)</span>
+
+			<span class="k">if</span> <span class="n">ok</span> <span class="p">{</span>
+				<span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+				<span class="n">DPrintf</span><span class="p">(</span><span class="s">"%d append entries get reply from %d, %t on term %d, is heartbeat? %t"</span><span class="p">,</span> <span class="n">rf</span><span class="o">.</span><span class="n">me</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">reply</span><span class="o">.</span><span class="n">Success</span><span class="p">,</span> <span class="n">reply</span><span class="o">.</span><span class="n">Term</span><span class="p">,</span> <span class="n">isHeartbeat</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">reply</span><span class="o">.</span><span class="n">Term</span> <span class="o">&gt;</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span> <span class="p">{</span> <span class="c">// at this time we need to step down</span>
+					<span class="n">rf</span><span class="o">.</span><span class="n">convertToFollower</span><span class="p">(</span><span class="n">reply</span><span class="o">.</span><span class="n">Term</span><span class="p">)</span>
+					<span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+					<span class="k">return</span>
+				<span class="p">}</span>
+
+				<span class="c">// check if the condition still matches when we schedule the RPC</span>
+				<span class="k">if</span> <span class="n">reply</span><span class="o">.</span><span class="n">Term</span> <span class="o">==</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span> <span class="o">&amp;&amp;</span> <span class="n">rf</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">Leader</span> <span class="p">{</span>
+					<span class="k">if</span> <span class="n">reply</span><span class="o">.</span><span class="n">Success</span> <span class="o">==</span> <span class="no">true</span> <span class="p">{</span>
+						<span class="n">rf</span><span class="o">.</span><span class="n">matchIndex</span><span class="p">[</span><span class="n">server</span><span class="p">]</span> <span class="o">=</span> <span class="n">lastIdx</span>
+						<span class="n">rf</span><span class="o">.</span><span class="n">nextIndex</span><span class="p">[</span><span class="n">server</span><span class="p">]</span> <span class="o">=</span> <span class="n">lastIdx</span> <span class="o">+</span> <span class="m">1</span>
+					<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+						<span class="c">// need to do an optimization here</span>
+						<span class="c">// rf.nextIndex[server] = rf.nextIndex[server] - 1</span>
+						<span class="n">rf</span><span class="o">.</span><span class="n">nextIndex</span><span class="p">[</span><span class="n">server</span><span class="p">]</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">updateNextIdx</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
+					<span class="p">}</span>
+				<span class="p">}</span>
+
+				<span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+				<span class="k">return</span>
+			<span class="p">}</span>
+		<span class="p">}(</span><span class="n">peer</span><span class="p">,</span> <span class="n">term</span><span class="p">,</span> <span class="n">isHeartbeat</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>The key change is:</p>
+
+<ul>
+  <li>We read the next index of the entry we need to send to follower <em>X</em> from nextIndex, which is initiated inside the leader when it is voted. This records the next index of the entry we need to send to each follower. Leader initiated it to the last index + 1. All entries after the next index is the new entries we would love follower <em>X</em> to replica</li>
+  <li>We also retrieve the pervious entry of the next index entry, send its index and term along the request</li>
+  <li>Upon receiving reply, we update the matchIndex and nextIndex accordingly. If request is rejected, we reduce the nextIndex of the follower <em>X</em> by one, this is a linear search of the first entry in leader’s log that the follower <em>X</em> would agree. However, in this assignment, it requires us to do some smarter search instead of linear search to speed up.</li>
+</ul>
+
+<p>The final piece of the logic is to create a thread to send replica to other servers. This is pretty similar to the thread that we periodically send heartbeats.</p>
+
+<h2 id="commit-log-and-apply">Commit Log and Apply</h2>
+
+<p>Another job we need to do is to commit log entries. The logic is done by the leader with the helper function <code class="language-plaintext highlighter-rouge">updateCommit</code>. Similarly, we also create a dedicated thread to periodically call this helper function to see if we should advance the current commit index. The logic of <code class="language-plaintext highlighter-rouge">updateCommit</code> is pretty simple, it just iterates all possible commit index and find the highest one that is qualified, which means that there are majority of server’s highest match index greater than it.</p>
+
+<figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="k">func</span> <span class="p">(</span><span class="n">rf</span> <span class="o">*</span><span class="n">Raft</span><span class="p">)</span> <span class="n">updateCommit</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c">// DPrintf("leader %d, current match index %v, current commit index %d", rf.me, rf.matchIndex, rf.commitIndex)</span>
+	<span class="n">newCommit</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rf</span><span class="o">.</span><span class="n">logEntries</span><span class="p">)</span> <span class="o">-</span> <span class="m">1</span>
+	<span class="k">for</span> <span class="p">;</span> <span class="n">newCommit</span> <span class="o">&gt;</span> <span class="n">rf</span><span class="o">.</span><span class="n">commitIndex</span><span class="p">;</span> <span class="n">newCommit</span> <span class="o">-=</span> <span class="m">1</span> <span class="p">{</span>
+		<span class="n">commitCount</span> <span class="o">:=</span> <span class="m">1</span>
+		<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">match</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">rf</span><span class="o">.</span><span class="n">matchIndex</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="n">match</span> <span class="o">&gt;=</span> <span class="n">newCommit</span> <span class="o">&amp;&amp;</span> <span class="n">rf</span><span class="o">.</span><span class="n">logEntries</span><span class="p">[</span><span class="n">newCommit</span><span class="p">]</span><span class="o">.</span><span class="n">Term</span> <span class="o">==</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span> <span class="p">{</span>
+				<span class="n">commitCount</span> <span class="o">+=</span> <span class="m">1</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+		<span class="c">// DPrintf("leader %d, current commit index %d, new commit index %d, commit count %d", rf.me, rf.commitIndex, newCommit, commitCount)</span>
+		<span class="k">if</span> <span class="n">commitCount</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rf</span><span class="o">.</span><span class="n">matchIndex</span><span class="p">)</span><span class="o">/</span><span class="m">2</span> <span class="o">+</span> <span class="m">1</span><span class="p">)</span> <span class="p">{</span>
+			<span class="n">rf</span><span class="o">.</span><span class="n">commitIndex</span> <span class="o">=</span> <span class="n">newCommit</span>
+			<span class="k">break</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Once the current commit index is updated, there is another thread working in background that going to apply the log entry from the current applied to the current commit index.</p>
+
+<h2 id="snapshot">Snapshot</h2>
+
+<p>In the final part of the Lab2, we are asked to add the functionality to persist state, which is the well known practice snapshot. According to the algorithm, there are in total three values need to be persisted: currentTerm, votedFor and log[]. Although we usually persist state to disk, in this lab we mimic this by using a dedicated class to encode and decode state. The change could be viewed <a href="https://shorturl.at/A1278">here</a>. Anytime we make a change to the above 3 state, we would call the persist function to create a snapshot. When a raft server crashed, it would read the snapshot it has persisted and start to catch up others from there, instead of starting everything from the beginning, which could be pretty time consuming.</p>
+
+<h2 id="future-work">Future work</h2>
+
+<p>By this point, we have implemented the Raft algorithm E2E. Working on Raft has been one of the most challenging coding assignments I have ever had, especially debugging the abnormal behavior of the system. In the following lab, we are going to build other distributed system on top of the raft algorithm we have implemented here. Stay tuned!</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="https://pyemma.github.io/tags/#distributed-system" class="page__taxonomy-item" rel="tag">distributed system</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2020-10-10T00:00:00-07:00">October 10, 2020</time></p>
+        
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="https://pyemma.github.io/Distributed-System-RAFT/" class="pagination--pager" title="MIT Distributed System Course - Raft I
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+</div>
+
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+    
+    
+    
+    
+    
+    <li><a href="https://pyemma.github.io/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 Yang Pei. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="https://pyemma.github.io/assets/js/main.min.js"></script>
+  <script src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
+
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://pyemma.github.io/Distributed-System-RAFT-II/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/Distributed-System-RAFT-II"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://pyemma.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>
