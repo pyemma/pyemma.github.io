@@ -25,15 +25,13 @@ The section 5.4.3 has provided a pretty good explanation on the safety guarantee
 
 ![RAFT properties](/assets/raft_property.png)
 
-All of the code in this post is available [here(2B)](https://shorturl.at/ciHP3) and [here(2C)](https://shorturl.at/A1278). 
-
 ## Log Replica
 
 Two functions plays a key role on Log Replica: updated version of `AppendEntries` by followers and `replicaLog` by leaders.
 
 We have already provided an implementation of `AppendEntries` in the last post so that the leader could use it to send heartbeats to followers. We extend the functionality of `AppendEntries` to make it support log replica.
 
-Here is the new implementation of the function (or take a look at (highlight of the change)[https://github.com/pyemma/mit-distributed-system/commit/4ca09b83b23325f14bfceae8161f366a4ddc030d]).
+Here is the new implementation of the function (or take a look at [highlight of the change](https://github.com/pyemma/mit-distributed-system/commit/4ca09b83b23325f14bfceae8161f366a4ddc030d)).
 
 {% highlight go %}
 func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply) {
@@ -87,7 +85,7 @@ The key new logic we introduced is as follow:
 * We also introduce a function called `checkCommit` to see if the leader has send a commit index that is larger than follower's current commit index on record
 * Once the pervious entry check is pass, we use the function `checkAndCopy` to do the actual copy and overwriting work, where we find the first entry that is different with the new entries sent by leader, and copy-paste from that point.
 
-As we have seen the `AppendEntries` RPC call's logic, let's take a look at how leader is going to send request to followers and process responses from followers. In the pervious post, we have implemented a function called `sendHeartbeat`. We rename it to `replicaLog` and extend its functionality, with a parameters to control whether we would love to use it to send heartbeats, or send real log entries. Below is the implementation (or take a look at (highlight of the change)[https://github.com/pyemma/mit-distributed-system/commit/4ca09b83b23325f14bfceae8161f366a4ddc030d]).
+As we have seen the `AppendEntries` RPC call's logic, let's take a look at how leader is going to send request to followers and process responses from followers. In the pervious post, we have implemented a function called `sendHeartbeat`. We rename it to `replicaLog` and extend its functionality, with a parameters to control whether we would love to use it to send heartbeats, or send real log entries. Below is the implementation (or take a look at [highlight of the change](https://github.com/pyemma/mit-distributed-system/commit/4ca09b83b23325f14bfceae8161f366a4ddc030d)).
 
 {% highlight go %}
 // replicaLog is the function used by leader to send log to replica

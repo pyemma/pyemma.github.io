@@ -248,7 +248,7 @@
 
 
 
-  8 minute read
+  7 minute read
 </p>
           
         </header>
@@ -278,15 +278,13 @@
 
 <p><img src="/assets/raft_property.png" alt="RAFT properties" /></p>
 
-<p>All of the code in this post is available <a href="https://shorturl.at/ciHP3">here(2B)</a> and <a href="https://shorturl.at/A1278">here(2C)</a>.</p>
-
 <h2 id="log-replica">Log Replica</h2>
 
 <p>Two functions plays a key role on Log Replica: updated version of <code class="language-plaintext highlighter-rouge">AppendEntries</code> by followers and <code class="language-plaintext highlighter-rouge">replicaLog</code> by leaders.</p>
 
 <p>We have already provided an implementation of <code class="language-plaintext highlighter-rouge">AppendEntries</code> in the last post so that the leader could use it to send heartbeats to followers. We extend the functionality of <code class="language-plaintext highlighter-rouge">AppendEntries</code> to make it support log replica.</p>
 
-<p>Here is the new implementation of the function (or take a look at (highlight of the change)[https://github.com/pyemma/mit-distributed-system/commit/4ca09b83b23325f14bfceae8161f366a4ddc030d]).</p>
+<p>Here is the new implementation of the function (or take a look at <a href="https://github.com/pyemma/mit-distributed-system/commit/4ca09b83b23325f14bfceae8161f366a4ddc030d">highlight of the change</a>).</p>
 
 <figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="k">func</span> <span class="p">(</span><span class="n">rf</span> <span class="o">*</span><span class="n">Raft</span><span class="p">)</span> <span class="n">AppendEntries</span><span class="p">(</span><span class="n">args</span> <span class="o">*</span><span class="n">AppendEntriesArgs</span><span class="p">,</span> <span class="n">reply</span> <span class="o">*</span><span class="n">AppendEntriesReply</span><span class="p">)</span> <span class="p">{</span>
 	<span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
@@ -340,7 +338,7 @@
   <li>Once the pervious entry check is pass, we use the function <code class="language-plaintext highlighter-rouge">checkAndCopy</code> to do the actual copy and overwriting work, where we find the first entry that is different with the new entries sent by leader, and copy-paste from that point.</li>
 </ul>
 
-<p>As we have seen the <code class="language-plaintext highlighter-rouge">AppendEntries</code> RPC call’s logic, let’s take a look at how leader is going to send request to followers and process responses from followers. In the pervious post, we have implemented a function called <code class="language-plaintext highlighter-rouge">sendHeartbeat</code>. We rename it to <code class="language-plaintext highlighter-rouge">replicaLog</code> and extend its functionality, with a parameters to control whether we would love to use it to send heartbeats, or send real log entries. Below is the implementation (or take a look at (highlight of the change)[https://github.com/pyemma/mit-distributed-system/commit/4ca09b83b23325f14bfceae8161f366a4ddc030d]).</p>
+<p>As we have seen the <code class="language-plaintext highlighter-rouge">AppendEntries</code> RPC call’s logic, let’s take a look at how leader is going to send request to followers and process responses from followers. In the pervious post, we have implemented a function called <code class="language-plaintext highlighter-rouge">sendHeartbeat</code>. We rename it to <code class="language-plaintext highlighter-rouge">replicaLog</code> and extend its functionality, with a parameters to control whether we would love to use it to send heartbeats, or send real log entries. Below is the implementation (or take a look at <a href="https://github.com/pyemma/mit-distributed-system/commit/4ca09b83b23325f14bfceae8161f366a4ddc030d">highlight of the change</a>).</p>
 
 <figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="c">// replicaLog is the function used by leader to send log to replica</span>
 <span class="k">func</span> <span class="p">(</span><span class="n">rf</span> <span class="o">*</span><span class="n">Raft</span><span class="p">)</span> <span class="n">replicaLog</span><span class="p">(</span><span class="n">isHeartbeat</span> <span class="kt">bool</span><span class="p">)</span> <span class="p">{</span>
