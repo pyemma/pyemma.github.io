@@ -108,4 +108,9 @@ var store = [{
         "excerpt":"IntroductionIn the following series of post, we are going to implement Raft consensus algorithm, which is used to manage replicated log. And on top of that, we would implement a failure tolerance key-value store. This type of failure tolerant system is called replicated state machine. Replicated state machine operates on...","categories": [],
         "tags": ["distributed system"],
         "url": "https://pyemma.github.io/Distributed-System-RAFT/",
+        "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
+        "title": "MIT Distributed System Course - Raft II",
+        "excerpt":"IntroductionIn this post, we continue our work on raft implementation. The focus of this post would be the second part of raft, which is the log replication, and snapshot to optimize the size of the log.Let’s first go through the high level logic of how log replica works in raft:...","categories": [],
+        "tags": ["distributed system"],
+        "url": "https://pyemma.github.io/Distributed-System-RAFT-II/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"}]
