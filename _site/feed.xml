@@ -7,6 +7,81 @@
     <atom:link href="https://pyemma.github.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>投资小白学习读财报</title>
+        <description>&lt;p&gt;最近开始步入投资领域，打算在自己的博客里面也专门开一个版块。主要的目的一方面是做阶段性的总结，和大家交流学习；另一方面也是给自己的博客增加一些多样性，而不是单纯的技术性博客（根本没人读 TAT）。&lt;/p&gt;
+
+&lt;p&gt;我的背景是纯粹的投资小白，属于那种连股票还有期权都分不清楚的那种24k纯投资小白，而且之前还一直不懈于搞投资。在老婆的劝（wei）说（xie）之下，终于开始尝试学习。我学习东西比较喜欢做主题性的学习，有点类似于主题阅读。通常我会找到一个主题（这个主题可能是听别人提到的，或者是在网站上偶然看到的一个主题），然后尽可能搜索相关的资料学习，最后整理一下要点。在这一篇博客里面，我就打算先介绍一下，自己最近在学习的关于&lt;strong&gt;阅读财报的一些要点&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;h3 id=&quot;去哪里找财报&quot;&gt;去哪里找财报&lt;/h3&gt;
+&lt;p&gt;找上市公司的财报信息有很多种的途径，在这里我介绍两种我使用过的方法：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;第一种是去公司的官方网站，然后找带有investor字样的链接。以我最近在研究的Palantir这家公司来说，在他家的官网最底下，有一个 &lt;a href=&quot;https://investors.palantir.com/&quot;&gt;Investor Relations&lt;/a&gt; 的链接，如下图所示。来到新页面上之后可以找到一个叫做 &lt;em&gt;Financials&lt;/em&gt; 的下拉选项单，在这里可以找到一个 &lt;em&gt;Quartely Results&lt;/em&gt; 和 &lt;em&gt;SEC Filing&lt;/em&gt; 的选项。一般我们小白读一读 &lt;a href=&quot;https://investors.palantir.com/financials/quarterly-results&quot;&gt;Quartely Results&lt;/a&gt; 上的东西就可以啦：有精简版的财报，还有制作精美的 PPT 供你选择阅读。当然也可以看更加正式的财报比如 K10 年报什么的，但是那个100多页的文档读起来可真的不轻松呀。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div style=&quot;text-align: center&quot;&gt;
+  &lt;img src=&quot;/assets/pltr_investor.png&quot; alt=&quot;pltr_investor&quot; title=&quot;Palantir Investor&quot; width=&quot;200&quot; height=&quot;150&quot; /&gt;
+&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;第二中方法是使用 &lt;a href=&quot;https://finance.yahoo.com/&quot;&gt;Yahoo Finance&lt;/a&gt; 网站。在搜索栏里面输入想要查询的公司的股票代码（PLTR)或者公司名字，然后我们在结果页面上能找到一个 Financials 的tab，如下图所示。在这里我们也能得到公司的财报信息。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div style=&quot;text-align: center&quot;&gt;
+  &lt;img src=&quot;/assets/pltr_yahoo.png&quot; alt=&quot;pltr_yahoo&quot; title=&quot;Palantir Yahoo Finance&quot; width=&quot;600&quot; height=&quot;300&quot; /&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;怎么读财报&quot;&gt;怎么读财报&lt;/h3&gt;
+
+&lt;p&gt;财报一共有三个表格，分别是盈利表(income sheet)，资产负债表(balance sheet)和现金流表(cash flow sheet)。在看这些表的时候基本上要遵守下面的几样原则：&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;绝对值(absolute number)很重要，但是比例(ratio)同样很重要，甚至是更加的重要。&lt;/li&gt;
+  &lt;li&gt;单纯看一年的数据不够劲儿，需要综合着看历年的数据，来观察趋势（导数啊同学们），以此来判断公司未来的发展前景。&lt;/li&gt;
+  &lt;li&gt;单纯看一家公司的也还不够劲儿，需要跟同一行业的其他公司来比较，从而了解这家公司在行业内的数据是不是足够优秀。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;这三张表中，我个人感觉最有用的还是盈利表和资产负债表，现金流表我到现在也还没有研究透彻，所以也不敢说得太多。&lt;/p&gt;
+
+&lt;p&gt;首先我们看看看盈利表，通过这张表我们可以知道这家公司运营的如何。首先可以看的是一家公司的营收(Revenue)。同时我们还可以看到支出(Cost of Revenue)，也就是相应的支出有多少。这两项相减，我们能得到公司的毛利润(Gross Profit)。同时我们还能从表上得到公司其他的一些operation cost，比如科研(R&amp;amp;D)还有市场营销(Marketing)之类的。除此之外还有要交的税啥的。如果我们把这些cost也都从应收里面扣除的话，就得到了传说中的净利润(Net Profit)或者净亏损(Net Loss)。我们把毛利润还有净利润分别跟营收相除，就得到了毛利率(Gross Margin)跟净利率(Net Margin)。下面我们来看个例子，比较一下Facebook还有Snapchat这两家公司的状况。&lt;/p&gt;
+
+&lt;div style=&quot;text-align: center&quot;&gt;
+  &lt;img src=&quot;/assets/fb_income_sheet.png&quot; alt=&quot;fb_income_sheet&quot; title=&quot;Facebook Income Sheet&quot; width=&quot;800&quot; height=&quot;400&quot; /&gt;
+  &lt;center&gt;Facebook&lt;/center&gt;
+  &lt;img src=&quot;/assets/snap_income_sheet.png&quot; alt=&quot;snap_income_sheet&quot; title=&quot;Snapchat Income Sheet&quot; width=&quot;800&quot; height=&quot;400&quot; /&gt;
+  &lt;center&gt;Snapchat&lt;/center&gt;
+&lt;/div&gt;
+
+&lt;p&gt;从上面的表格中我们可以看出，2020年全年Facebook的营收比2019年增长了大约21.59%，Snapchat则是38.16%。说明Snapchat的增长速度远远超过Facebook，这个也是比较符合我们的预期的，因为Facebook已经是一个大型的非常成熟的企业了，而Snapchat任然处于一个高速的发展阶段。这个从两家公司最后的净利润也可以看出来，Facebook是有实现盈利的，而Snapchat任然是处于亏损的状态。2020年Facebook的净利率大概是33.9%，相比较2019年的26.1%，有一个比较大的提升。这个对于科技公司来说在2020年是一个比较普遍的影响，由于疫情的影响，科技公司的业务往往实现了一个爆发式的增长。&lt;/p&gt;
+
+&lt;p&gt;巴菲特老爷子就很看重公司的毛利率还有净利率，他的一个建议是，一个公司的毛利率在40%以上，净利率在20%以上的话，那么这个公司就是还蛮不错的。&lt;/p&gt;
+
+&lt;p&gt;有了净利润，我们再除以全部的股东权益的话，那么就能得到每股收益(Earning Per Share)。这个不用我们自己手算，在盈利表中就已经给了。Facebook的EPS从2019年的6.48涨到了10.22，实现了57%的增长。EPS还有一个很重要的用途就是用来计算P/E值，这个值在价值投资里面是一个很重要的指标，用来衡量一家公司的股票是被高估还是低估了。在《聪明的投资者》一书中，作者就建议当P/E值超过40的时候，可以考虑卖出股票。这条建议在现在的成长股中可能不是很实用（P/E 超高的股票太多了）。Facebook的P/E值现在是26左右，Snapchat的则没有这个值，因为其EPS是负数（没有实现盈利）。&lt;/p&gt;
+
+&lt;p&gt;不同的行业，其净利率，EPS可能会很不一样，这个是又行业本身的性质决定的。我们可以看一下苹果公司的数据，如下图所示&lt;/p&gt;
+&lt;div style=&quot;text-align: center&quot;&gt;
+  &lt;img src=&quot;/assets/apple_income_sheet.png&quot; alt=&quot;apple_income_sheet&quot; title=&quot;Apple Income Sheet&quot; width=&quot;800&quot; height=&quot;400&quot; /&gt;
+  &lt;center&gt;Apple&lt;/center&gt;
+&lt;/div&gt;
+
+&lt;p&gt;苹果公司2020年的净利率是26%左右，比Facebook低了很多。其EPS从2019年的2.99增长到了2020年的3.31，实现了10.7%的增长。这些数据比Facebook低，但是这丝毫没有影响大家对其的喜爱。苹果公司的P/E值打到了32左右，说明投资者对于苹果公司的前景是更加看好的。这个例子就是想告诉大家，大家在比较公司的时候一定要同类别进行比较，否则数据没有什么意义（call back 第三点）。&lt;/p&gt;
+
+&lt;p&gt;下一张表我们可以看看资产负债表，这个表反映了公司的债务情况。总体上一句话，公司的资产(Asset)=从银行借来的钱(Liabilities) + 从股东们借来的钱(Shareholder’s equity)。在这张表里面，我们其实就是主要看看现金以及现金等价物，来确保公司的财务状况比较的健康。Facebook 2020年的现金大概17576M，和2019年的19079M没有什么太大的变化，这种稳定的现金储备就是公司比较健康的表现。要是突然看到现金锐减，那就要仔细研究研究有什么猫腻了。初次之外，巴菲特老爷子也推荐仔细看看Retained Earnings，这个钱就是净利润扣除了股票的分红之后剩下来的钱。巴菲特老爷子希望看到这个钱是能一直有增长的。我是希望这个钱能稳定的维持在一定的水平，这样的话我能知道公司的管理层在拿这些钱用来办事儿，而不是仅仅拿在手里不知道干啥，也不发给股东。另一点巴菲特老爷子提醒要关注的就是有没有太多的长期负债。&lt;/p&gt;
+
+&lt;p&gt;最后一张表示现金流表。这张表详细的注明了了公司的营业现金收入，投资的现金收入，以及融资的现金收入。说实话这张表其实我是看不太懂的，所以也就不说太多了。&lt;/p&gt;
+
+&lt;h3 id=&quot;结语&quot;&gt;结语&lt;/h3&gt;
+&lt;p&gt;这篇小文章只是很粗略的总结了一下我最近学习到的读财报的知识，并不是非常专业的深度文章，旨在能起到一个抛砖引玉，和大家分享讨论的作用。如果有哪里说得不是很准确，欢迎大家的指正。之后如果我还有新的学习发现，也会及时地更新来与大家分享。&lt;/p&gt;
+
+&lt;h3 id=&quot;参考资料&quot;&gt;参考资料&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=lBBXmim527A&quot;&gt;WARREN BUFFETT AND THE INTERPRETATION OF FINANCIAL STATEMENTS&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=rgKKNZlgXbw&quot;&gt;贝拉财经 192期&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=rq9B79mNQiA&quot;&gt;如何读科技股的财报&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Sat, 27 Feb 2021 00:00:00 -0800</pubDate>
+        <link>https://pyemma.github.io//%E6%8A%95%E8%B5%84-%E6%8A%95%E8%B5%84%E5%B0%8F%E7%99%BD%E5%AD%A6%E4%B9%A0%E8%AF%BB%E8%B4%A2%E6%8A%A5/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//%E6%8A%95%E8%B5%84-%E6%8A%95%E8%B5%84%E5%B0%8F%E7%99%BD%E5%AD%A6%E4%B9%A0%E8%AF%BB%E8%B4%A2%E6%8A%A5/</guid>
+      </item>
+    
+      <item>
         <title>MIT Distributed System Course - Raft II</title>
         <description>&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
 
@@ -1290,84 +1365,6 @@ E(s, a) = \gamma\lambda E(s, a)\]
         <pubDate>Sat, 19 Aug 2017 00:00:00 -0700</pubDate>
         <link>https://pyemma.github.io//Reinforcement-Learning-Lesson-4/</link>
         <guid isPermaLink="true">https://pyemma.github.io//Reinforcement-Learning-Lesson-4/</guid>
-      </item>
-    
-      <item>
-        <title>Reinforcement Learning Lesson 3</title>
-        <description>&lt;p&gt;In this lesson, we will learn about what to do when we have no knowledge about the MDP. In the last lesson, we learnt about how to solve a MDP when we have full information about it (e.g. $P$, $R$). When we don’t have enough information, the Bellman Equation won’t work. The only way is to learn from experience, where we run the process once, and obtain a $S_1, R_1, …, S_T$ sequence and improve our value function with it. This is called model free. In this lesson, we learn about when given a policy $\pi$, how do we calculate the state value function (which is called model free predicting). And in the next one, we will learn how to come up with the policy (which is called model free control).&lt;/p&gt;
-
-&lt;h4 id=&quot;monte-carlo-reinforcement-learning&quot;&gt;Monte-Carlo Reinforcement Learning&lt;/h4&gt;
-&lt;p&gt;The first method is called Mento-Carlo Reinforcement Learning. The idea behind this method is to use empirical mean to measure the value. The algorithm is as follow:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Initialize $N(s)$ to all zero, copying the value function from last one&lt;/li&gt;
-  &lt;li&gt;Given an episode $S_1, R_1, …, S_T$&lt;/li&gt;
-  &lt;li&gt;For each $S_t$ with return $G_t$&lt;/li&gt;
-&lt;/ul&gt;
-
-\[N(S_t) = N(S_t) + 1\]
-
-\[V(S_t) = V(S_t) + \frac{1}{N(S_t)}(G_t - V(S_t))\]
-
-&lt;p&gt;Here $N(S_t)$ counts the number of our visit to $S_t$. The update function is using running mean to update the value of the current state, by moving it towards the return in this episode (G_t) a little bit. Here we can replace $\frac{1}{N(S_t)}$ to a small number $\alpha$, this is functioning as a learning rate to control how quick we update our value function. When we increase the counter, we can increase it either by first visit within the episode or every visit within the episode.&lt;/p&gt;
-
-&lt;p&gt;Mento-Carlo Reinforcement Learning can only works with episode experience, which means the MDP must has a terminate state and the experience must be complete.&lt;/p&gt;
-
-&lt;p&gt;In this method, we are &lt;strong&gt;sampling&lt;/strong&gt; from the policy distribution because for each state, we are only considering one possible successor state. The learning method in last lesson is using dynamic programming, and it is not based on sampling, it actually takes all possible successor states into consideration.&lt;/p&gt;
-
-&lt;h4 id=&quot;td0-learning&quot;&gt;TD(0) Learning&lt;/h4&gt;
-&lt;p&gt;The second method is called Temporal Difference Learning. As its naming suggested, in this method we are not using the actual return in the episode but using an temporal estimation to update the value function. The algorithm is:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;For each $S_t$ within the episode&lt;/li&gt;
-&lt;/ul&gt;
-
-\[V(S_t) = V(S_t) + \alpha(R_{t+1} + \gamma V(S_{t+1}) - V(S_t))\]
-
-&lt;p&gt;Here, $R_{t+1} + \gamma V(S_{t+1})$ is called TD target, and $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$ is called the TD error. The main logic here is bootstrapping, which means we are not directly making each value function to the most accurate value it should be given this episode. We are making it slightly better based on our current estimate on the successor state. The benefit of the doing so is that we can learn from incomplete experience, and MDP without a terminal state.&lt;/p&gt;
-
-&lt;p&gt;In this method, we are also &lt;strong&gt;sampling&lt;/strong&gt; from the policy distribution, as well as bootstrapping. Dynamic programming also uses bootstrapping similar to TD(0) learning (recall the Bellman Equation).&lt;/p&gt;
-
-&lt;h4 id=&quot;tdlambda-learning&quot;&gt;TD($\lambda$) Learning&lt;/h4&gt;
-&lt;p&gt;In both MC and TD(0) Learning, we are looking forward to the future rewards. In MC, we are looking until we reach the end, while in TD(0) we only look at next step. Instead of looking forward, we can also looking backward. However, this involves how to assign the current timestamp rewards to pervious states. This is called credit assignment problem. And the method we overcome it is to use &lt;strong&gt;Eligibility Traces&lt;/strong&gt;, which fusion both assigning credit to the most recent state and most frequent states. Here we introduce the TD($\lambda$) algorithm (back view version):&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Initialize Eligibility Traces $E_0(s) = 0$&lt;/li&gt;
-  &lt;li&gt;Given an experience, for each state $s$:&lt;/li&gt;
-  &lt;li&gt;Update the Eligibility Traces by: $E_t(s) = \gamma \lambda E_{t-1}(s) + 1(S_t = s)$&lt;/li&gt;
-  &lt;li&gt;Calculate the update step by: $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$&lt;/li&gt;
-  &lt;li&gt;Update &lt;strong&gt;each&lt;/strong&gt; state by: $V(s) = V(s) + \alpha \delta_t E_t(s)$&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;If we use $\lambda = 0$, then the Eligibility Traces will fall to $1(S_t = s)$ and replace it in the update function, we will see that its the exact same update function as TD(0). If we choose $\lambda = 1$, then it is actually equals to every visit MC. We can prove it as follow:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Suppose in our experience, $s$ is visited at timestamp $k$, then the $E_t(s)$ will be like&lt;/li&gt;
-&lt;/ul&gt;
-
-\[E_t(s) = \begin{cases}
-0, &amp;amp; \text{if $t &amp;lt; k$} \\
-\gamma^{t - k}, &amp;amp; \text{if $t \ge k$} \\
-\end{cases}\]
-
-&lt;ul&gt;
-  &lt;li&gt;The accumulated online update for $s$ is&lt;/li&gt;
-&lt;/ul&gt;
-
-\[\begin{align}
-\sum_{t=1}^{T-1}\alpha\delta_t E_t(s) &amp;amp; = \sum_{t=k}^{T-1}\gamma^{t-k}\delta_t \\
-&amp;amp; = \delta_k + \gamma\delta_{k+1} + ... + \gamma^{T-1-k}\delta_{T-1} \\
-&amp;amp; = R_{k+1} + \gamma V(S_{k+1}) - V(S_k) + \gamma R_{k+2} + \gamma^2 V(S_{k+2}) - \gamma V(S_{k+1}) + ... \\
-&amp;amp; + \gamma^{T-1-k} R_{T-1} + \gamma^{T-k} V(S_T) - \gamma^{T-1-k} V(S_{T-1}) \\
-&amp;amp; = R_{k+1} + \gamma R_{k+2} + \gamma^2 R_{k+3} + ... + \gamma^{T-1-k} R_{T-1} - V(S_k) \\
-&amp;amp; = G_k - V(S_k)
-\end{align}\]
-
-&lt;ul&gt;
-  &lt;li&gt;Thus the update function for TD(1) is the same as the one in every visit MC (where we use $\alpha$ as a learning rate instead of the original one).&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The good thing for TD($lambda$) is that it can learn with incomplete experience. And the update is performed &lt;em&gt;online&lt;/em&gt;, &lt;em&gt;step by step&lt;/em&gt; within the episode. MC is updated via offline, cause it needs to wait until the end and calculate the update for each state and update them in batch.&lt;/p&gt;
-</description>
-        <pubDate>Thu, 17 Aug 2017 00:00:00 -0700</pubDate>
-        <link>https://pyemma.github.io//Reinforcement-Learning-Lession-3/</link>
-        <guid isPermaLink="true">https://pyemma.github.io//Reinforcement-Learning-Lession-3/</guid>
       </item>
     
   </channel>
