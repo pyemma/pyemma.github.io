@@ -7,6 +7,88 @@
     <atom:link href="https://pyemma.github.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>投资小白读《指数基金投资指南》</title>
+        <description>&lt;p&gt;在上一篇&lt;a href=&quot;https://pyemma.github.io/Newbee-Reading-Investment-Books-I/&quot;&gt;blog&lt;/a&gt;中，我们多次提到了指数基金的定投是一个对于投资新手来说非常不错的方法。为此，我去专门找了一本讲解指数基金投资的书：《指数基金投资指南》。这本书比较吸引我的两个章节分别是如何选择指数基金，以及如何选择定投的策略。在这篇blog中，我会总结一些书中提到的一些方法和大家分享。&lt;/p&gt;
+
+&lt;p&gt;这篇blog仅代表我个人观点，不构成任何具体的投资建议，特此声明。&lt;/p&gt;
+
+&lt;h2 id=&quot;指数基金的选择方法&quot;&gt;指数基金的选择方法&lt;/h2&gt;
+
+&lt;h3 id=&quot;道听途说法笑&quot;&gt;道听途说法（笑）&lt;/h3&gt;
+&lt;p&gt;这个方法是我之前自己用的方法，也就是从网上的一些推荐股票的博主，或者投资的论坛的帖子来挑选要投资的ETF。这个方法没有任何的技术含量，而且有被忽悠的风险，谨慎选择。不过如果是规模比较大的ETF的话，其实还是相对比较靠谱。我现在自己一直在坚持定投的VOO就是通过这种方法了解到的。&lt;/p&gt;
+
+&lt;h3 id=&quot;盈利收益率法&quot;&gt;盈利收益率法&lt;/h3&gt;
+&lt;p&gt;所谓的盈利收益率，其实指的就是市盈率（PE）的倒数。它所代表的意义就是说，如果我们买下整个公司的话，这家公司一年的盈利能够带给我们的收益率。而所谓的盈利收益率法，其实就是在盈利收益率高的时候出手，买入ETF；而在盈利收益率低的时候卖出。书中给出的具体的参数是这样的：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;当盈利收益率高于10%的时候，分批投资&lt;/li&gt;
+  &lt;li&gt;当盈利收益率低于10%但是高于6.4%的时候，持有&lt;/li&gt;
+  &lt;li&gt;当盈利收益率低于6.4%的时候，卖出
+盈利收益率法有其一定的局限性，只适用于流通性比较好，盈利比较稳定的品种。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;em&gt;同时，书中给出的10%以及6.4%的阈值区间，主要是针对A股的。这个数值不一定适用于美股。如果有哪位大神知道适用于美股的阈值的话，欢迎评论！&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;博格公式法&quot;&gt;博格公式法&lt;/h3&gt;
+&lt;p&gt;博格公式法，是指数基金之父约翰博格所提出来的。是针对能够影响股市长期回报率的几个关键因素所总结出的一种方法。他提出了指数基金的收益公式为&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;指数基金未来的年复合收益率，等于指数基金的投资初期股息率，加上指数基金每年的市盈率变化率，再加上指数基金每年的盈利变化率&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;然而，这个公式的实际计算还是很复杂的（这个下面的例子可以看出来），但是根据这个公式中所包含的变量，我们其实可以得到一些简单的步骤来操作&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;在股息率高的时候买入&lt;/li&gt;
+  &lt;li&gt;在市盈率处于历史较低位置的时候买入&lt;/li&gt;
+  &lt;li&gt;买入之后，等待市盈率从低到高&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;举个&quot;&gt;举个🌰&lt;/h3&gt;
+&lt;p&gt;下面我们就用VOO这个ETF作为例子，来运用一下上面的两个方法。
+PS: 数据的截取时间点是5/31/2021&lt;/p&gt;
+
+&lt;p&gt;我们可以从Vanguard的&lt;a href=&quot;https://institutional.vanguard.com/web/c1/investments/product-details/fund/0968&quot;&gt;官网&lt;/a&gt;上找到VOO的一些数据（官网相比较其他的野鸡网站来说数据源更加靠谱，我个人觉得）。从这上面看，VOO这个ETF现在的PE值大概是26.3，那么其盈利收益率大概为3.80%。根据盈利收益率法，我们应该选择卖出VOO。&lt;/p&gt;
+
+&lt;p&gt;然后我们可以再根据博格公式法来算算看VOO的未来年复合收益率。为了计算这个，我们需要知道股息率，市盈率变化率以及盈利变化率。&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;股息率在五年前的时候是2.23% &lt;a href=&quot;http://www.lazyportfolioetf.com/etf/vanguard-sp-500-voo-dividend-yield/&quot;&gt;数据来源&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;市盈率变化率在过去五年中从5.65%变化到了现在的3.80%, 那么年平均变化率为-7.6%左右。（这个数字在官网上找不到，而且官网上也没有提供historical的PE的数据，所以我用了这个&lt;a href=&quot;https://www.gurufocus.com/etf/VOO&quot;&gt;资源&lt;/a&gt;上的数据&lt;/li&gt;
+  &lt;li&gt;盈利变化率，在官网上能个得到，在过去五年中这个数值为18.9%&lt;/li&gt;
+  &lt;li&gt;将上面的数据结合起来，我们能得到18.9 - 7.6 + 2.23 = 13.53%，这个与官网上实际给出的五年平均收益13.87%相差不多&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;我们可以比较Vanguard旗下的另外一个ETF VCR。这个是追踪必须非必须消费品指数的一个ETF。具体的计算结果如下：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;股息率在五年前的时候是1.63% &lt;a href=&quot;https://seekingalpha.com/symbol/VCR/dividends/yield&quot;&gt;数据来源&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;市盈率变化率在过去的五年中从3.34%变化到了现在的3.12，平均变化率为-9.9左右。&lt;/li&gt;
+  &lt;li&gt;盈利变化率，在过去五年中数值为33.6%&lt;/li&gt;
+  &lt;li&gt;带入公式我们能够得到 33.6 - 9.9 + 1.63 = 25.33%&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;由此可见，VCR相比较VOO而言，在博格公式法中更好，但是在市盈率中则要相对差一些。除此之外，VCR的管理费用为0.1%，这个比VOO的0.03%可是贵了3倍，也是不可小觑的一点。至于具体应该投资VOO还是VCR，这个就要靠投资人自己的喜好来决定了。&lt;/p&gt;
+
+&lt;h2 id=&quot;指数基金的定投方法&quot;&gt;指数基金的定投方法&lt;/h2&gt;
+
+&lt;h3 id=&quot;定时定量法笑&quot;&gt;定时定量法（笑）&lt;/h3&gt;
+&lt;p&gt;这个是我自己之前一直在用的一种傻瓜式方法。就是每个月在固定的时间（比如说每个月的第一天），买入固定股数的ETF（比如说5股VOO）。这种方法自然不是最优的，但是简单无脑，省去很多需要操心的东西。少拿点收益，多空余一些时间去干点别的事情（比如说玩儿手游）。&lt;/p&gt;
+
+&lt;h3 id=&quot;定时定资金&quot;&gt;定时定资金&lt;/h3&gt;
+&lt;p&gt;这个和定时定量差不太多，只是每次固定投入的金额，比如固定从工资单中扣除2000美金投入到指数基金中。我最近被安利使用了一款智能定投的APP wealthfront，在这个APP中我就使用了这种方法。等年底的时候我回来通报一下实际的收益如何。&lt;/p&gt;
+
+&lt;h3 id=&quot;不定时不定资金价格低于价值时定投&quot;&gt;不定时不定资金（价格低于价值时定投）&lt;/h3&gt;
+&lt;p&gt;这个就是一个相对高端的方法了，书中给出的建议是这样的&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;在盈利收益率大于10%的时候坚持定投 （或者市盈率/市净率处于历史底部区域的时候&lt;/li&gt;
+  &lt;li&gt;盈利收益率小于10%但是大于6.4%的时候，暂停定投，继续持有；可以定投其他盈利收益率大于10%的品种 （或者当市盈率/市净率回归正常估值&lt;/li&gt;
+  &lt;li&gt;盈利收益率小于6.4%的时候卖出 （或者当市盈率/市净率处于历史高位&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;这个方法蛮需要经验，来判断现在ETF的价值所处在的区间是什么样子的。我打算在投资这个领域先摸爬滚打一段时间之后再考虑使用这种高端的方法。&lt;/p&gt;
+</description>
+        <pubDate>Fri, 14 May 2021 00:00:00 -0700</pubDate>
+        <link>https://pyemma.github.io//Newbee-Reading-Investment-Books-II/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//Newbee-Reading-Investment-Books-II/</guid>
+      </item>
+    
+      <item>
         <title>投资小白读《聪明的投资者》/ 《投资的常识》</title>
         <description>&lt;p&gt;作为一个投资小白，阅读一些书籍来学习一些知识还是很有必要的。在琳琅满目的投资类书籍中，我优先读了这么两本书：《聪明的投资者》和《投资的常识》。《聪明的投资者》是被誉为华尔街教父的格雷厄姆写的一本通俗易懂的面向大众的投资书籍。格老是价值投资的先驱，巴菲特的精神导师，其投资理念可见一斑。《投资的常识》是一本更加通俗易懂的小书，以朴实无华的语言，向大众传授投资的理念。这本书的两位作者也是在投资领域非常著名的人物。在这篇博客里面，我总结一些我自己读完这两本书之后感触最深刻的一些部分，起到一些抛砖引玉的作用，也希望大家能有时间亲自读一读这两本经典的书籍。&lt;/p&gt;
 
@@ -1296,47 +1378,6 @@ J_{avR}(\theta) = \sum_{s}d^{\pi_\theta}(s)\sum_{a}\pi_\theta(s, a)R_s^a\]
         <pubDate>Sun, 10 Sep 2017 00:00:00 -0700</pubDate>
         <link>https://pyemma.github.io//Reinforcment-Learning-Lesson-6/</link>
         <guid isPermaLink="true">https://pyemma.github.io//Reinforcment-Learning-Lesson-6/</guid>
-      </item>
-    
-      <item>
-        <title>Reinforcement Learning Lesson 5</title>
-        <description>&lt;p&gt;In this post, we are going to look into how can we solve the real world problem with a practical way. Think of the state value function $v(s)$ or the action value function $q(s, a)$ we mentioned before. If the problem has a really large state space, then it would take a lot of memory to store each value function. Instead of recording each value function, we can actually use a model to approximate the actual value function, which means given the current state, we want to predict the value of the state. There are three types of value function approximation:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Input current state, output the state value&lt;/li&gt;
-  &lt;li&gt;Input current state and an action, out put the action value&lt;/li&gt;
-  &lt;li&gt;Input current state, output all possible action’s action value&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;This can be reviewed as a classical supervised learning problem if we &lt;strong&gt;know the actual value function&lt;/strong&gt;, and more accurately speaking, its a regression problem. In the regression problem, we are trying to fit a model which will output some real number that matches the our input label as much as possible. In the regression problem, the loss is defined using mean-square error. In order to get a model, we need first to do some feature engineering and represent each state using the &lt;strong&gt;feature vector&lt;/strong&gt; $x(S)$, this is going to be the input into our model. And then we try to minimize&lt;/p&gt;
-
-\[L(w) = E_{\pi}[(v_{\pi}(S) - v(S, w))^2]\]
-
-&lt;p&gt;Here $w$ is our model’s parameter and is what we are going to improve. $v_{\pi}(S)$ is the actual value (label) and $v(S, w)$ is the output from our model (predict). In order to minimize this loss, we use stochastic gradient decrease to update $w$, which we have:&lt;/p&gt;
-
-\[\Delta w = \alpha (v_{\pi}(S) - v(S, w)) \nabla_w v(S, w)\]
-
-&lt;p&gt;Here $\alpha$ is a learning rate controlling how fast we improve $w$, and $\nabla_w v(S, w)$ is the derivate of our model toward the parameter, for example, if we choose a linear model, where $v(S, w) = x(S)^T * w$, then we would have&lt;/p&gt;
-
-\[\Delta w = \alpha (v_{\pi}(S) - v(S, w))x(S)\]
-
-&lt;p&gt;However, we could only obtain this update when we really &lt;strong&gt;know the actual value function&lt;/strong&gt;, which is the case of supervised learning. However, in reinforcement learning, we are lack of such information. So we have to use some target to replacement them. We can actually combining it with the algorithm we have introduced before. For example the MC algorithm, In each episode, we will get a series of the state and corresponding return $&amp;lt;S_t, G_t&amp;gt;$, we can actually use this return as our target and train our model on it. The process would be like use our model to compute the state value, and use some policy to go through the process, then we would have $&amp;lt;S_1, G_1&amp;gt;, &amp;lt;S_2, G_2&amp;gt;, …, &amp;lt;S_T, G_T&amp;gt;$. Then use these as our training data and update our model. This training is &lt;strong&gt;on-policy&lt;/strong&gt; (because we are learning as well as behaving) and &lt;strong&gt;incremental&lt;/strong&gt; (episode by episode). Similar things can be applied to TD(0) and TD($\lambda$), where we use TD target and $G_t^\lambda$. Good news to use TD target is that is needs less steps for model to converge (since TD target is less variance), but it might not converge in some cases, for example, if we choose Neural Network as our model, then the model will blow up.&lt;/p&gt;
-
-&lt;p&gt;Besides the incremental method, there is also &lt;strong&gt;batch&lt;/strong&gt; method, which we record all experience of the agent in $D$, and sample from it to get the training sample, then we update our model parameter using the same method above. &lt;strong&gt;Batch&lt;/strong&gt; method is more sample efficient and tries to find the best fit of all value functions available. While in the &lt;strong&gt;incremental&lt;/strong&gt; one, we are generate training sample one by one which is not very efficient, and we only use it once after update the parameter. A more detailed example is Deep Q-Networks (DQN), you can think of it as using NN model along with Q learning method. The algorithm is as follow:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Take action $a_t$ according to $\epsilon$-greedy policy&lt;/li&gt;
-  &lt;li&gt;Store transition $(s_t, a_t, r_{t+1}, s_{t+1})$ in replay memory $D$&lt;/li&gt;
-  &lt;li&gt;Sample random mini-batch of transitions $(s, a, r, s^,)$ from $D$&lt;/li&gt;
-  &lt;li&gt;Compute Q learning target with an old, fixed parameter $w^-$&lt;/li&gt;
-  &lt;li&gt;Optimize MSE between Q target and Q learning Network&lt;/li&gt;
-&lt;/ul&gt;
-
-\[L_i(w_i) = E_{s,a,r,s^, ~ D}[(r + \gamma max_{a^,}Q(s^,,a^,; w^-) - Q(s, a; w_i))^2]\]
-
-&lt;p&gt;The key method that stabilize the model is experience reply and Q target. For the experience reply, it helps decouple the relationship between each step since we are randomly sampling. For the Q target, we are using the model several steps ago, not the model we just updated. You can think of this as avoid oscillation.&lt;/p&gt;
-</description>
-        <pubDate>Fri, 08 Sep 2017 00:00:00 -0700</pubDate>
-        <link>https://pyemma.github.io//Reinforcement-Learning-Lesson-5/</link>
-        <guid isPermaLink="true">https://pyemma.github.io//Reinforcement-Learning-Lesson-5/</guid>
       </item>
     
   </channel>
