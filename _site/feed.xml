@@ -29,7 +29,7 @@
   &lt;li&gt;Passively wait until A notify that there are some message for B to read&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;These 2 different patterns, more formally speaking, &lt;strong&gt;poll&lt;/strong&gt; and &lt;strong&gt;push&lt;/strong&gt;, is common approach on &lt;em&gt;how&lt;/em&gt; message is delivered, or how &lt;em&gt;consumer&lt;/em&gt; (B in our example) would receive the message.&lt;/p&gt;
+&lt;p&gt;These 2 different patterns, more formally speaking, &lt;strong&gt;pull&lt;/strong&gt; and &lt;strong&gt;push&lt;/strong&gt;, is common approach on &lt;em&gt;how&lt;/em&gt; message is delivered, or how &lt;em&gt;consumer&lt;/em&gt; (B in our example) would receive the message.&lt;/p&gt;
 
 &lt;p&gt;Direct connection works, but what would happen if B somehow offline for a period of time $T$? B would miss all the message A plans to deliver during $T$. One potential solution is to add the capability of storing the message temporarily within A, but that would increase the responsibility of A and make it more complexity. We need some sort of dedicated component to help us, this lead to &lt;em&gt;message broker&lt;/em&gt;, or &lt;em&gt;message queue&lt;/em&gt;, which is really good at this job.&lt;/p&gt;
 
@@ -68,7 +68,7 @@
     &lt;/tr&gt;
     &lt;tr&gt;
       &lt;td&gt;&lt;strong&gt;Message Delivery&lt;/strong&gt;&lt;/td&gt;
-      &lt;td&gt;poll&lt;/td&gt;
+      &lt;td&gt;pull&lt;/td&gt;
       &lt;td&gt;push&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;

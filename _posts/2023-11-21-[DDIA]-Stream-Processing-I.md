@@ -25,7 +25,7 @@ The most straight-forward approach is to build a direct connection between A and
 - Proactively asking A if there is new message with some intervals in between these ask
 - Passively wait until A notify that there are some message for B to read
 
-These 2 different patterns, more formally speaking, **poll** and **push**, is common approach on *how* message is delivered, or how *consumer* (B in our example) would receive the message.
+These 2 different patterns, more formally speaking, **pull** and **push**, is common approach on *how* message is delivered, or how *consumer* (B in our example) would receive the message.
 
 Direct connection works, but what would happen if B somehow offline for a period of time $T$? B would miss all the message A plans to deliver during $T$. One potential solution is to add the capability of storing the message temporarily within A, but that would increase the responsibility of A and make it more complexity. We need some sort of dedicated component to help us, this lead to *message broker*, or *message queue*, which is really good at this job.
 
@@ -49,7 +49,7 @@ Everything has two sides. The benefits of using message queue is that: **1. impr
 |   | RabbitMQ | Kafka |
 |---|----------|-------| 
 | **Message Persistent** | control by request parameter | persistent |
-| **Message Delivery** | poll | push |
+| **Message Delivery** | pull | push |
 | **Message Ack** | auto-ack or explicit ack | no ack, consumer commit offset |
 | **Scalability** | vertical | horizontal |
 | **Availability** | single node in general | leader-follower replication |

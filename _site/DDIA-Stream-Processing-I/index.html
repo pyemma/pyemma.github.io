@@ -314,7 +314,7 @@
   <li>Passively wait until A notify that there are some message for B to read</li>
 </ul>
 
-<p>These 2 different patterns, more formally speaking, <strong>poll</strong> and <strong>push</strong>, is common approach on <em>how</em> message is delivered, or how <em>consumer</em> (B in our example) would receive the message.</p>
+<p>These 2 different patterns, more formally speaking, <strong>pull</strong> and <strong>push</strong>, is common approach on <em>how</em> message is delivered, or how <em>consumer</em> (B in our example) would receive the message.</p>
 
 <p>Direct connection works, but what would happen if B somehow offline for a period of time $T$? B would miss all the message A plans to deliver during $T$. One potential solution is to add the capability of storing the message temporarily within A, but that would increase the responsibility of A and make it more complexity. We need some sort of dedicated component to help us, this lead to <em>message broker</em>, or <em>message queue</em>, which is really good at this job.</p>
 
@@ -353,7 +353,7 @@
     </tr>
     <tr>
       <td><strong>Message Delivery</strong></td>
-      <td>poll</td>
+      <td>pull</td>
       <td>push</td>
     </tr>
     <tr>
