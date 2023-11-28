@@ -7,6 +7,139 @@
     <atom:link href="https://pyemma.github.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>DDIA Chapter 11 Stream Processing Part I</title>
+        <description>&lt;p&gt;In this post, we would introduce stream processing. Since it is a large topic, we would break it down into 2 part, and in the first part, we would focus on the component that is related to the “flow” of stream, a.k.a, &lt;strong&gt;delivery of message&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-event&quot;&gt;What is Event&lt;/h2&gt;
+&lt;p&gt;Stream is composed by sequence of &lt;em&gt;event&lt;/em&gt;, which we also use &lt;em&gt;message&lt;/em&gt; as an alternative term. Here is a quote from confluent on describing what is &lt;em&gt;event&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;An event is any type of action, incident, or change that’s identified or recorded by software or applications. For example, a payment, a website click, or a temperature reading, along with a description of what happened.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Take the payment as an example, a &lt;em&gt;payment event&lt;/em&gt;, could be User A paid X dollars to User B, for the purchase of an item C, on date X. This event would be recognized by our system to trigger the necessary processing (e.g. record in database, make third-party API call).&lt;/p&gt;
+
+&lt;h2 id=&quot;how-to-deliver-message&quot;&gt;How to deliver message&lt;/h2&gt;
+&lt;p&gt;How could we deliver message from machine A to machine B? There are multiple options.&lt;/p&gt;
+
+&lt;h3 id=&quot;direct-connection&quot;&gt;Direct connection&lt;/h3&gt;
+&lt;p&gt;The most straight-forward approach is to build a direct connection between A and B via network. Once the connection is published, B could receive the message from A in &lt;em&gt;2 different patterns&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Proactively asking A if there is new message with some intervals in between these ask&lt;/li&gt;
+  &lt;li&gt;Passively wait until A notify that there are some message for B to read&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;These 2 different patterns, more formally speaking, &lt;strong&gt;poll&lt;/strong&gt; and &lt;strong&gt;push&lt;/strong&gt;, is common approach on &lt;em&gt;how&lt;/em&gt; message is delivered, or how &lt;em&gt;consumer&lt;/em&gt; (B in our example) would receive the message.&lt;/p&gt;
+
+&lt;p&gt;Direct connection works, but what would happen if B somehow offline for a period of time $T$? B would miss all the message A plans to deliver during $T$. One potential solution is to add the capability of storing the message temporarily within A, but that would increase the responsibility of A and make it more complexity. We need some sort of dedicated component to help us, this lead to &lt;em&gt;message broker&lt;/em&gt;, or &lt;em&gt;message queue&lt;/em&gt;, which is really good at this job.&lt;/p&gt;
+
+&lt;h3 id=&quot;message-queue&quot;&gt;Message Queue&lt;/h3&gt;
+&lt;p&gt;Message queue could be treated as some type of &lt;em&gt;buffer&lt;/em&gt; in between of the message sender, a.k.a producer, and message receiver, a.k.a consumer. Producer would publish message to message queue, message queue would do some “necessary” processing on the message and hold it. Consumer could retrieve these message from message queue, by subscribing to some queue. Since message is buffered in message queue, it is okay that B is offline when A tries to send message, message queue would hold that message, and when B comes online, the message is not lost and could be consumed.&lt;/p&gt;
+
+&lt;h3 id=&quot;when-to-use-message-queue&quot;&gt;When to use Message Queue&lt;/h3&gt;
+&lt;p&gt;Message queue is pretty good to be used when the business involves certain &lt;strong&gt;async&lt;/strong&gt; property, which means that user don’t expect an immediate response from the application, but could retrieve the result sometime in the future. Some typical case including:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Job scheduler: user schedule a job (e.g. project building, model training) and expect it to finish sometime in the future&lt;/li&gt;
+  &lt;li&gt;Youtube video encoding: when user upload a video, the encoding job would be pushed onto a queue and be processed by some worker in the future&lt;/li&gt;
+  &lt;li&gt;Notification: a job to send some customer SMS/Email would be placed on queue and be sent in the future&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In the later section, we would see some more concrete example from industry on how message queue is being used in practice.&lt;/p&gt;
+
+&lt;p&gt;Everything has two sides. The benefits of using message queue is that: &lt;strong&gt;1. improve overall robustness of the system be decoupling different components&lt;/strong&gt;; &lt;strong&gt;2. balance the workload for upstream/downstream system (e.g. in case of burst of traffic)&lt;/strong&gt;. The downside of message queue is that, it would increase the complexity of the overall system (e.g. how to handle duplicated events gracefully).&lt;/p&gt;
+
+&lt;h2 id=&quot;industry-practice&quot;&gt;Industry practice&lt;/h2&gt;
+&lt;h3 id=&quot;rabbitmq--kafka&quot;&gt;RabbitMQ &amp;amp; Kafka&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.rabbitmq.com/&quot;&gt;RabbitMQ&lt;/a&gt; and &lt;a href=&quot;https://kafka.apache.org/&quot;&gt;Kafka&lt;/a&gt; is 2 commonly adopted message queue in industry. For a deeper dive into these 2 message queue, we would put it into another post. Here we would first summarize some highlight of them:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt; &lt;/th&gt;
+      &lt;th&gt;RabbitMQ&lt;/th&gt;
+      &lt;th&gt;Kafka&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;Message Persistent&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;control by request parameter&lt;/td&gt;
+      &lt;td&gt;persistent&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;Message Delivery&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;poll&lt;/td&gt;
+      &lt;td&gt;push&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;Message Ack&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;auto-ack or explicit ack&lt;/td&gt;
+      &lt;td&gt;no ack, consumer commit offset&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;Scalability&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;vertical&lt;/td&gt;
+      &lt;td&gt;horizontal&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;Availability&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;single node in general&lt;/td&gt;
+      &lt;td&gt;leader-follower replication&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;Order Guarantee&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;FIFO in general, special case: priority, sharded queue, multi consumer&lt;/td&gt;
+      &lt;td&gt;FIFO on partition level&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;Consumer Load Balance&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;priority or round robin&lt;/td&gt;
+      &lt;td&gt;different strategy specified by consumer group&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;doordash&quot;&gt;DoorDash&lt;/h3&gt;
+&lt;p&gt;In this &lt;a href=&quot;https://doordash.engineering/2020/09/03/eliminating-task-processing-outages-with-kafka/&quot;&gt;engineering blog&lt;/a&gt;, DoorDash introduced how they are using message queue in their business and why they migrate from RabbitMQ to Kafka.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Several business task in DoorDash is done in async, such as order checkout, merchant order transmission and dasher location processing&lt;/li&gt;
+  &lt;li&gt;DoorDash use Celery + RabbitMQ as their initial async task processing infra. However, they identified several pain points:
+    &lt;ul&gt;
+      &lt;li&gt;Availability is low. RabbitMQ would easily down during peak traffic. Traffic control needs to be enabled to prevent the issue that task consumption could not keep up with task publishing, which cause serious network lagging.&lt;/li&gt;
+      &lt;li&gt;Scalability is low. They are running the largest RabbitMQ node already (vertical scale). And they are using the primary-secondary HA mode, which also prevent them from scale (the down time could easily goes to 20mins to recover)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;They migrate RabbitMQ to Kafka to achieve better availability (partition replicated) and scalability (partitioned topic)
+    &lt;ul&gt;
+      &lt;li&gt;They also mentioned on improvement on dealing with “straggler”: using one dedicated thread to read message from topic partition, and use multi-threading to process the message. Thus, if one message takes long time to process, then only one thread would be blocked, while other thread could continues to process the messages&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;robinhood&quot;&gt;Robinhood&lt;/h3&gt;
+&lt;p&gt;In this &lt;a href=&quot;https://newsroom.aboutrobinhood.com/part-i-scaling-robinhood-clearing-accounting/&quot;&gt;blog&lt;/a&gt; from Robinhood, the author introduced how they are using Kafka to build their clearing service (which is one critical service to make sure the inside and outside account information is insync).&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Clearing service is not on the critical path of users (users don’t need to be aware of this), and thus they decided to build it as an async service.&lt;/li&gt;
+  &lt;li&gt;In their initial design, they use a monolith consumer, which contains a giant transaction to make update to several tables. This raise the contention issue and the efficiency is low.&lt;/li&gt;
+  &lt;li&gt;In their new design, they breakdown the original transaction into several smaller transaction to update only 1 ~ 2 tables. They also adopt the event source pattern that, once one job is done (e.g. user table update finished), it would fire one event to a Kafka topic, and one downstream consumer would consume the event and to the necessary update (e.g. update account table), and then fire another event.
+    &lt;ul&gt;
+      &lt;li&gt;The benefit of this reduction in contention and overall throughput improvement&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;But what if one consumer in the middle failed, how to resume and avoid duplicated write?
+    &lt;ul&gt;
+      &lt;li&gt;Use Kafka commit log to resume where left&lt;/li&gt;
+      &lt;li&gt;When do the DB write, first update the lookup table, then the duplicated write would be no-op&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Tue, 21 Nov 2023 00:00:00 -0800</pubDate>
+        <link>https://pyemma.github.io//DDIA-Stream-Processing-I/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//DDIA-Stream-Processing-I/</guid>
+      </item>
+    
+      <item>
         <title>MIT Distributed System Course - KVRaft</title>
         <description>&lt;p&gt;It has been a long time since last update on the project. Finally I have found some time that I could resume this project and finish it up.&lt;/p&gt;
 
@@ -1434,85 +1567,6 @@ PS: 数据的截取时间点是5/31/2021&lt;/p&gt;
         <pubDate>Wed, 13 Sep 2017 00:00:00 -0700</pubDate>
         <link>https://pyemma.github.io//Reinforcement-Learning-Lesson-8/</link>
         <guid isPermaLink="true">https://pyemma.github.io//Reinforcement-Learning-Lesson-8/</guid>
-      </item>
-    
-      <item>
-        <title>Reinforcement Learning Lesson 7</title>
-        <description>&lt;p&gt;In the pervious notes, we are all using &lt;strong&gt;model-free&lt;/strong&gt; reinforcement learning method to find the solution for the problem. Today we are going to introduce method that directly learns from the experience and tries to understand the underlaying world.&lt;/p&gt;
-
-&lt;p&gt;From &lt;a href=&quot;http://pyemma.github.io/posts/Reinforcement-Learning-Lesson-1&quot;&gt;Lesson 1&lt;/a&gt; we know that a MDP can be represent by \( &amp;lt;S, A, P, R&amp;gt; \), and our model is going to understand and simulate this. We will only introduce the simple version here, in which we assume that the \( S \) and \( A \) is known, and thus we only need to model \( P \) and \( R \). We can formulate it as:&lt;/p&gt;
-
-\[S_{t+1} ~ P_\eta(S_{t+1}|S_t, A_t) \\
-R_{t+1} = R_\eta(R_{t+1}|S_t, A_t)\]
-
-&lt;p&gt;where the prediction of next state is a density estimation problem and the reward is a regression problem.&lt;/p&gt;
-
-&lt;h2 id=&quot;integrated-architecture&quot;&gt;Integrated Architecture&lt;/h2&gt;
-&lt;p&gt;In this architecture, we are going to consider two types of experience. &lt;strong&gt;Real experience&lt;/strong&gt; which is sampled from the environment, and &lt;strong&gt;Simulated experience&lt;/strong&gt; which is sampled from our model. In the past, we only use the real experience to learn value function/policy. Now, we are going to learn our model from real experience, then plan and learn value function/policy from both real and simulated experience. This is thus called integrated architecture (integration of real and fake), the &lt;strong&gt;Dyna Architecture&lt;/strong&gt;. Here is an picture to illustrate what the logic flow of Dyna is like.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/assets/dyna.png&quot; alt=&quot;Dyna Architecture&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;According to the Dyna architecture, we can design many algorithm, here is an example of &lt;strong&gt;Dyna-Q Algorithm&lt;/strong&gt;:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Initialize \( Q(s, a) \) and \( Model(s, a) \) for all \( s \) and \( a \)&lt;/li&gt;
-  &lt;li&gt;Do forever:
-    &lt;ul&gt;
-      &lt;li&gt;\( S = \) current (nonterminal) state&lt;/li&gt;
-      &lt;li&gt;\( A = \epsilon - \text{greedy}(S, Q) \)&lt;/li&gt;
-      &lt;li&gt;Execute action \( A \); observe result reward \( R \), and state \( S’ \)&lt;/li&gt;
-      &lt;li&gt;\( Q(S, A) = Q(S, A) + \alpha[R + \gamma max_a Q(S’, a) - Q(S, A)] \) (This is using real experience)&lt;/li&gt;
-      &lt;li&gt;Update \( Model(S, A) \) using \( R, S’ \)&lt;/li&gt;
-      &lt;li&gt;Repeat \( n \) times: (This is using simulated experience to learn value function)
-        &lt;ul&gt;
-          &lt;li&gt;\( S = \) random previously observed state&lt;/li&gt;
-          &lt;li&gt;\( A = \) random action previously taken in \( S \)&lt;/li&gt;
-          &lt;li&gt;Sample \( R, S’ \) from \( Model(S, A) \)&lt;/li&gt;
-          &lt;li&gt;\( Q(S, A) = Q(S, A) + \alpha[R + \gamma max_a Q(S’, a) - Q(S, A)] \)&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;monte-carlo-tree-search&quot;&gt;Monte-Carlo Tree Search&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;Monte-Carlo Tree Search&lt;/strong&gt; is a very efficient algorithm to plan once we have a model.&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Given a model \( M_v \)&lt;/li&gt;
-  &lt;li&gt;Simulate $K$ episodes from current state $s_t$ using current simulation policy \( \pi \)&lt;/li&gt;
-&lt;/ul&gt;
-
-\[{s_t, A_t^k, R_{t+1}^k, S_{t+1}^k, ..., S_T^k} ~ M_v, \pi\]
-
-&lt;ul&gt;
-  &lt;li&gt;Build a search tree containing visited states and actions&lt;/li&gt;
-  &lt;li&gt;Evaluate state \( Q(s, a) \) by mean return of episodes from \( s, a \)&lt;/li&gt;
-  &lt;li&gt;After search is finished, select current (real) action with maximum value in search tree&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;In MCMT, the simulation policy \( \pi \) improves. Each simulation consists of two phases (in-tree, out-of-tree):&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Tree policy (improves): pick action to maximize \( Q(S, A) \)&lt;/li&gt;
-  &lt;li&gt;Default policy (fixed): pick action randomly&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Repeat (each simulation):&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Evaluate states \( Q(S, A) \) by Mento-Carlo evaluation&lt;/li&gt;
-  &lt;li&gt;Improve tree policy, e.g. by \( \epsilon-\text{greedy}(Q) \)s&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;There are several advantages of MCMT:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Highly selective best-first search&lt;/li&gt;
-  &lt;li&gt;Evaluates states dynamically&lt;/li&gt;
-  &lt;li&gt;Uses sampling to break curse of dimensionality&lt;/li&gt;
-  &lt;li&gt;Works for “black-box” models (only requires samples)&lt;/li&gt;
-  &lt;li&gt;Computationally efficient, anytime&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Mon, 11 Sep 2017 00:00:00 -0700</pubDate>
-        <link>https://pyemma.github.io//Reinforcement-Learning-Lesson-7/</link>
-        <guid isPermaLink="true">https://pyemma.github.io//Reinforcement-Learning-Lesson-7/</guid>
       </item>
     
   </channel>

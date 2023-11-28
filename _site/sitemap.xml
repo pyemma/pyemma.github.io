@@ -109,6 +109,10 @@
 <lastmod>2022-07-05T00:00:00-07:00</lastmod>
 </url>
 <url>
+<loc>https://pyemma.github.io/DDIA-Stream-Processing-I/</loc>
+<lastmod>2023-11-21T00:00:00-08:00</lastmod>
+</url>
+<url>
 <loc>https://pyemma.github.io/</loc>
 </url>
 <url>
@@ -146,6 +150,15 @@
 </url>
 <url>
 <loc>https://pyemma.github.io/tags/%E6%8A%95%E8%B5%84/</loc>
+</url>
+<url>
+<loc>https://pyemma.github.io/tags/system-design/</loc>
+</url>
+<url>
+<loc>https://pyemma.github.io/tags/ddia/</loc>
+</url>
+<url>
+<loc>https://pyemma.github.io/tags/message-queue/</loc>
 </url>
 <url>
 <loc>https://pyemma.github.io/page2/</loc>

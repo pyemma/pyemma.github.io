@@ -63,6 +63,20 @@
 
 <!-- end _includes/seo.html -->
 
+<script>
+    MathJax = {
+      tex: {
+        inlineMath: [ ['$', '$'], ['\\(', '\\)'] ]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+    </script>
+    <script
+      type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
 
 <link href="https://pyemma.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="Coding Monkey Feed">
 
@@ -153,12 +167,15 @@
       <section class="page__content" itemprop="text">
         
         
-<!-- site_tags: project,tools,algorithm,interview,distributed system,data structure,reinforcement learning,投资 -->
+<!-- site_tags: project,tools,algorithm,interview,distributed system,data structure,reinforcement learning,投资,system design,DDIA,message queue -->
 
-<!-- tag_words: algorithmdata structuredistributed systeminterviewprojectreinforcement learningtools投资 -->
+<!-- tag_words: DDIAalgorithmdata structuredistributed systeminterviewmessage queueprojectreinforcement learningsystem designtools投资 -->
 
 <div id="tags">
   <ul class="tag-box inline">
+  
+    
+    <li><a href="#DDIA">DDIA <span>1</span></a></li>
   
     
     <li><a href="#algorithm">algorithm <span>5</span></a></li>
@@ -167,16 +184,22 @@
     <li><a href="#data+structure">data structure <span>2</span></a></li>
   
     
-    <li><a href="#distributed+system">distributed system <span>6</span></a></li>
+    <li><a href="#distributed+system">distributed system <span>7</span></a></li>
   
     
     <li><a href="#interview">interview <span>5</span></a></li>
+  
+    
+    <li><a href="#message+queue">message queue <span>1</span></a></li>
   
     
     <li><a href="#project">project <span>3</span></a></li>
   
     
     <li><a href="#reinforcement+learning">reinforcement learning <span>1</span></a></li>
+  
+    
+    <li><a href="#system+design">system design <span>1</span></a></li>
   
     
     <li><a href="#tools">tools <span>1</span></a></li>
@@ -186,6 +209,14 @@
   
   </ul>
  
+  
+    
+  <h2 id="DDIA">DDIA</h2>
+  <ul class="posts">
+    
+    <li itemscope=""><span class="entry-date"><time datetime="2023-11-21T00:00:00-08:00" itemprop="datePublished">November 21, 2023</time></span> &raquo; <a href="/DDIA-Stream-Processing-I/">DDIA Chapter 11 Stream Processing Part I</a></li>
+    
+  </ul>
   
     
   <h2 id="algorithm">algorithm</h2>
@@ -216,6 +247,8 @@
     
   <h2 id="distributed+system">distributed system</h2>
   <ul class="posts">
+    
+    <li itemscope=""><span class="entry-date"><time datetime="2023-11-21T00:00:00-08:00" itemprop="datePublished">November 21, 2023</time></span> &raquo; <a href="/DDIA-Stream-Processing-I/">DDIA Chapter 11 Stream Processing Part I</a></li>
     
     <li itemscope=""><span class="entry-date"><time datetime="2022-07-05T00:00:00-07:00" itemprop="datePublished">July 05, 2022</time></span> &raquo; <a href="/Distributed-System-KVRaft/">MIT Distributed System Course - KVRaft</a></li>
     
@@ -248,6 +281,14 @@
   </ul>
   
     
+  <h2 id="message+queue">message queue</h2>
+  <ul class="posts">
+    
+    <li itemscope=""><span class="entry-date"><time datetime="2023-11-21T00:00:00-08:00" itemprop="datePublished">November 21, 2023</time></span> &raquo; <a href="/DDIA-Stream-Processing-I/">DDIA Chapter 11 Stream Processing Part I</a></li>
+    
+  </ul>
+  
+    
   <h2 id="project">project</h2>
   <ul class="posts">
     
@@ -264,6 +305,14 @@
   <ul class="posts">
     
     <li itemscope=""><span class="entry-date"><time datetime="2017-09-10T00:00:00-07:00" itemprop="datePublished">September 10, 2017</time></span> &raquo; <a href="/Reinforcment-Learning-Lesson-6/">Reinforcement Learning Lesson 6</a></li>
+    
+  </ul>
+  
+    
+  <h2 id="system+design">system design</h2>
+  <ul class="posts">
+    
+    <li itemscope=""><span class="entry-date"><time datetime="2023-11-21T00:00:00-08:00" itemprop="datePublished">November 21, 2023</time></span> &raquo; <a href="/DDIA-Stream-Processing-I/">DDIA Chapter 11 Stream Processing Part I</a></li>
     
   </ul>
   
@@ -332,7 +381,7 @@
   </ul>
 </div>
 
-<div class="page__footer-copyright">&copy; 2022 Yang Pei. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+<div class="page__footer-copyright">&copy; 2023 Yang Pei. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
 
       </footer>
     </div>

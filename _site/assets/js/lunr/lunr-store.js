@@ -133,4 +133,9 @@ var store = [{
         "excerpt":"It has been a long time since last update on the project. Finally I have found some time that I could resume this project and finish it up.In this post, I would mainly introduce the work on the LAB 3A, which is to leverage RAFT we have implemented in LAB...","categories": [],
         "tags": ["distributed system"],
         "url": "https://pyemma.github.io/Distributed-System-KVRaft/",
+        "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
+        "title": "DDIA Chapter 11 Stream Processing Part I",
+        "excerpt":"In this post, we would introduce stream processing. Since it is a large topic, we would break it down into 2 part, and in the first part, we would focus on the component that is related to the “flow” of stream, a.k.a, delivery of message.What is EventStream is composed by...","categories": [],
+        "tags": ["distributed system","system design","DDIA","message queue"],
+        "url": "https://pyemma.github.io/DDIA-Stream-Processing-I/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"}]

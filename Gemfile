@@ -16,6 +16,8 @@ gem "jekyll", "~> 3.5"
 gem "minimal-mistakes-jekyll"
 gem "jemoji"
 gem "kramdown-parser-gfm"
+gem "webrick"
+gem 'jekyll-toc'
 
 # The following plugins are automatically loaded by the theme-gem:
 #   gem "jekyll-paginate"
