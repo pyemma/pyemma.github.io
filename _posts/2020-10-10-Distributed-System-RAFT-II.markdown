@@ -139,7 +139,6 @@ func (rf *Raft) replicaLog(isHeartbeat bool) {
 
 			if ok {
 				rf.mu.Lock()
-				DPrintf("%d append entries get reply from %d, %t on term %d, is heartbeat? %t", rf.me, server, reply.Success, reply.Term, isHeartbeat)
 				if reply.Term > rf.currentTerm { // at this time we need to step down
 					rf.convertToFollower(reply.Term)
 					rf.mu.Unlock()
@@ -180,7 +179,6 @@ Another job we need to do is to commit log entries. The logic is done by the lea
 
 {% highlight go %}
 func (rf *Raft) updateCommit() {
-	// DPrintf("leader %d, current match index %v, current commit index %d", rf.me, rf.matchIndex, rf.commitIndex)
 	newCommit := len(rf.logEntries) - 1
 	for ; newCommit > rf.commitIndex; newCommit -= 1 {
 		commitCount := 1
@@ -189,7 +187,6 @@ func (rf *Raft) updateCommit() {
 				commitCount += 1
 			}
 		}
-		// DPrintf("leader %d, current commit index %d, new commit index %d, commit count %d", rf.me, rf.commitIndex, newCommit, commitCount)
 		if commitCount >= (len(rf.matchIndex)/2 + 1) {
 			rf.commitIndex = newCommit
 			break

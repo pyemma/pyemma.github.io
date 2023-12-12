@@ -405,7 +405,6 @@
 
 			<span class="k">if</span> <span class="n">ok</span> <span class="p">{</span>
 				<span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
-				<span class="n">DPrintf</span><span class="p">(</span><span class="s">"%d append entries get reply from %d, %t on term %d, is heartbeat? %t"</span><span class="p">,</span> <span class="n">rf</span><span class="o">.</span><span class="n">me</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">reply</span><span class="o">.</span><span class="n">Success</span><span class="p">,</span> <span class="n">reply</span><span class="o">.</span><span class="n">Term</span><span class="p">,</span> <span class="n">isHeartbeat</span><span class="p">)</span>
 				<span class="k">if</span> <span class="n">reply</span><span class="o">.</span><span class="n">Term</span> <span class="o">&gt;</span> <span class="n">rf</span><span class="o">.</span><span class="n">currentTerm</span> <span class="p">{</span> <span class="c">// at this time we need to step down</span>
 					<span class="n">rf</span><span class="o">.</span><span class="n">convertToFollower</span><span class="p">(</span><span class="n">reply</span><span class="o">.</span><span class="n">Term</span><span class="p">)</span>
 					<span class="n">rf</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
@@ -446,7 +445,6 @@
 <p>Another job we need to do is to commit log entries. The logic is done by the leader with the helper function <code class="language-plaintext highlighter-rouge">updateCommit</code>. Similarly, we also create a dedicated thread to periodically call this helper function to see if we should advance the current commit index. The logic of <code class="language-plaintext highlighter-rouge">updateCommit</code> is pretty simple, it just iterates all possible commit index and find the highest one that is qualified, which means that there are majority of server’s highest match index greater than it.</p>
 
 <figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="k">func</span> <span class="p">(</span><span class="n">rf</span> <span class="o">*</span><span class="n">Raft</span><span class="p">)</span> <span class="n">updateCommit</span><span class="p">()</span> <span class="p">{</span>
-	<span class="c">// DPrintf("leader %d, current match index %v, current commit index %d", rf.me, rf.matchIndex, rf.commitIndex)</span>
 	<span class="n">newCommit</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rf</span><span class="o">.</span><span class="n">logEntries</span><span class="p">)</span> <span class="o">-</span> <span class="m">1</span>
 	<span class="k">for</span> <span class="p">;</span> <span class="n">newCommit</span> <span class="o">&gt;</span> <span class="n">rf</span><span class="o">.</span><span class="n">commitIndex</span><span class="p">;</span> <span class="n">newCommit</span> <span class="o">-=</span> <span class="m">1</span> <span class="p">{</span>
 		<span class="n">commitCount</span> <span class="o">:=</span> <span class="m">1</span>
@@ -455,7 +453,6 @@
 				<span class="n">commitCount</span> <span class="o">+=</span> <span class="m">1</span>
 			<span class="p">}</span>
 		<span class="p">}</span>
-		<span class="c">// DPrintf("leader %d, current commit index %d, new commit index %d, commit count %d", rf.me, rf.commitIndex, newCommit, commitCount)</span>
 		<span class="k">if</span> <span class="n">commitCount</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rf</span><span class="o">.</span><span class="n">matchIndex</span><span class="p">)</span><span class="o">/</span><span class="m">2</span> <span class="o">+</span> <span class="m">1</span><span class="p">)</span> <span class="p">{</span>
 			<span class="n">rf</span><span class="o">.</span><span class="n">commitIndex</span> <span class="o">=</span> <span class="n">newCommit</span>
 			<span class="k">break</span>
