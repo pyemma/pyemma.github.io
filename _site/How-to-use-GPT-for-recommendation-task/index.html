@@ -11,7 +11,7 @@
     <meta charset="utf-8">
 
 <!-- begin _includes/seo.html --><title>How to use LLM for recommendation task - Coding Monkey</title>
-<meta name="description" content="Recently, I have been working with some of my friends (Dalao) on leveraging GPT to do recommendation tasks. This gives me an opportunity to review some paper in this field. In this post, I would like to summarize some of my learnings along the journey.  PS: due to the rapid change of this area, the paper I read might have been outdated. Please feel free to leave comments on the latest work/idea in this domain. Also I’m reading the latest paper from arxiv and will potentially have a new series of post on summarizing the latest work in LLM and ML area, stay tuned!">
+<meta name="description" content="Recently, I have been working with some of my friends (Dalao) on leveraging GPT to do recommendation tasks. This gives me an opportunity to review some paper in this field. In this post, I would like to summarize some of my learnings along the journey.">
 
 
 
@@ -22,7 +22,7 @@
 <meta property="og:url" content="https://pyemma.github.io/How-to-use-GPT-for-recommendation-task/">
 
 
-  <meta property="og:description" content="Recently, I have been working with some of my friends (Dalao) on leveraging GPT to do recommendation tasks. This gives me an opportunity to review some paper in this field. In this post, I would like to summarize some of my learnings along the journey.  PS: due to the rapid change of this area, the paper I read might have been outdated. Please feel free to leave comments on the latest work/idea in this domain. Also I’m reading the latest paper from arxiv and will potentially have a new series of post on summarizing the latest work in LLM and ML area, stay tuned!">
+  <meta property="og:description" content="Recently, I have been working with some of my friends (Dalao) on leveraging GPT to do recommendation tasks. This gives me an opportunity to review some paper in this field. In this post, I would like to summarize some of my learnings along the journey.">
 
 
 
@@ -247,7 +247,7 @@
 
   <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
     <meta itemprop="headline" content="How to use LLM for recommendation task">
-    <meta itemprop="description" content="Recently, I have been working with some of my friends (Dalao) on leveraging GPT to do recommendation tasks. This gives me an opportunity to review some paper in this field. In this post, I would like to summarize some of my learnings along the journey.  PS: due to the rapid change of this area, the paper I read might have been outdated. Please feel free to leave comments on the latest work/idea in this domain. Also I’m reading the latest paper from arxiv and will potentially have a new series of post on summarizing the latest work in LLM and ML area, stay tuned!">
+    <meta itemprop="description" content="Recently, I have been working with some of my friends (Dalao) on leveraging GPT to do recommendation tasks. This gives me an opportunity to review some paper in this field. In this post, I would like to summarize some of my learnings along the journey.">
     <meta itemprop="datePublished" content="December 12, 2023">
     
 
@@ -262,7 +262,7 @@
 
 
 
-  5 minute read
+  6 minute read
 </p>
           
         </header>
@@ -284,6 +284,15 @@
           </aside>
         
         <p>Recently, I have been working with some of my friends (Dalao) on leveraging GPT to do recommendation tasks. This gives me an opportunity to review some paper in this field. In this post, I would like to summarize some of my learnings along the journey.</p>
+
+<p>Some key take away:</p>
+<ul>
+  <li>LLM internally has encapsulated lots of knowledge about the world and it could leverage these knowledge to do some general recommendation (such as Movie)</li>
+  <li>In context learning is a powerful technique to inject various information into promote to provide more context for LLM, such as user profile and user past interaction history</li>
+  <li>Use training data that specifically constructed for recommendation task to fine tune LLM could further improve the performance of LLM</li>
+  <li>We could directly use LLM to output candidate, or use LLM output as additional signal to inject into existing recommendation models</li>
+</ul>
+
 <blockquote>
   <p>PS: due to the rapid change of this area, the paper I read might have been outdated. Please feel free to leave comments on the latest work/idea in this domain. Also I’m reading the latest paper from arxiv and will potentially have a new series of post on summarizing the latest work in LLM and ML area, stay tuned!</p>
 </blockquote>
