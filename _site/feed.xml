@@ -7,6 +7,104 @@
     <atom:link href="https://pyemma.github.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>How to use LLM for recommendation task</title>
+        <description>&lt;p&gt;Recently, I have been working with some of my friends (Dalao) on leveraging GPT to do recommendation tasks. This gives me an opportunity to review some paper in this field. In this post, I would like to summarize some of my learnings along the journey.&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;PS: due to the rapid change of this area, the paper I read might have been outdated. Please feel free to leave comments on the latest work/idea in this domain. Also I’m reading the latest paper from arxiv and will potentially have a new series of post on summarizing the latest work in LLM and ML area, stay tuned!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;PPS: I would primarily summarize my understanding without to much technical terms and mathematic formula; the main goal is to grasp the highlevel idea of the paper&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;context&quot;&gt;Context&lt;/h2&gt;
+&lt;p&gt;In classical recommendation system, we usually adopt a 2-stage architecture. In first stage, we adopt heuristic rule, or leverage some simple model to quickly identify some promising candidates from the entire eligible population (&lt;em&gt;actually, there is indexing step before here as well, but for simplicity, let’s skip that&lt;/em&gt;). This first stage is called &lt;strong&gt;candidate retrieval&lt;/strong&gt;, which we usually optimize for &lt;strong&gt;recall&lt;/strong&gt;. In the second stage, we would rank the candidates we retrieved in the first stage, via more signals and more powerful model. This stage is usually called &lt;strong&gt;rerank&lt;/strong&gt;, which optimize for &lt;strong&gt;precision&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;pairwise-ranking-via-llm&quot;&gt;Pairwise Ranking via LLM&lt;/h2&gt;
+&lt;p&gt;In paper &lt;a href=&quot;https://arxiv.org/pdf/2306.17563.pdf&quot;&gt;“Large Language Model Are Effective Text Rankers With Pairwise Ranking Prompting”&lt;/a&gt;, the author proposed a new format of prompt that let LLM to rank a pair of candidates given a query, which outperforms the point-wise and list-wise format. The format of the prompt is as follow:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+Given a query &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;, which of the following two passage is more relevant to the query?
+
+Passage A: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;description&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+
+Passage B: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;description&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+
+Output Passage A or Passage B
+&quot;&quot;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;For each pair of candidates, we use the above prompt to let LLM output the choice, and compute the final scores as&lt;/p&gt;
+
+\[s_{i} = 1 * \sum_{j \neq i} I_{d_{i} &amp;gt; d_{j}} + 0.5 * \sum_{j \neq i} I_{d_{i} = d_{j}}\]
+
+&lt;p&gt;and rank the document accordingly.&lt;/p&gt;
+
+&lt;h2 id=&quot;enrich-the-information-for-llm-to-recommend&quot;&gt;Enrich the information for LLM to recommend&lt;/h2&gt;
+&lt;p&gt;Personalized recommendation is critical to improve the conversion rate. Use profiling, user past’s item interaction history bring valuable signal for recommendation. In this section, we will take a look some idea on how to inject such information into prompt to let LLM “learn” the flavor of user and provide better personalized result.&lt;/p&gt;
+
+&lt;p&gt;In &lt;a href=&quot;https://arxiv.org/pdf/2304.10149.pdf&quot;&gt;“Is ChatGPT a Good Recommender? A Preliminary Study”&lt;/a&gt;, the authors proposed different type of prompt of different type of tasks. These prompt could be decomposed as &lt;strong&gt;task descriptor&lt;/strong&gt;, &lt;strong&gt;user-specific injection&lt;/strong&gt;, &lt;strong&gt;formatting restrictions&lt;/strong&gt;. &lt;strong&gt;User-specific injection&lt;/strong&gt; is the part where we add user’s past item interaction info. The format for &lt;em&gt;sequential recommendation&lt;/em&gt; is as follow (content in bracket is comment)&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+Requirement: you must choose 10 items for recommendation and sort them in order of priority, 
+from hightest to lowest. [task descriptor]
+
+Output format: a python list. Do not explain the reason for include any other words. [formatting restrictions]
+
+Given user&apos;s interaction history in chronological order: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i_1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i_2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i_3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i_n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;, 
+the next interaction item is &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i_n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;. [In context learning]
+Now, if the interaction history is updated to &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j_1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j_2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j_3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j_n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; and the user is likely to interact again, 
+recommend the next item. [user-specific injection]
+&quot;&quot;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;In this prompt, a common technique, which is called &lt;em&gt;in context learning&lt;/em&gt;, or &lt;em&gt;few shot prompting&lt;/em&gt; , is used. By showing LLM some examples to follow in the prompt, we could change the underlying distribution of LLM model and bias it to generate the output &lt;em&gt;conditionally&lt;/em&gt; on the examples we have given. This stanford &lt;a href=&quot;https://ai.stanford.edu/blog/understanding-incontext/&quot;&gt;blog&lt;/a&gt; is a great source to learn more on how &lt;em&gt;in context learning&lt;/em&gt; works. In short words, the additional example we provided helps LLM to better &lt;em&gt;locate&lt;/em&gt; concept internally, and thus more aligned. A Bayesian inference view on that is as follow, which is pretty easy to understand&lt;/p&gt;
+
+\[p(output|prompt) = \int_{concept}p(output|concept, prompt)p(concept|prompt)d(concept)\]
+
+&lt;p&gt;In &lt;a href=&quot;https://arxiv.org/pdf/2305.07622.pdf&quot;&gt;“PALR: Personalization Aware LLMs for Recommendation”&lt;/a&gt;, author adopted similar approach to integrate users’ past interaction into prompt. One novel idea in this paper is to leverage LLM to generate user profile, which leverages the summarization capability of LLM. The prompt is as follow (use MovieLens-1M as example)&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+Input: Your task is to use two keywords to summarize user&apos;s preference based on history interactions.
+The output is an itemized list based on importance. The output template is:
+&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;KEYWORD_1&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;HISTORY_MOVE_1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;HISTORY_MOVE_2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;KEYWORD_2&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;HISTORY_MOVE_2&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+The history movies and their keywords
+&quot;MOVIE_1&quot;: KEYWORD_1, KEYWORD_2
+&quot;MOVIE_2&quot;: KEYWORD_1, KEYWORD_3
+&quot;MOVIE_3&quot;: KEYWORD_4
+&quot;MOVIE_4&quot;: KEYWORD_1, KEYWORD_3, KEYWORD_4
+&quot;&quot;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Then the user profile is also input into the prompt to let LLM recommend items from the candidate set.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;In context learning&lt;/em&gt; is a technique that I widely used during my project. It is much cheaper compared to fine-tune LLM, and the performance is also pretty good as long as you have high quality data. From my experience, &lt;em&gt;formatting control&lt;/em&gt; is pretty challenge and sometimes could not be 100% solved by explicit instructions or few shot. Sometimes, we need to have some dedicated business code to do some postprocessing on LLM output to parse the part we interested most out.&lt;/p&gt;
+
+&lt;h2 id=&quot;go-beyond-in-context-learning-fine-tune-llm-for-recommendation-task&quot;&gt;Go beyond In-Context Learning: Fine-tune LLM for recommendation task&lt;/h2&gt;
+&lt;p&gt;In context learning is a powerful technique, however, due to the fact that LLM is trained on NLP task instead of recommendation task, its performance is still sometime limited. Using some training data that is specifically constructed for recommendation to fine-tune LLM could help LLM to &lt;em&gt;learn&lt;/em&gt; more for recommendation task.&lt;/p&gt;
+
+&lt;p&gt;In &lt;a href=&quot;https://arxiv.org/pdf/2305.00447.pdf&quot;&gt;TALLRec: An Effective and Efficient Tuning Framework to Align Large Language Model with Recommendation&lt;/a&gt;, the author proposed a 2-stage fine-tuning framework. In first stage, they leverage &lt;a href=&quot;https://crfm.stanford.edu/2023/03/13/alpaca.html&quot;&gt;Alpaca Tuning&lt;/a&gt; to improve LLM’s generalization ability, and then in 2nd stage, they use recommendation training data to do &lt;em&gt;rec tuning&lt;/em&gt;. The format of the training data is as follow&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+Task instruction: Given the user&apos;s historical interactions, please determine whether the user
+will enjoy the target new movie by answering &quot;Yes&quot; or &quot;No&quot;.
+Task input:
+    - User&apos;s liked items: GodFather.
+    - User&apos;s disliked items: Star Wars.
+    - Target new movie: Iron Man.
+Task output: No
+&quot;&quot;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;A high level flow is as follow
+&lt;img src=&quot;/assets/tallrec.png&quot; alt=&quot;TALLRec&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;work-with-existing-recommendation-models&quot;&gt;Work with existing Recommendation models&lt;/h2&gt;
+&lt;p&gt;Besides directly let LLM to output the recommendation from the candidates, we could also use LLM together with existing recommendation models. Use the output of one model as input to another model has been a widely adopted practice in the ranking world, e.g. using the GBDT leave as feature in NN. You could think of that we leverage model to do some compression and preprocessing on the signals, which is similar to traditional feature engineering.&lt;/p&gt;
+
+&lt;p&gt;In &lt;a href=&quot;https://arxiv.org/pdf/2307.15780.pdf&quot;&gt;LLM-Rec: Personalized Recommendation via Prompting Large Language Models&lt;/a&gt;, the author used different prompt to generate various text description from the original content, and then embedding them as additional signals and feed into MLP for ranking together with the original descriptions. Below is a high level architecture of their model&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/llm-rec.png&quot; alt=&quot;LLM-Rec&quot; /&gt;&lt;/p&gt;
+</description>
+        <pubDate>Tue, 12 Dec 2023 00:00:00 -0800</pubDate>
+        <link>https://pyemma.github.io//How-to-use-GPT-for-recommendation-task/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//How-to-use-GPT-for-recommendation-task/</guid>
+      </item>
+    
+      <item>
         <title>How to Design Webhook</title>
         <description>&lt;p&gt;Today, let’s discuss about how to design a system that could let customer to register webhook and send webhook requests to destination.&lt;/p&gt;
 
@@ -1592,99 +1690,6 @@ PS: 数据的截取时间点是5/31/2021&lt;/p&gt;
         <pubDate>Sat, 25 Jul 2020 00:00:00 -0700</pubDate>
         <link>https://pyemma.github.io//Distributed-System-Map-Reduce/</link>
         <guid isPermaLink="true">https://pyemma.github.io//Distributed-System-Map-Reduce/</guid>
-      </item>
-    
-      <item>
-        <title>DQN In Practice</title>
-        <description>&lt;p&gt;Recently I have been working on Deep-Q-Learning and apply it to some interesting AI games. In this post, I would like to give a brief introduction to how I implemented the Deep-Q-Learning, as well as lots of learning along the way.&lt;/p&gt;
-
-&lt;h3 id=&quot;what-is-dqn&quot;&gt;What is DQN&lt;/h3&gt;
-&lt;p&gt;To understand DQN, we need first know is prototype, Q-Leanring. Here is a pervious post about &lt;a href=&quot;https://pyemma.github.io/Reinforcement-Learning-Lesson-4/&quot;&gt;Q-Learning&lt;/a&gt;. Some core elements are:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;We have a \( Q(s, a) \) to record for each state and action pair, what is the expected reward we can get from them&lt;/li&gt;
-  &lt;li&gt;We update this estimation by finding what is the &lt;strong&gt;max&lt;/strong&gt; reward we can get from the next state leaded by our current state and action, update it by \(Q(S, A) = Q(S, A) + \alpha(R + \gamma max_a Q(S^\prime, a) - Q(S, A))\)&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;If we have limited number of state and action, we can hold these information into a simple lookup table. However, in reality we usually deal with unlimited number of state and action. In this case, a lookup table is not scalable, we use a model to simulate this part: describe the state with some features, tell the model and the model will tell us what \( Q(s, a) \) would be, the model would be trained and updated along the way with the examples we have.&lt;/p&gt;
-
-&lt;p&gt;Deep-Q-Leanring basically is a combination of the above two ideas. Apply the logic of Q-Learning, with a model measuring the \( Q(s, a) \). Here the &lt;em&gt;Deep&lt;/em&gt; comes from the fact that we usually use &lt;em&gt;Deep-Neural-Network&lt;/em&gt; as our model. However, there is another two important thing to stabilize the training of DQN:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;strong&gt;Experience Replay&lt;/strong&gt;: Instead of directly using the most recent example, we keep a pool of past experience and sample a batch from this pool to update our model&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Q-Target Network&lt;/strong&gt;: Instead of the max value output by our current model, we use the version of several steps ago. This is called the Q-Target model and this model will be frozen and not updated, but occasionally copied from our main model.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&quot;dqn-implementation&quot;&gt;DQN Implementation&lt;/h3&gt;
-&lt;p&gt;Cool, as we have some highlight idea on what DQN is, let’s see how it is implemented. The code is &lt;a href=&quot;https://github.com/pyemma/tensorflow/blob/master/util/dqn.py&quot;&gt;here&lt;/a&gt;. Please not that this code is currently not generalized yet and only suitable for training &lt;em&gt;Cartpole&lt;/em&gt; game due to how we parsing the state. Making it generalized is WIP. However, that does not prevent us from understanding the main idea of DQN. Let me now illustrate some important component:&lt;/p&gt;
-
-&lt;p&gt;Let’s first take a look at the main training logic:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;epsiode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Train the model
-    Args:
-        epsiode:        Number of epsiode to train
-    &quot;&quot;&quot;&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;epsilon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;epsilon_start&lt;/span&gt;
-
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ep&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;epsiode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;action&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_action&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_norm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;epsilon&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;next_state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;step&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;action&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;reward&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;
-            &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_remember&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;action&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;next_state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;next_state&lt;/span&gt;
-
-        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_learn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-
-        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ep&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;step_to_copy_graph&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-            &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_copy_graph&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-
-        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;epsilon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;epsilon_end&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;epsilon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;epsilon_decay&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;For each episode, we first initialize the state, and before the game terminate, we take a action based on our model and policy, then get the reward and next state for that action. We then put this as an experience into our memory pool. After the game is terminated, we update our model, and check if we should update q-target network. We also decrease the epsilon as we play. Here we are using \( \epsilon \)-greedy policy, and this parameter is the tradeoff between explore and exploit.&lt;/p&gt;
-
-&lt;p&gt;Now lets take a look at how we train the model:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;_learn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Use Experience Replay and Target Value Network to learn
-    &quot;&quot;&quot;&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;memory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;batch_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;sample_idx&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;choice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;memory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;memory_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;batch_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;samples&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;memory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;idx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;idx&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sample_idx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;q_X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target_X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;actions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rewards&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dones&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[],&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[],&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[],&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[],&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;action&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;next_state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;samples&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;q_X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;target_X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;next_state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;actions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;action&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;rewards&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reward&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;dones&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;q_labels&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target_labels&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;predict&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q_X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;predict&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target_X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;q_target&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q_labels&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;copy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;q_target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;batch_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;actions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rewards&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gamma&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target_labels&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dones&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-
-    &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sess&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q_X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q_target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;Here, we sample a batch of experience from our memory pool. Then prepare it into the right format. Our goal is to train our model’s prediction (in this case, the prediction is the value of each action) is the same as the actual reward + q-target. In the code, we first get the model prediction for all actions. We also get q-target prediction for each action. We then update the value for the action we take to the target value. Then we train our model using this updated value. Since we only updated the value of action we took, the model will only learn from these updated value, all other is the same as before and model would not learn from them.&lt;/p&gt;
-
-&lt;h3 id=&quot;dqn-in-practice&quot;&gt;DQN In Practice&lt;/h3&gt;
-&lt;p&gt;During the implementation of this feature, I encountered lots of problem and would like to notice them down for further discussion:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;Initially I updated the model &lt;strong&gt;after we take each action&lt;/strong&gt; instead of &lt;strong&gt;after each game&lt;/strong&gt;. This will dramatically increase the number of training we have and impact on the training time. However, getting more number of training is not always a good thing. I noticed that in my case, the training would be not stable.&lt;/li&gt;
-  &lt;li&gt;Parameter tuning is really challenging. I tried different combination of batch size, memory pool size, learning rate, and model arch. I found that usually have a moderate memory pool size with a larger learning rate is beneficial.&lt;/li&gt;
-  &lt;li&gt;The step to copy the q-target network is also hard to set. If we set is too small, then the training is less stabile; if too large, the training does not get improved.&lt;/li&gt;
-  &lt;li&gt;I feel like the usage of the memory is not good enough, as there is not difference in terms of success experience and failure experience. From our common sense, we know that we learn more from our bad experience, maybe we should skew more onto the bad experience?&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-        <pubDate>Sat, 27 Jan 2018 00:00:00 -0800</pubDate>
-        <link>https://pyemma.github.io//DQN-In-Practice/</link>
-        <guid isPermaLink="true">https://pyemma.github.io//DQN-In-Practice/</guid>
       </item>
     
   </channel>

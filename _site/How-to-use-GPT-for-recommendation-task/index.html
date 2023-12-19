@@ -1,0 +1,495 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.9.0 by Michael Rose
+  Copyright 2013-2018 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE.txt
+-->
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>How to use LLM for recommendation task - Coding Monkey</title>
+<meta name="description" content="Recently, I have been working with some of my friends (Dalao) on leveraging GPT to do recommendation tasks. This gives me an opportunity to review some paper in this field. In this post, I would like to summarize some of my learnings along the journey.  PS: due to the rapid change of this area, the paper I read might have been outdated. Please feel free to leave comments on the latest work/idea in this domain. Also I’m reading the latest paper from arxiv and will potentially have a new series of post on summarizing the latest work in LLM and ML area, stay tuned!">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Coding Monkey">
+<meta property="og:title" content="How to use LLM for recommendation task">
+<meta property="og:url" content="https://pyemma.github.io/How-to-use-GPT-for-recommendation-task/">
+
+
+  <meta property="og:description" content="Recently, I have been working with some of my friends (Dalao) on leveraging GPT to do recommendation tasks. This gives me an opportunity to review some paper in this field. In this post, I would like to summarize some of my learnings along the journey.  PS: due to the rapid change of this area, the paper I read might have been outdated. Please feel free to leave comments on the latest work/idea in this domain. Also I’m reading the latest paper from arxiv and will potentially have a new series of post on summarizing the latest work in LLM and ML area, stay tuned!">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2023-12-12T00:00:00-08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://pyemma.github.io/How-to-use-GPT-for-recommendation-task/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Person",
+      "name" : "Yang Pei",
+      "url" : "https://pyemma.github.io",
+      "sameAs" : null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+<script>
+    MathJax = {
+      tex: {
+        inlineMath: [ ['$', '$'], ['\\(', '\\)'] ]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+    </script>
+    <script
+      type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+
+<link href="https://pyemma.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="Coding Monkey Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://pyemma.github.io/assets/css/main.css">
+
+<!--[if lte IE 9]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use http://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    <div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        <a class="site-title" href="https://pyemma.github.io/">Coding Monkey</a>
+        <ul class="visible-links">
+          
+        </ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle Menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Yang Pei</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        I am a Coding Monkey
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="http://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Mountain View</span>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+    <meta itemprop="headline" content="How to use LLM for recommendation task">
+    <meta itemprop="description" content="Recently, I have been working with some of my friends (Dalao) on leveraging GPT to do recommendation tasks. This gives me an opportunity to review some paper in this field. In this post, I would like to summarize some of my learnings along the journey.  PS: due to the rapid change of this area, the paper I read might have been outdated. Please feel free to leave comments on the latest work/idea in this domain. Also I’m reading the latest paper from arxiv and will potentially have a new series of post on summarizing the latest work in LLM and ML area, stay tuned!">
+    <meta itemprop="datePublished" content="December 12, 2023">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 class="page__title" itemprop="headline">How to use LLM for recommendation task
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#context">Context</a></li>
+  <li><a href="#pairwise-ranking-via-llm">Pairwise Ranking via LLM</a></li>
+  <li><a href="#enrich-the-information-for-llm-to-recommend">Enrich the information for LLM to recommend</a></li>
+  <li><a href="#go-beyond-in-context-learning-fine-tune-llm-for-recommendation-task">Go beyond In-Context Learning: Fine-tune LLM for recommendation task</a></li>
+  <li><a href="#work-with-existing-recommendation-models">Work with existing Recommendation models</a></li>
+</ul>
+            </nav>
+          </aside>
+        
+        <p>Recently, I have been working with some of my friends (Dalao) on leveraging GPT to do recommendation tasks. This gives me an opportunity to review some paper in this field. In this post, I would like to summarize some of my learnings along the journey.</p>
+<blockquote>
+  <p>PS: due to the rapid change of this area, the paper I read might have been outdated. Please feel free to leave comments on the latest work/idea in this domain. Also I’m reading the latest paper from arxiv and will potentially have a new series of post on summarizing the latest work in LLM and ML area, stay tuned!</p>
+</blockquote>
+
+<blockquote>
+  <p>PPS: I would primarily summarize my understanding without to much technical terms and mathematic formula; the main goal is to grasp the highlevel idea of the paper</p>
+</blockquote>
+
+<h2 id="context">Context</h2>
+<p>In classical recommendation system, we usually adopt a 2-stage architecture. In first stage, we adopt heuristic rule, or leverage some simple model to quickly identify some promising candidates from the entire eligible population (<em>actually, there is indexing step before here as well, but for simplicity, let’s skip that</em>). This first stage is called <strong>candidate retrieval</strong>, which we usually optimize for <strong>recall</strong>. In the second stage, we would rank the candidates we retrieved in the first stage, via more signals and more powerful model. This stage is usually called <strong>rerank</strong>, which optimize for <strong>precision</strong>.</p>
+
+<h2 id="pairwise-ranking-via-llm">Pairwise Ranking via LLM</h2>
+<p>In paper <a href="https://arxiv.org/pdf/2306.17563.pdf">“Large Language Model Are Effective Text Rankers With Pairwise Ranking Prompting”</a>, the author proposed a new format of prompt that let LLM to rank a pair of candidates given a query, which outperforms the point-wise and list-wise format. The format of the prompt is as follow:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sa">f</span><span class="s">"""
+Given a query </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s">, which of the following two passage is more relevant to the query?
+
+Passage A: </span><span class="si">{</span><span class="n">description</span> <span class="n">of</span> <span class="n">A</span><span class="si">}</span><span class="s">
+
+Passage B: </span><span class="si">{</span><span class="n">description</span> <span class="n">of</span> <span class="n">B</span><span class="si">}</span><span class="s">
+
+Output Passage A or Passage B
+"""</span>
+</code></pre></div></div>
+
+<p>For each pair of candidates, we use the above prompt to let LLM output the choice, and compute the final scores as</p>
+
+\[s_{i} = 1 * \sum_{j \neq i} I_{d_{i} &gt; d_{j}} + 0.5 * \sum_{j \neq i} I_{d_{i} = d_{j}}\]
+
+<p>and rank the document accordingly.</p>
+
+<h2 id="enrich-the-information-for-llm-to-recommend">Enrich the information for LLM to recommend</h2>
+<p>Personalized recommendation is critical to improve the conversion rate. Use profiling, user past’s item interaction history bring valuable signal for recommendation. In this section, we will take a look some idea on how to inject such information into prompt to let LLM “learn” the flavor of user and provide better personalized result.</p>
+
+<p>In <a href="https://arxiv.org/pdf/2304.10149.pdf">“Is ChatGPT a Good Recommender? A Preliminary Study”</a>, the authors proposed different type of prompt of different type of tasks. These prompt could be decomposed as <strong>task descriptor</strong>, <strong>user-specific injection</strong>, <strong>formatting restrictions</strong>. <strong>User-specific injection</strong> is the part where we add user’s past item interaction info. The format for <em>sequential recommendation</em> is as follow (content in bracket is comment)</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sa">f</span><span class="s">"""
+Requirement: you must choose 10 items for recommendation and sort them in order of priority, 
+from hightest to lowest. [task descriptor]
+
+Output format: a python list. Do not explain the reason for include any other words. [formatting restrictions]
+
+Given user's interaction history in chronological order: </span><span class="si">{</span><span class="p">[</span><span class="n">i_1</span><span class="p">,</span> <span class="n">i_2</span><span class="p">,</span> <span class="n">i_3</span><span class="p">,</span> <span class="p">...,</span> <span class="n">i_n</span><span class="p">]</span><span class="si">}</span><span class="s">, 
+the next interaction item is </span><span class="si">{</span><span class="n">i_n</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s">. [In context learning]
+Now, if the interaction history is updated to </span><span class="si">{</span><span class="p">[</span><span class="n">j_1</span><span class="p">,</span> <span class="n">j_2</span><span class="p">,</span> <span class="n">j_3</span><span class="p">,</span> <span class="p">...,</span> <span class="n">j_n</span><span class="p">]</span><span class="si">}</span><span class="s"> and the user is likely to interact again, 
+recommend the next item. [user-specific injection]
+"""</span>
+</code></pre></div></div>
+<p>In this prompt, a common technique, which is called <em>in context learning</em>, or <em>few shot prompting</em> , is used. By showing LLM some examples to follow in the prompt, we could change the underlying distribution of LLM model and bias it to generate the output <em>conditionally</em> on the examples we have given. This stanford <a href="https://ai.stanford.edu/blog/understanding-incontext/">blog</a> is a great source to learn more on how <em>in context learning</em> works. In short words, the additional example we provided helps LLM to better <em>locate</em> concept internally, and thus more aligned. A Bayesian inference view on that is as follow, which is pretty easy to understand</p>
+
+\[p(output|prompt) = \int_{concept}p(output|concept, prompt)p(concept|prompt)d(concept)\]
+
+<p>In <a href="https://arxiv.org/pdf/2305.07622.pdf">“PALR: Personalization Aware LLMs for Recommendation”</a>, author adopted similar approach to integrate users’ past interaction into prompt. One novel idea in this paper is to leverage LLM to generate user profile, which leverages the summarization capability of LLM. The prompt is as follow (use MovieLens-1M as example)</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sa">f</span><span class="s">"""
+Input: Your task is to use two keywords to summarize user's preference based on history interactions.
+The output is an itemized list based on importance. The output template is:
+</span><span class="si">{</span><span class="n">KEYWORD_1</span><span class="si">:</span> <span class="s">"HISTORY_MOVE_1"</span><span class="p">,</span> <span class="s">"HISTORY_MOVE_2"</span><span class="p">;</span> <span class="n">KEYWORD_2</span><span class="si">:</span> <span class="s">"HISTORY_MOVE_2"</span><span class="si">}</span><span class="s">
+The history movies and their keywords
+"MOVIE_1": KEYWORD_1, KEYWORD_2
+"MOVIE_2": KEYWORD_1, KEYWORD_3
+"MOVIE_3": KEYWORD_4
+"MOVIE_4": KEYWORD_1, KEYWORD_3, KEYWORD_4
+"""</span>
+</code></pre></div></div>
+<p>Then the user profile is also input into the prompt to let LLM recommend items from the candidate set.</p>
+
+<p><em>In context learning</em> is a technique that I widely used during my project. It is much cheaper compared to fine-tune LLM, and the performance is also pretty good as long as you have high quality data. From my experience, <em>formatting control</em> is pretty challenge and sometimes could not be 100% solved by explicit instructions or few shot. Sometimes, we need to have some dedicated business code to do some postprocessing on LLM output to parse the part we interested most out.</p>
+
+<h2 id="go-beyond-in-context-learning-fine-tune-llm-for-recommendation-task">Go beyond In-Context Learning: Fine-tune LLM for recommendation task</h2>
+<p>In context learning is a powerful technique, however, due to the fact that LLM is trained on NLP task instead of recommendation task, its performance is still sometime limited. Using some training data that is specifically constructed for recommendation to fine-tune LLM could help LLM to <em>learn</em> more for recommendation task.</p>
+
+<p>In <a href="https://arxiv.org/pdf/2305.00447.pdf">TALLRec: An Effective and Efficient Tuning Framework to Align Large Language Model with Recommendation</a>, the author proposed a 2-stage fine-tuning framework. In first stage, they leverage <a href="https://crfm.stanford.edu/2023/03/13/alpaca.html">Alpaca Tuning</a> to improve LLM’s generalization ability, and then in 2nd stage, they use recommendation training data to do <em>rec tuning</em>. The format of the training data is as follow</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sa">f</span><span class="s">"""
+Task instruction: Given the user's historical interactions, please determine whether the user
+will enjoy the target new movie by answering "Yes" or "No".
+Task input:
+    - User's liked items: GodFather.
+    - User's disliked items: Star Wars.
+    - Target new movie: Iron Man.
+Task output: No
+"""</span>
+</code></pre></div></div>
+<p>A high level flow is as follow
+<img src="/assets/tallrec.png" alt="TALLRec" /></p>
+
+<h2 id="work-with-existing-recommendation-models">Work with existing Recommendation models</h2>
+<p>Besides directly let LLM to output the recommendation from the candidates, we could also use LLM together with existing recommendation models. Use the output of one model as input to another model has been a widely adopted practice in the ranking world, e.g. using the GBDT leave as feature in NN. You could think of that we leverage model to do some compression and preprocessing on the signals, which is similar to traditional feature engineering.</p>
+
+<p>In <a href="https://arxiv.org/pdf/2307.15780.pdf">LLM-Rec: Personalized Recommendation via Prompting Large Language Models</a>, the author used different prompt to generate various text description from the original content, and then embedding them as additional signals and feed into MLP for ranking together with the original descriptions. Below is a high level architecture of their model</p>
+
+<p><img src="/assets/llm-rec.png" alt="LLM-Rec" /></p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="https://pyemma.github.io/tags/#llm" class="page__taxonomy-item" rel="tag">LLM</a><span class="sep">, </span>
+    
+      
+      
+      <a href="https://pyemma.github.io/tags/#machine-learning" class="page__taxonomy-item" rel="tag">machine learning</a><span class="sep">, </span>
+    
+      
+      
+      <a href="https://pyemma.github.io/tags/#recommendation-system" class="page__taxonomy-item" rel="tag">recommendation system</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2023-12-12T00:00:00-08:00">December 12, 2023</time></p>
+        
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="https://pyemma.github.io/How-to-Design-Webhook/" class="pagination--pager" title="How to Design Webhook
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+</div>
+
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+    
+    
+    
+    
+    
+    <li><a href="https://pyemma.github.io/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Yang Pei. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="https://pyemma.github.io/assets/js/main.min.js"></script>
+  <script src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
+
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://pyemma.github.io/How-to-use-GPT-for-recommendation-task/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/How-to-use-GPT-for-recommendation-task"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://pyemma.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

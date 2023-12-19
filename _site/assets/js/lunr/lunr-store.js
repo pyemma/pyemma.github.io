@@ -143,4 +143,9 @@ var store = [{
         "excerpt":"Today, let’s discuss about how to design a system that could let customer to register webhook and send webhook requests to destination.Let’s first align on some terms that we are going to use across this post: webhook provider: the platform that let customer to register webhook and send the webhook...","categories": [],
         "tags": ["distributed system","system design","webhook"],
         "url": "https://pyemma.github.io/How-to-Design-Webhook/",
+        "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
+        "title": "How to use LLM for recommendation task",
+        "excerpt":"Recently, I have been working with some of my friends (Dalao) on leveraging GPT to do recommendation tasks. This gives me an opportunity to review some paper in this field. In this post, I would like to summarize some of my learnings along the journey. PS: due to the rapid...","categories": [],
+        "tags": ["machine learning","LLM","recommendation system"],
+        "url": "https://pyemma.github.io/How-to-use-GPT-for-recommendation-task/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"}]
