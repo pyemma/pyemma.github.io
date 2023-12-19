@@ -8,6 +8,13 @@ tags:
 toc: true
 ---
 Recently, I have been working with some of my friends (Dalao) on leveraging GPT to do recommendation tasks. This gives me an opportunity to review some paper in this field. In this post, I would like to summarize some of my learnings along the journey.
+
+Some key take away:
+- LLM internally has encapsulated lots of knowledge about the world and it could leverage these knowledge to do some general recommendation (such as Movie)
+- In context learning is a powerful technique to inject various information into promote to provide more context for LLM, such as user profile and user past interaction history
+- Use training data that specifically constructed for recommendation task to fine tune LLM could further improve the performance of LLM
+- We could directly use LLM to output candidate, or use LLM output as additional signal to inject into existing recommendation models 
+
 > PS: due to the rapid change of this area, the paper I read might have been outdated. Please feel free to leave comments on the latest work/idea in this domain. Also I'm reading the latest paper from arxiv and will potentially have a new series of post on summarizing the latest work in LLM and ML area, stay tuned!
 
 > PPS: I would primarily summarize my understanding without to much technical terms and mathematic formula; the main goal is to grasp the highlevel idea of the paper

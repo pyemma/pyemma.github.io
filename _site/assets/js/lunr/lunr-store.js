@@ -145,7 +145,7 @@ var store = [{
         "url": "https://pyemma.github.io/How-to-Design-Webhook/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
         "title": "How to use LLM for recommendation task",
-        "excerpt":"Recently, I have been working with some of my friends (Dalao) on leveraging GPT to do recommendation tasks. This gives me an opportunity to review some paper in this field. In this post, I would like to summarize some of my learnings along the journey. PS: due to the rapid...","categories": [],
+        "excerpt":"Recently, I have been working with some of my friends (Dalao) on leveraging GPT to do recommendation tasks. This gives me an opportunity to review some paper in this field. In this post, I would like to summarize some of my learnings along the journey.Some key take away: LLM internally...","categories": [],
         "tags": ["machine learning","LLM","recommendation system"],
         "url": "https://pyemma.github.io/How-to-use-GPT-for-recommendation-task/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"}]
