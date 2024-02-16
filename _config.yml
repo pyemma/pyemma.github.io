@@ -10,9 +10,9 @@ minimal_mistakes_skin    : "mint" # "air", "aqua", "contrast", "dark", "dirt", "
 remote_theme             : "mmistakes/minimal-mistakes"
 # Site Settings
 locale                   : "en-US"
-title                    : "Coding Monkey"
+title                    : "Coding Monkey's Blog"
 title_separator          : "-"
-name                     : "Yang Pei"
+name                     : "Bayarea Coding Monkey"
 description              : "The effort a coding monkey paid when he managed to become a coding machine."
 url                      : "https://pyemma.github.io"
 baseurl                  : # the subpath of your site, e.g. "/blog"
@@ -85,10 +85,10 @@ analytics:
 
 # Site Author
 author:
-  name             : "Yang Pei"
+  name             : "Bayarea Coding Monkey"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "I am a Coding Monkey"
-  location         : "Mountain View"
+  bio              : "I am a coding monkey, and I am proud of it. I have done lots of work in machine learning area, especially recommendation system and AutoML. This blog summarize my journey to become an expert monkey in distributed system and LLM."
+  location         : "Sunnyvale"
   email            :
   uri              :
   home             : # null (default), "absolute or relative url to link to author home"
