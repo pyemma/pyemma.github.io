@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Yang Pei</title>
+    <title>Bayarea Coding Monkey</title>
     <description>The effort a coding monkey paid when he managed to become a coding machine.</description>
     <link>https://pyemma.github.io</link>
     <atom:link href="https://pyemma.github.io/feed.xml" rel="self" type="application/rss+xml" />
