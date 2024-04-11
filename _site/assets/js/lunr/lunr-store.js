@@ -148,4 +148,9 @@ var store = [{
         "excerpt":"Recently, I have been working with some of my friends (Dalao) on leveraging GPT to do recommendation tasks. This gives me an opportunity to review some paper in this field. In this post, I would like to summarize some of my learnings along the journey.Some key take away: LLM internally...","categories": [],
         "tags": ["machine learning","LLM","recommendation system"],
         "url": "https://pyemma.github.io/How-to-use-GPT-for-recommendation-task/",
+        "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
+        "title": "How to Design Auction System",
+        "excerpt":"In this post, let’s discuss a little bit how to design an auction system similar to the one on eBay, where owner could list their items in the system and others could place a bid on it. User with highest bid would be the winner of this auction and could...","categories": [],
+        "tags": ["distributed system","system design","auction"],
+        "url": "https://pyemma.github.io/How-to-design-auction-system/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"}]

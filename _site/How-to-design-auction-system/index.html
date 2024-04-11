@@ -1,0 +1,735 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.9.0 by Michael Rose
+  Copyright 2013-2018 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE.txt
+-->
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>How to Design Auction System - Coding Monkey’s Blog</title>
+<meta name="description" content="In this post, let’s discuss a little bit how to design an auction system similar to the one on eBay, where owner could list their items in the system and others could place a bid on it. User with highest bid would be the winner of this auction and could buy it.">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Coding Monkey's Blog">
+<meta property="og:title" content="How to Design Auction System">
+<meta property="og:url" content="https://pyemma.github.io/How-to-design-auction-system/">
+
+
+  <meta property="og:description" content="In this post, let’s discuss a little bit how to design an auction system similar to the one on eBay, where owner could list their items in the system and others could place a bid on it. User with highest bid would be the winner of this auction and could buy it.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2024-04-06T00:00:00-07:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://pyemma.github.io/How-to-design-auction-system/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Person",
+      "name" : "Bayarea Coding Monkey",
+      "url" : "https://pyemma.github.io",
+      "sameAs" : null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+<script>
+    MathJax = {
+      tex: {
+        inlineMath: [ ['$', '$'], ['\\(', '\\)'] ]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+    </script>
+    <script
+      type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+
+<link href="https://pyemma.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="Coding Monkey's Blog Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://pyemma.github.io/assets/css/main.css">
+
+<!--[if lte IE 9]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use http://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    <div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        <a class="site-title" href="https://pyemma.github.io/">Coding Monkey's Blog</a>
+        <ul class="visible-links">
+          
+        </ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle Menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Bayarea Coding Monkey</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        I am a coding monkey, and I am proud of it. I have done lots of work in machine learning area, especially recommendation system and AutoML. This blog summarize my journey to become an expert monkey in distributed system and LLM.
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="http://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Sunnyvale</span>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+    <meta itemprop="headline" content="How to Design Auction System">
+    <meta itemprop="description" content="In this post, let’s discuss a little bit how to design an auction system similar to the one on eBay, where owner could list their items in the system and others could place a bid on it. User with highest bid would be the winner of this auction and could buy it.">
+    <meta itemprop="datePublished" content="April 06, 2024">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 class="page__title" itemprop="headline">How to Design Auction System
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  18 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#functional-requirement">Functional Requirement</a></li>
+  <li><a href="#non-functional-requirements">Non Functional Requirements</a></li>
+  <li><a href="#some-questions-to-clarify">Some questions to clarify</a></li>
+  <li><a href="#high-level-design">High level design</a>
+    <ul>
+      <li><a href="#auction-creation">Auction creation</a></li>
+      <li><a href="#auction-bid-place-and-update">Auction Bid Place and Update</a></li>
+      <li><a href="#auction-bid-execution">Auction Bid Execution</a></li>
+      <li><a href="#final-stateless-architecture">Final Stateless Architecture</a></li>
+    </ul>
+  </li>
+  <li><a href="#stateful-choice">Stateful Choice</a></li>
+  <li><a href="#additional-discussion">Additional Discussion</a>
+    <ul>
+      <li><a href="#high-availability">High Availability</a></li>
+      <li><a href="#high-scalability">High Scalability</a></li>
+      <li><a href="#cache-and-auction-db-consistency">Cache and Auction DB consistency</a></li>
+      <li><a href="#websocket-and-sse">Websocket and SSE</a></li>
+    </ul>
+  </li>
+  <li><a href="#reference">Reference</a>
+    <ul>
+      <li><a href="#acknowledgement">Acknowledgement</a></li>
+    </ul>
+  </li>
+</ul>
+            </nav>
+          </aside>
+        
+        <p>In this post, let’s discuss a little bit how to design an auction system similar to the one on eBay, where owner could list their items in the system and others could place a bid on it. User with highest bid would be the winner of this auction and could buy it.</p>
+
+<p>In a real world auction system, there are lots of components involved, such as the search (user could search active auction based on their interest), payment (winner need to make the payment) and inventory (owner could add new items). We would not dive deep into these components, but would only focus on the auction service itself. For search and payment, I plan to have other posts to discuss them in depth.</p>
+
+<p>In this post, we would discuss 2 different ways to design the auction system, <em>stateful</em> and <em>stateless</em>, and see what would be their pros and cons. In reality, <em>stateless</em> is more common, while <em>stateful</em> design still play a critical role in different use cases, e.g. stream processing.</p>
+
+<h2 id="functional-requirement">Functional Requirement</h2>
+<p>We would assume the following functional requirement to be offered by our system</p>
+<ul>
+  <li>User could start an auction</li>
+  <li>User could view the active auction, and place a bid in the auction; user could also get realtime update on the current highest bid</li>
+  <li>Auction is closed when there is no higher bid for 1 hour</li>
+  <li>Winner of the auction would receive notification and has 10 minutes to make the payment</li>
+</ul>
+
+<h2 id="non-functional-requirements">Non Functional Requirements</h2>
+<ul>
+  <li>High availability</li>
+  <li>High scalability</li>
+  <li>Low latency</li>
+  <li>Eventual consistency is acceptable for live bidding part (we could discuss for higher consistency level), but when determine the winner of the auction, it needs strong consistency</li>
+  <li>1B DAU, 100k auctions per-day, on average 10% of user place 1 bid per day, assume 10:1 read:write ratio</li>
+</ul>
+
+<h2 id="some-questions-to-clarify">Some questions to clarify</h2>
+<ul>
+  <li>What if there are multiple bids with the same price, who would be the winner?
+    <ul>
+      <li>The first bidder would be the winner</li>
+    </ul>
+  </li>
+  <li>Do we allow a bidder to place multiple bids within the same auction?
+    <ul>
+      <li>No, each bidder could only place 1 bid, but they could increase their bid if their original one is not winner</li>
+    </ul>
+  </li>
+  <li>Do we need to record all bids that user placed during the auction?
+    <ul>
+      <li>This is great question, let’s keep all bid that users have placed instead of just winners</li>
+    </ul>
+  </li>
+  <li>What shall we do if there is no bid for certain auction, do we need user to provide a TTL?
+    <ul>
+      <li>Let’s simplify the problem as of now and assume there is no TTL required</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="high-level-design">High level design</h2>
+<p>Newton has said that</p>
+
+<blockquote>
+  <p>If I have been able to see further, it was only because I stood on the shoulders of giants</p>
+</blockquote>
+
+<p>In this design, we would also stand on the shoulders of <em>giants</em>, which is <strong>live comment</strong> and <strong>cron job scheduler</strong>.</p>
+
+<h3 id="auction-creation">Auction creation</h3>
+<p>This part is relative simple. We have <strong>Auction Service</strong> to handle the creation HTTP request from user. The auction service would write a new entry to the <code class="language-plaintext highlighter-rouge">auction_table</code> within <strong>Auction DB</strong> and update to cache. Below is an example schema of our auction table. Besides the regular metadata such as <code class="language-plaintext highlighter-rouge">owner_id</code>, <code class="language-plaintext highlighter-rouge">item_id</code> and <code class="language-plaintext highlighter-rouge">created_at</code>, there are 2 important fields, <code class="language-plaintext highlighter-rouge">status</code> and <code class="language-plaintext highlighter-rouge">expire_at</code>, which is critical for us to manage the transition of auction and handle the payment.</p>
+
+<p><img src="/assets/auction_db.png" alt="Auction Database" /></p>
+
+<p>When we create a new auction, we would also update it into the cache and mark it as a <code class="language-plaintext highlighter-rouge">ACTIVE</code> auction. This design choice actually makes our auction service stateless: it does not need to maintain any data on the server regarding the auction. If it needs to know the status of an auction, it would query the cache and then do the necessary processing. The cache is primarily used to help us improve the read performance regarding the highest bid for a given auction. If DB write or cache update fails, we would return failure to client and client would retry the creation.</p>
+
+<p>There might be issue that the status in cache and in Auction DB are inconsistent, we would dive deeper into this topic in <a href="#cache-and-auction-db-consistency">Cache and Auction DB consistency</a> section.</p>
+
+<h3 id="auction-bid-place-and-update">Auction Bid Place and Update</h3>
+<p>For this part, there are 2 key problems we need to answer:</p>
+<ol>
+  <li>the connection mechanism between client and our service</li>
+  <li>the mechanism to route highest bid to users who are viewing the current auction</li>
+</ol>
+
+<p>For the first problem, we would use a combination of <em>HTTP request</em> and <em>server sent event (SSE)</em>: to place a bid, we issue an HTTP request to <strong>Auction Service</strong>; while to receive highest bid from others, we leverage SSE connection with <strong>Bid Update Service</strong>. Other connection options are <em>HTTP long polling</em> and <em>websocket</em>. <em>HTTP long polling</em> is relative less efficient because client needs to repeatedly query the backend for new bids. <em>Websocket</em> is a little bit over killing in our scenario as we don’t expect each user viewing the auction actively place bids, thus a single direction connection is sufficient. However, <em>websocket</em> might also be applicable in some cases. A more detailed comparison between <em>websocket</em> and <em>SSE</em> is available in <a href="#websocket-and-sse">Websocket vs SSE</a>.</p>
+
+<p>For the second problem, one naive approach is to write all bids into DB and let the <strong>Bid Update Service</strong> to poll the DB to see if there are new bids. This approach works if there is not much traffic, but is less efficient in our scale and would put too much pressure on DB (# of auction x 60 / # of granularity QPS from a single <strong>Bid Update Service</strong>). Here we would leverage a <em>hierarchy fan-out</em> mechanism to route the bids.</p>
+
+<p><img src="/assets/auction_bid_update.png" alt="Auction Bid Update" /></p>
+
+<p>When user first navigate to an auction page, we would retrieve the information about the auction through <em>Auction Service</em> via regular HTTP request. If the auction is still in <code class="language-plaintext highlighter-rouge">ACTIVE</code> status, user would build a SSE connection with one <strong>Bid Update Service</strong> (Load Balancer could randomly pick one). The <strong>Bid Update Service</strong> <code class="language-plaintext highlighter-rouge">bus1</code> would update its in-memory <em>subscription table</em> to record that a user <code class="language-plaintext highlighter-rouge">u1</code> is viewing auction <code class="language-plaintext highlighter-rouge">a1</code>. Also, this server would also make a request to <strong>Dispatcher</strong> specifying that itself is listening to <code class="language-plaintext highlighter-rouge">a1</code> and <strong>Dispatcher</strong> would also update its in-memory <em>subscription table</em>.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="c1"># bus1 subscription table
+</span><span class="p">{</span>
+    <span class="s">'a1'</span><span class="p">:</span> <span class="p">[</span><span class="s">'u1'</span><span class="p">,</span> <span class="s">'u2'</span><span class="p">],</span>
+<span class="p">}</span>
+<span class="c1"># dispatcher subscription table
+</span><span class="p">{</span>
+    <span class="s">'a1'</span><span class="p">:</span> <span class="p">[</span><span class="s">'bus1'</span><span class="p">],</span>
+    <span class="s">'a2'</span><span class="p">:</span> <span class="p">[</span><span class="s">'bus2'</span><span class="p">],</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>When user make a bid, client would send a HTTP request to <strong>Auction Service</strong>, the node that handle the request would also make a request towards <strong>Dispatcher</strong>. The <strong>Dispatcher</strong> would check its internal <em>subscription table</em> to figure out which <strong>Bid Update Service</strong> (in this case <code class="language-plaintext highlighter-rouge">bus1</code>) needs this update. Once <code class="language-plaintext highlighter-rouge">bus1</code> receives the request, it would also check its internal <em>subscription table</em> to figure out which connected user it needs to send this update.</p>
+
+<p>In the version we just described, <strong>Dispatcher</strong> is a <em>stateful</em> service because it needs to maintain the <em>subscription table</em>. If it is down, we won’t able to forward bid update anymore and thus making it highly available is critical to our system. The following options could be considered:</p>
+<ol>
+  <li>Adopt <em>write ahead log</em> and <em>snapshot</em> to rebuild the state after failure</li>
+  <li>Replicate the state to external storage (e.g. KV store) so that other nodes could pick it up</li>
+  <li>Active standby node to be promoted to primary once original one fails</li>
+</ol>
+
+<p>Another consideration here is that we might be able to remove dispatcher, and just use coordination service or a distributed kv store to maintain the <em>subscription table</em>. <strong>Bid Update Service</strong> would directly make update to coordination service, and <strong>Auction Service</strong> directly query it to figure out the <strong>Bid Update Service</strong> it needs to send update to.</p>
+
+<p>There are pros and cons of both approach</p>
+<ul>
+  <li>Dispatcher
+    <ul>
+      <li>pros: simplify <strong>Auction Service’s</strong> responsibility (SRP), could scale individually, handoff on retry</li>
+      <li>cons: slightly more complex overall architecture</li>
+    </ul>
+  </li>
+  <li>Without Dispatcher
+    <ul>
+      <li>pros: simpler architecture, less maintenance cost</li>
+      <li>cons: <strong>Auction Service</strong> needs to handle forwarding and retry</li>
+    </ul>
+  </li>
+</ul>
+
+<p>If we would like to achieve higher consistency, such as each update needs to be sent to all users that is within the same auction. We could enable ACK among the services. For example, if certain <strong>Bid Update Service</strong> does not reply ACK to <strong>Dispatcher</strong>, <strong>Dispatcher</strong> would retry the request. It is possible that on the client side we receive duplicated events, but it is pretty simple to dedup as we only need to keep the highest bid.</p>
+
+<p>It is still possible that certain bid update is lost during the transmission and it might not a big duel. The reason is that:</p>
+<ul>
+  <li>During normal active auction, there would always new bids coming out, which overwrite the pervious one; so certain data loss on client side would not make a big issue.</li>
+  <li>The only critical one is the miss of highest bid, which would be the last bid on the current auction. We could set a timer on the client side, and if it has been 10mins since we receive last update on bid, we could issue a hard pull to <strong>Auction Service</strong> to get the latest bid information.</li>
+</ul>
+
+<p>Having discussed about how bids are routed to other users, let’s take a look how we maintain the current highest bid. When user make a bid, one instance of <strong>Auction Service</strong> is going to handle the request. It first check if the auction exists in <strong>cache</strong> or not, and see if the status of the auction is still <code class="language-plaintext highlighter-rouge">ACTIVE</code> status. If there is a cache miss, it reads <strong>Auction DB</strong> to check the status of the auction (this could happen but should be some corner case). If auction is still <code class="language-plaintext highlighter-rouge">ACTIVE</code>, then <strong>Auction Service</strong> write the bid into the bid table in <em>append</em> pattern, which is great for write throughput. This choice would result in multiple bids for a single user given an auction, and we would use the latest one as user’s final bid (<em>latest</em> could be determined by insertion time, or we could have client side request id which would be more robust). Once DB write is done and if the new bid is higher than the current one in cache, we would also update the information in cache and <strong>Auction Service</strong> would also send request to <strong>Dispatcher</strong> to deliver this new update to all clients.</p>
+
+<p>It is possible that the DB write is failed or the cache update is failed. We would retry the request if is some transitional issue.</p>
+
+<p>In the cache, we would store the following metadata</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">auction_id</span><span class="p">:</span> <span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">highest_bid</span><span class="p">,</span> <span class="n">highest_bidder_id</span><span class="p">,</span> <span class="n">updated_at</span><span class="p">,</span> <span class="n">expire_at</span><span class="p">)</span></code></pre></figure>
+
+<p><code class="language-plaintext highlighter-rouge">status</code>, <code class="language-plaintext highlighter-rouge">highest_bid</code> and <code class="language-plaintext highlighter-rouge">highest_bidder_id</code> is relative straightforward. <code class="language-plaintext highlighter-rouge">updated_at</code> is used to record the staleness of the cached entry, <code class="language-plaintext highlighter-rouge">expire_at</code> is used as timer to trigger the auction execution (see <a href="#auction-bid-execution">Auction Bid Execution</a>). This state works because in our FR we assume that the same user could only modify his bidder to higher price instead of lower. If we allow user to bid lower, then we need to store all user’s bid or top 100 bid.</p>
+
+<p>Since we cache auction state by <code class="language-plaintext highlighter-rouge">auction_id</code>, we could suffer from <em>hotspot</em> issue. For example, <strong>Wing Gundam Zero</strong> is so popular that everyone tries to bid it and we have lots of concurrent update to the cache. Below are some options that we could consider</p>
+<ul>
+  <li>To deal with high volume of concurrent write request, we could use lease to coordinate the update to avoid potential <em>stale update</em>. The downside is that the update might need to retry multiple times to succeed.</li>
+  <li>If we choose quorum as our replication strategy, we could potentially set write commit to 1 to increase the write throughput and have customized conflict resolve (relative simple as <em>larger-is-winner</em>). This works because in our FR we assume that the same user could only place higher bid but not lower.</li>
+</ul>
+
+<h3 id="auction-bid-execution">Auction Bid Execution</h3>
+<p>To execute the winner’s bid after 1 hour, we have a <strong>Fulfillment Service</strong>. This service is similar to a cron job scheduler that it periodically scan the state we have in cache and see if there is any bid that needs to be executed by checking the <code class="language-plaintext highlighter-rouge">status</code> and <code class="language-plaintext highlighter-rouge">expire_at</code>. Once it identify one bid that needs to be executed, it would also send a request to <strong>Auction DB</strong> to double check if this is indeed the winner bid we need to execute:</p>
+<ul>
+  <li>If not, it would make a write to cache to correct the information in cache. This is similar to <em>read repair</em> in quorum replication.</li>
+  <li>If confirmed, then <strong>Fulfillment Service</strong> would update the status of the auction to be <code class="language-plaintext highlighter-rouge">PAYMENT_PENDING</code> in both DB and cache. The <code class="language-plaintext highlighter-rouge">expired_at</code> field in <code class="language-plaintext highlighter-rouge">auction_table</code> would be set based on the policy (e.g. 10mins in our case). The <code class="language-plaintext highlighter-rouge">winner_id</code>, <code class="language-plaintext highlighter-rouge">winner_bid_id</code>, <code class="language-plaintext highlighter-rouge">winner_price</code> would also be populated all together. And then send request to notification system to send a payment notification to the winner. This event update would also be sent via the <strong>Dispatcher</strong> to all live users in this auction.</li>
+</ul>
+
+<p><img src="/assets/auction_bid_execution.png" alt="Auction Bid Execution" /></p>
+
+<p>The actual payment would be handled by another dedicated system which we won’t discuss too much in details. But once the payment is done, the payment service would update the auction status to <code class="language-plaintext highlighter-rouge">SUCCEED</code>.</p>
+
+<p>The <strong>Fulfillment Service</strong> would also periodically check the auction that is in <code class="language-plaintext highlighter-rouge">PAYMENT_PENDING</code> status and see if there is any auction that exceeds the deadline but still not <code class="language-plaintext highlighter-rouge">SUCCEED</code> yet, and move them to <code class="language-plaintext highlighter-rouge">FAILED</code> status.</p>
+
+<p>Notice that in our design, the <strong>Fulfillment Service</strong> depends on the cache to trigger the bid execution. This requires us to have cache to be highly available (through strategy such as different replication mechanism). Another option is to directly have the <strong>Fulfillment Service</strong> to query the <strong>Auction DB</strong> where our ground truth data exists. It needs to perform a relative complex query to join <code class="language-plaintext highlighter-rouge">auction_table</code> with <code class="language-plaintext highlighter-rouge">bid_table</code> to find the wining bid of each <code class="language-plaintext highlighter-rouge">ACTIVE</code> auction and check if they need to be executed or not. This is one tradeoff we need to consider:</p>
+<ul>
+  <li>use cache, pros is reduced latency, cons is potential inconsistency issue which cause missed execution</li>
+  <li>directly read db, pros is accurate and no missed execution, cons is high latency and more pressure on DB</li>
+</ul>
+
+<h3 id="final-stateless-architecture">Final Stateless Architecture</h3>
+<p>In the final design, we also introduce a <strong>Reconcile Service</strong> which help us to detect certain abnormal situation. For example, the payment has succeed but the auction status is not correctly updated.</p>
+
+<p><img src="/assets/auction_all.png" alt="Stateless Architecture" /></p>
+
+<h2 id="stateful-choice">Stateful Choice</h2>
+<p>The discussion above is mainly on the <em>stateless design</em>. In this section, we discuss a little bit about the <em>stateful design</em> and see how it would be different from the <em>stateless one</em>.</p>
+
+<p><img src="/assets/auction_stateful.png" alt="Stateful Architecture" /></p>
+
+<p>We would make <strong>Auction Service</strong> stateful, which means that it would maintain all bid related data for an auction. Once owner create an auction, it would be randomly assigned to a <strong>Auction Service</strong> and all bid for this auction would be handled through this instance. To minimize the latency, we could make the state maintained in memory. But similar to <strong>Dispatcher</strong>, we still need to make it highly available. <em>WAL</em> + <em>snapshot</em> or rebuilding from <strong>Auction DB</strong> are available options.</p>
+
+<p>If user make a bid, we would leverage the load balancer to route this request to the right <strong>Auction Service</strong> instance to handle it (<em>service discover</em>). We don’t need another cron job scheduler to check if there is any bid needs to be executed, all these information is already available within the instance and it could handle that correctly.</p>
+
+<p>We could take a simple comparison between <em>stateful</em> and <em>stateless</em></p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>stateful</th>
+      <th>stateless</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>consistency</td>
+      <td>easier to achieve high consistency as all data related to an auction is handled by a single server, for example we don’t need a separate fulfillment service to check if there is a bid to be executed</td>
+      <td>more challenging because there could be concurrent data write on the same auction handled by different servers</td>
+    </tr>
+    <tr>
+      <td>availability</td>
+      <td>more challenging to achieve as we need to replicate the stateful data</td>
+      <td>easier to handle as the server is stateless and all state data is handled by external storage</td>
+    </tr>
+    <tr>
+      <td>scalability</td>
+      <td>more challenging to scale, especially hotspot</td>
+      <td>easier to scale as we could add more machines and evenly balance the traffic</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="additional-discussion">Additional Discussion</h2>
+<p>In this section, we discuss about several additional points about the design.</p>
+
+<h3 id="high-availability">High Availability</h3>
+<p>During the high level design discussion, we have touched a little bit about how to achieve high availability in each component. In this section, we summarize the key points and add some additional ones.</p>
+<ul>
+  <li><strong>Auction Service</strong>
+    <ul>
+      <li>in the <em>stateless</em> design, there is not much concern here, if the node is down before response back to client, the client would just retry and another node would help server the request. There might be duplicated write/update but it is fine in our case
+        <ul>
+          <li>the auction creation could use upsert and check if there is the same <code class="language-plaintext highlighter-rouge">user_id</code> and <code class="language-plaintext highlighter-rouge">item_id</code> combination within a time rage for dedup</li>
+          <li>the bid is designed to be in appends and only the last one (by request id or injection time) would be used as the user’s final bid</li>
+          <li>the update to cache is fine regarding duplicated ones</li>
+        </ul>
+      </li>
+      <li>in the <em>stateful</em> design, we need to replicate the service state, by having follower node or snapshot the state to external storage</li>
+    </ul>
+  </li>
+  <li><strong>Dispatcher</strong>: this is also a <em>stateful</em> service and the strategy is similar to the <em>stateful</em> <strong>Auction Service</strong></li>
+  <li><strong>Cache, Auction DB, KV Store</strong>: different replication strategy could be discussed here, such as single leader, multi leader and quorum based. If you are not familiar with these concepts, please refer to the video below learn more details</li>
+</ul>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/X8IhZx7fg24" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe>
+
+<ul>
+  <li><strong>Bid Update Service</strong>: even though these service are also stateful because they need to maintain the connection with client, we don’t need to replicate them nor persistent the information similar to other <em>stateful</em> service. The reason is that: 1. this stateful information is coupled with the liveness of this service, if the node is down, the connection has to be rebuild with other nodes; 2. the stateful information is not shareable with other nodes</li>
+  <li><strong>Fulfillment Service</strong>: this is also stateless and we could have a active standby to take the work once the primary one is done</li>
+</ul>
+
+<h3 id="high-scalability">High Scalability</h3>
+<p>We didn’t talk too much about how the system could scale.</p>
+<ul>
+  <li><strong>Auction Service</strong>
+    <ul>
+      <li>in the <em>stateless</em> design, it is pretty easy to scale as we could add more nodes to improve the request that we could handle</li>
+      <li>in the <em>stateful</em> design, we could scale it via sharding by <code class="language-plaintext highlighter-rouge">owner_id</code>; sharding by <code class="language-plaintext highlighter-rouge">auction_id</code> is an option if we have a separate id generator to assign it upon the creation request</li>
+    </ul>
+  </li>
+  <li><strong>Dispatcher</strong>: the size of the <code class="language-plaintext highlighter-rouge">subscription_table</code> is manageable (# of bid update server x 100k x 8 bytes ~ GB level), thus a single sever should be sufficient; however, the size of data is only one dimension we need to consider when scale the system, the QPS would also be a factor that we need to consider. For <strong>Dispatcher</strong>, it needs to deal with pretty high volume of request, thus we could add read replica to improve the throughput (sync replication for stronger consistency or async for eventual consistency), or we could also shard it by <code class="language-plaintext highlighter-rouge">auction_id</code></li>
+  <li><strong>Cache, Auction DB, KV Store</strong>: different sharding strategy could be discussed here, such as partition by <code class="language-plaintext highlighter-rouge">auction_id</code> (which offers good co-locate property for the <code class="language-plaintext highlighter-rouge">auction_table</code> and <code class="language-plaintext highlighter-rouge">bid_table</code> but has the downside of hotspot); or partition by <code class="language-plaintext highlighter-rouge">user_id</code> (which might better distribute the write as is it relative rare for someone that becomes a hotspot and they could be rate limited)</li>
+  <li><strong>Bid Update Service</strong>: it is also easy to scale by adding more nodes because they only keep in-memory <code class="language-plaintext highlighter-rouge">subscription_table</code></li>
+  <li><strong>Fulfillment Service</strong>: we could shard it by <code class="language-plaintext highlighter-rouge">auction_id</code> to evenly distribute the processing to more nodes</li>
+</ul>
+
+<h3 id="cache-and-auction-db-consistency">Cache and Auction DB consistency</h3>
+<p>In our <em>stateless</em> design, we store all data into <strong>Auction DB</strong>, and also store highest bid related information for each auction in a cache. We adopted something similar to <em>write through</em>, in which we write DB first and then update the cache; another option to consider is <em>write back</em>, in which we update cache first, and then at sometime later right back to DB. <em>Write back</em> could be used if we decided to in real time update the winning bid into the <code class="language-plaintext highlighter-rouge">auction_table</code> to reduce the volume of write request.</p>
+
+<p>It is possible that we write to DB success but failed to update cache. For example, the request to update cache is failed or the node is down before try to update the cache. Retry could be used here, but it could still possible that the update to cache is failed after several retry. But since our <strong>Fulfillment Service</strong> reads the cache to execute the bid, it might read some outdated data because of the above potential failure. That is also why we have <code class="language-plaintext highlighter-rouge">updated_at</code> field to track if we should read from DB again to see if the data is up-to-date. Also upon serving request from client on pulling highest bid, we leverage <code class="language-plaintext highlighter-rouge">updated_at</code> to do a <em>read repair</em> to fix the potential out of date.</p>
+
+<h3 id="websocket-and-sse">Websocket and SSE</h3>
+<p><em>Websocket</em> and <em>SSE</em> are 2 common way we build a connection with backend and keep it live to send/receive data; instead of repeatedly creating new request and sent it over. Below is a simple comparison of these 2 approach</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Websocket</th>
+      <th>SSE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>communication</td>
+      <td>bi-direction</td>
+      <td>single direction</td>
+    </tr>
+    <tr>
+      <td>support</td>
+      <td>most modern browser already supported</td>
+      <td>limited browser support</td>
+    </tr>
+    <tr>
+      <td>failure</td>
+      <td>could not reconnect and need to establish a new one</td>
+      <td>could reconnect</td>
+    </tr>
+    <tr>
+      <td>data type</td>
+      <td>support both text and binary data</td>
+      <td>text data only</td>
+    </tr>
+    <tr>
+      <td>application</td>
+      <td>realtime messaging, online gaming</td>
+      <td>stock monitor, live comment</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>In our current design, we are establish a new SSE whenever user navigate to a new auction. Another design choice here is to let user establish a new connection upon login to our application. And keep a <em>websocket</em> connection. Whenever user navigate to another auction, it would send this event over the <em>websocket</em> so that the <strong>Bid Update Service</strong> could update the <code class="language-plaintext highlighter-rouge">subscription table</code>. Depends on the pattern of how general users are interacting with our system, we could optimize the choice of the connection mechanism.</p>
+
+<h2 id="reference">Reference</h2>
+<ul>
+  <li><a href="https://www.infoq.com/presentations/linkedin-play-akka-distributed-systems/">Streaming a Million Likes/Second: Real-Time Interactions on Live Video</a></li>
+  <li><a href="https://dropbox.tech/infrastructure/asynchronous-task-scheduling-at-dropbox">How we designed Dropbox ATF: an async task framework</a></li>
+  <li><a href="https://dataintensive.net/">Design Data-Intensive Applications</a></li>
+  <li><a href="https://www.infoq.com/news/2015/11/scaling-stateful-services/">Scaling Stateful Service</a></li>
+  <li><a href="https://stackoverflow.com/questions/5195452/websockets-vs-server-sent-events-eventsource">Difference between Websockets and Server Sent Events</a></li>
+  <li><a href="https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf">Scaling Memcache at Facebook</a></li>
+  <li><a href="https://www.oreilly.com/library/view/stream-processing-with/9781491974285/">Stream Processing with Apache Flink</a></li>
+  <li><a href="https://youtu.be/85uigxGitIg?si=H6JFhiylr0OXphYt">DDIA Chapter 6 Partition</a></li>
+</ul>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/85uigxGitIg?si=cx6C9z5XDto6rj7g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe>
+
+<h3 id="acknowledgement">Acknowledgement</h3>
+<p>Thanks Rita and Celia for the great discussion and lots of idea.</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="https://pyemma.github.io/tags/#auction" class="page__taxonomy-item" rel="tag">auction</a><span class="sep">, </span>
+    
+      
+      
+      <a href="https://pyemma.github.io/tags/#distributed-system" class="page__taxonomy-item" rel="tag">distributed system</a><span class="sep">, </span>
+    
+      
+      
+      <a href="https://pyemma.github.io/tags/#system-design" class="page__taxonomy-item" rel="tag">system design</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2024-04-06T00:00:00-07:00">April 06, 2024</time></p>
+        
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="https://pyemma.github.io/How-to-use-GPT-for-recommendation-task/" class="pagination--pager" title="How to use LLM for recommendation task
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+</div>
+
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+    
+    
+    
+    
+    
+    <li><a href="https://pyemma.github.io/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2024 Bayarea Coding Monkey. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="https://pyemma.github.io/assets/js/main.min.js"></script>
+  <script src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
+
+
+
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "https://pyemma.github.io/How-to-design-auction-system/";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "/How-to-design-auction-system"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://pyemma.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+  </body>
+</html>

@@ -7,6 +7,324 @@
     <atom:link href="https://pyemma.github.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>How to Design Auction System</title>
+        <description>&lt;p&gt;In this post, let’s discuss a little bit how to design an auction system similar to the one on eBay, where owner could list their items in the system and others could place a bid on it. User with highest bid would be the winner of this auction and could buy it.&lt;/p&gt;
+
+&lt;p&gt;In a real world auction system, there are lots of components involved, such as the search (user could search active auction based on their interest), payment (winner need to make the payment) and inventory (owner could add new items). We would not dive deep into these components, but would only focus on the auction service itself. For search and payment, I plan to have other posts to discuss them in depth.&lt;/p&gt;
+
+&lt;p&gt;In this post, we would discuss 2 different ways to design the auction system, &lt;em&gt;stateful&lt;/em&gt; and &lt;em&gt;stateless&lt;/em&gt;, and see what would be their pros and cons. In reality, &lt;em&gt;stateless&lt;/em&gt; is more common, while &lt;em&gt;stateful&lt;/em&gt; design still play a critical role in different use cases, e.g. stream processing.&lt;/p&gt;
+
+&lt;h2 id=&quot;functional-requirement&quot;&gt;Functional Requirement&lt;/h2&gt;
+&lt;p&gt;We would assume the following functional requirement to be offered by our system&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;User could start an auction&lt;/li&gt;
+  &lt;li&gt;User could view the active auction, and place a bid in the auction; user could also get realtime update on the current highest bid&lt;/li&gt;
+  &lt;li&gt;Auction is closed when there is no higher bid for 1 hour&lt;/li&gt;
+  &lt;li&gt;Winner of the auction would receive notification and has 10 minutes to make the payment&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;non-functional-requirements&quot;&gt;Non Functional Requirements&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;High availability&lt;/li&gt;
+  &lt;li&gt;High scalability&lt;/li&gt;
+  &lt;li&gt;Low latency&lt;/li&gt;
+  &lt;li&gt;Eventual consistency is acceptable for live bidding part (we could discuss for higher consistency level), but when determine the winner of the auction, it needs strong consistency&lt;/li&gt;
+  &lt;li&gt;1B DAU, 100k auctions per-day, on average 10% of user place 1 bid per day, assume 10:1 read:write ratio&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;some-questions-to-clarify&quot;&gt;Some questions to clarify&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;What if there are multiple bids with the same price, who would be the winner?
+    &lt;ul&gt;
+      &lt;li&gt;The first bidder would be the winner&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Do we allow a bidder to place multiple bids within the same auction?
+    &lt;ul&gt;
+      &lt;li&gt;No, each bidder could only place 1 bid, but they could increase their bid if their original one is not winner&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Do we need to record all bids that user placed during the auction?
+    &lt;ul&gt;
+      &lt;li&gt;This is great question, let’s keep all bid that users have placed instead of just winners&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;What shall we do if there is no bid for certain auction, do we need user to provide a TTL?
+    &lt;ul&gt;
+      &lt;li&gt;Let’s simplify the problem as of now and assume there is no TTL required&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;high-level-design&quot;&gt;High level design&lt;/h2&gt;
+&lt;p&gt;Newton has said that&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;If I have been able to see further, it was only because I stood on the shoulders of giants&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;In this design, we would also stand on the shoulders of &lt;em&gt;giants&lt;/em&gt;, which is &lt;strong&gt;live comment&lt;/strong&gt; and &lt;strong&gt;cron job scheduler&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;auction-creation&quot;&gt;Auction creation&lt;/h3&gt;
+&lt;p&gt;This part is relative simple. We have &lt;strong&gt;Auction Service&lt;/strong&gt; to handle the creation HTTP request from user. The auction service would write a new entry to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;auction_table&lt;/code&gt; within &lt;strong&gt;Auction DB&lt;/strong&gt; and update to cache. Below is an example schema of our auction table. Besides the regular metadata such as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;owner_id&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;item_id&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;created_at&lt;/code&gt;, there are 2 important fields, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;status&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;expire_at&lt;/code&gt;, which is critical for us to manage the transition of auction and handle the payment.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/auction_db.png&quot; alt=&quot;Auction Database&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;When we create a new auction, we would also update it into the cache and mark it as a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ACTIVE&lt;/code&gt; auction. This design choice actually makes our auction service stateless: it does not need to maintain any data on the server regarding the auction. If it needs to know the status of an auction, it would query the cache and then do the necessary processing. The cache is primarily used to help us improve the read performance regarding the highest bid for a given auction. If DB write or cache update fails, we would return failure to client and client would retry the creation.&lt;/p&gt;
+
+&lt;p&gt;There might be issue that the status in cache and in Auction DB are inconsistent, we would dive deeper into this topic in &lt;a href=&quot;#cache-and-auction-db-consistency&quot;&gt;Cache and Auction DB consistency&lt;/a&gt; section.&lt;/p&gt;
+
+&lt;h3 id=&quot;auction-bid-place-and-update&quot;&gt;Auction Bid Place and Update&lt;/h3&gt;
+&lt;p&gt;For this part, there are 2 key problems we need to answer:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;the connection mechanism between client and our service&lt;/li&gt;
+  &lt;li&gt;the mechanism to route highest bid to users who are viewing the current auction&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;For the first problem, we would use a combination of &lt;em&gt;HTTP request&lt;/em&gt; and &lt;em&gt;server sent event (SSE)&lt;/em&gt;: to place a bid, we issue an HTTP request to &lt;strong&gt;Auction Service&lt;/strong&gt;; while to receive highest bid from others, we leverage SSE connection with &lt;strong&gt;Bid Update Service&lt;/strong&gt;. Other connection options are &lt;em&gt;HTTP long polling&lt;/em&gt; and &lt;em&gt;websocket&lt;/em&gt;. &lt;em&gt;HTTP long polling&lt;/em&gt; is relative less efficient because client needs to repeatedly query the backend for new bids. &lt;em&gt;Websocket&lt;/em&gt; is a little bit over killing in our scenario as we don’t expect each user viewing the auction actively place bids, thus a single direction connection is sufficient. However, &lt;em&gt;websocket&lt;/em&gt; might also be applicable in some cases. A more detailed comparison between &lt;em&gt;websocket&lt;/em&gt; and &lt;em&gt;SSE&lt;/em&gt; is available in &lt;a href=&quot;#websocket-and-sse&quot;&gt;Websocket vs SSE&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;For the second problem, one naive approach is to write all bids into DB and let the &lt;strong&gt;Bid Update Service&lt;/strong&gt; to poll the DB to see if there are new bids. This approach works if there is not much traffic, but is less efficient in our scale and would put too much pressure on DB (# of auction x 60 / # of granularity QPS from a single &lt;strong&gt;Bid Update Service&lt;/strong&gt;). Here we would leverage a &lt;em&gt;hierarchy fan-out&lt;/em&gt; mechanism to route the bids.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/auction_bid_update.png&quot; alt=&quot;Auction Bid Update&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;When user first navigate to an auction page, we would retrieve the information about the auction through &lt;em&gt;Auction Service&lt;/em&gt; via regular HTTP request. If the auction is still in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ACTIVE&lt;/code&gt; status, user would build a SSE connection with one &lt;strong&gt;Bid Update Service&lt;/strong&gt; (Load Balancer could randomly pick one). The &lt;strong&gt;Bid Update Service&lt;/strong&gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bus1&lt;/code&gt; would update its in-memory &lt;em&gt;subscription table&lt;/em&gt; to record that a user &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;u1&lt;/code&gt; is viewing auction &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;a1&lt;/code&gt;. Also, this server would also make a request to &lt;strong&gt;Dispatcher&lt;/strong&gt; specifying that itself is listening to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;a1&lt;/code&gt; and &lt;strong&gt;Dispatcher&lt;/strong&gt; would also update its in-memory &lt;em&gt;subscription table&lt;/em&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# bus1 subscription table
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&apos;a1&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;u1&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&apos;u2&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# dispatcher subscription table
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&apos;a1&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;bus1&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&apos;a2&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;bus2&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;When user make a bid, client would send a HTTP request to &lt;strong&gt;Auction Service&lt;/strong&gt;, the node that handle the request would also make a request towards &lt;strong&gt;Dispatcher&lt;/strong&gt;. The &lt;strong&gt;Dispatcher&lt;/strong&gt; would check its internal &lt;em&gt;subscription table&lt;/em&gt; to figure out which &lt;strong&gt;Bid Update Service&lt;/strong&gt; (in this case &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bus1&lt;/code&gt;) needs this update. Once &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bus1&lt;/code&gt; receives the request, it would also check its internal &lt;em&gt;subscription table&lt;/em&gt; to figure out which connected user it needs to send this update.&lt;/p&gt;
+
+&lt;p&gt;In the version we just described, &lt;strong&gt;Dispatcher&lt;/strong&gt; is a &lt;em&gt;stateful&lt;/em&gt; service because it needs to maintain the &lt;em&gt;subscription table&lt;/em&gt;. If it is down, we won’t able to forward bid update anymore and thus making it highly available is critical to our system. The following options could be considered:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Adopt &lt;em&gt;write ahead log&lt;/em&gt; and &lt;em&gt;snapshot&lt;/em&gt; to rebuild the state after failure&lt;/li&gt;
+  &lt;li&gt;Replicate the state to external storage (e.g. KV store) so that other nodes could pick it up&lt;/li&gt;
+  &lt;li&gt;Active standby node to be promoted to primary once original one fails&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Another consideration here is that we might be able to remove dispatcher, and just use coordination service or a distributed kv store to maintain the &lt;em&gt;subscription table&lt;/em&gt;. &lt;strong&gt;Bid Update Service&lt;/strong&gt; would directly make update to coordination service, and &lt;strong&gt;Auction Service&lt;/strong&gt; directly query it to figure out the &lt;strong&gt;Bid Update Service&lt;/strong&gt; it needs to send update to.&lt;/p&gt;
+
+&lt;p&gt;There are pros and cons of both approach&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Dispatcher
+    &lt;ul&gt;
+      &lt;li&gt;pros: simplify &lt;strong&gt;Auction Service’s&lt;/strong&gt; responsibility (SRP), could scale individually, handoff on retry&lt;/li&gt;
+      &lt;li&gt;cons: slightly more complex overall architecture&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Without Dispatcher
+    &lt;ul&gt;
+      &lt;li&gt;pros: simpler architecture, less maintenance cost&lt;/li&gt;
+      &lt;li&gt;cons: &lt;strong&gt;Auction Service&lt;/strong&gt; needs to handle forwarding and retry&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If we would like to achieve higher consistency, such as each update needs to be sent to all users that is within the same auction. We could enable ACK among the services. For example, if certain &lt;strong&gt;Bid Update Service&lt;/strong&gt; does not reply ACK to &lt;strong&gt;Dispatcher&lt;/strong&gt;, &lt;strong&gt;Dispatcher&lt;/strong&gt; would retry the request. It is possible that on the client side we receive duplicated events, but it is pretty simple to dedup as we only need to keep the highest bid.&lt;/p&gt;
+
+&lt;p&gt;It is still possible that certain bid update is lost during the transmission and it might not a big duel. The reason is that:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;During normal active auction, there would always new bids coming out, which overwrite the pervious one; so certain data loss on client side would not make a big issue.&lt;/li&gt;
+  &lt;li&gt;The only critical one is the miss of highest bid, which would be the last bid on the current auction. We could set a timer on the client side, and if it has been 10mins since we receive last update on bid, we could issue a hard pull to &lt;strong&gt;Auction Service&lt;/strong&gt; to get the latest bid information.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Having discussed about how bids are routed to other users, let’s take a look how we maintain the current highest bid. When user make a bid, one instance of &lt;strong&gt;Auction Service&lt;/strong&gt; is going to handle the request. It first check if the auction exists in &lt;strong&gt;cache&lt;/strong&gt; or not, and see if the status of the auction is still &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ACTIVE&lt;/code&gt; status. If there is a cache miss, it reads &lt;strong&gt;Auction DB&lt;/strong&gt; to check the status of the auction (this could happen but should be some corner case). If auction is still &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ACTIVE&lt;/code&gt;, then &lt;strong&gt;Auction Service&lt;/strong&gt; write the bid into the bid table in &lt;em&gt;append&lt;/em&gt; pattern, which is great for write throughput. This choice would result in multiple bids for a single user given an auction, and we would use the latest one as user’s final bid (&lt;em&gt;latest&lt;/em&gt; could be determined by insertion time, or we could have client side request id which would be more robust). Once DB write is done and if the new bid is higher than the current one in cache, we would also update the information in cache and &lt;strong&gt;Auction Service&lt;/strong&gt; would also send request to &lt;strong&gt;Dispatcher&lt;/strong&gt; to deliver this new update to all clients.&lt;/p&gt;
+
+&lt;p&gt;It is possible that the DB write is failed or the cache update is failed. We would retry the request if is some transitional issue.&lt;/p&gt;
+
+&lt;p&gt;In the cache, we would store the following metadata&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;n&quot;&gt;auction_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;highest_bid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;highest_bidder_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;updated_at&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expire_at&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;status&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;highest_bid&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;highest_bidder_id&lt;/code&gt; is relative straightforward. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;updated_at&lt;/code&gt; is used to record the staleness of the cached entry, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;expire_at&lt;/code&gt; is used as timer to trigger the auction execution (see &lt;a href=&quot;#auction-bid-execution&quot;&gt;Auction Bid Execution&lt;/a&gt;). This state works because in our FR we assume that the same user could only modify his bidder to higher price instead of lower. If we allow user to bid lower, then we need to store all user’s bid or top 100 bid.&lt;/p&gt;
+
+&lt;p&gt;Since we cache auction state by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;auction_id&lt;/code&gt;, we could suffer from &lt;em&gt;hotspot&lt;/em&gt; issue. For example, &lt;strong&gt;Wing Gundam Zero&lt;/strong&gt; is so popular that everyone tries to bid it and we have lots of concurrent update to the cache. Below are some options that we could consider&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;To deal with high volume of concurrent write request, we could use lease to coordinate the update to avoid potential &lt;em&gt;stale update&lt;/em&gt;. The downside is that the update might need to retry multiple times to succeed.&lt;/li&gt;
+  &lt;li&gt;If we choose quorum as our replication strategy, we could potentially set write commit to 1 to increase the write throughput and have customized conflict resolve (relative simple as &lt;em&gt;larger-is-winner&lt;/em&gt;). This works because in our FR we assume that the same user could only place higher bid but not lower.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;auction-bid-execution&quot;&gt;Auction Bid Execution&lt;/h3&gt;
+&lt;p&gt;To execute the winner’s bid after 1 hour, we have a &lt;strong&gt;Fulfillment Service&lt;/strong&gt;. This service is similar to a cron job scheduler that it periodically scan the state we have in cache and see if there is any bid that needs to be executed by checking the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;status&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;expire_at&lt;/code&gt;. Once it identify one bid that needs to be executed, it would also send a request to &lt;strong&gt;Auction DB&lt;/strong&gt; to double check if this is indeed the winner bid we need to execute:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;If not, it would make a write to cache to correct the information in cache. This is similar to &lt;em&gt;read repair&lt;/em&gt; in quorum replication.&lt;/li&gt;
+  &lt;li&gt;If confirmed, then &lt;strong&gt;Fulfillment Service&lt;/strong&gt; would update the status of the auction to be &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PAYMENT_PENDING&lt;/code&gt; in both DB and cache. The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;expired_at&lt;/code&gt; field in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;auction_table&lt;/code&gt; would be set based on the policy (e.g. 10mins in our case). The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;winner_id&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;winner_bid_id&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;winner_price&lt;/code&gt; would also be populated all together. And then send request to notification system to send a payment notification to the winner. This event update would also be sent via the &lt;strong&gt;Dispatcher&lt;/strong&gt; to all live users in this auction.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/auction_bid_execution.png&quot; alt=&quot;Auction Bid Execution&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The actual payment would be handled by another dedicated system which we won’t discuss too much in details. But once the payment is done, the payment service would update the auction status to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SUCCEED&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The &lt;strong&gt;Fulfillment Service&lt;/strong&gt; would also periodically check the auction that is in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PAYMENT_PENDING&lt;/code&gt; status and see if there is any auction that exceeds the deadline but still not &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SUCCEED&lt;/code&gt; yet, and move them to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;FAILED&lt;/code&gt; status.&lt;/p&gt;
+
+&lt;p&gt;Notice that in our design, the &lt;strong&gt;Fulfillment Service&lt;/strong&gt; depends on the cache to trigger the bid execution. This requires us to have cache to be highly available (through strategy such as different replication mechanism). Another option is to directly have the &lt;strong&gt;Fulfillment Service&lt;/strong&gt; to query the &lt;strong&gt;Auction DB&lt;/strong&gt; where our ground truth data exists. It needs to perform a relative complex query to join &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;auction_table&lt;/code&gt; with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bid_table&lt;/code&gt; to find the wining bid of each &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ACTIVE&lt;/code&gt; auction and check if they need to be executed or not. This is one tradeoff we need to consider:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;use cache, pros is reduced latency, cons is potential inconsistency issue which cause missed execution&lt;/li&gt;
+  &lt;li&gt;directly read db, pros is accurate and no missed execution, cons is high latency and more pressure on DB&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;final-stateless-architecture&quot;&gt;Final Stateless Architecture&lt;/h3&gt;
+&lt;p&gt;In the final design, we also introduce a &lt;strong&gt;Reconcile Service&lt;/strong&gt; which help us to detect certain abnormal situation. For example, the payment has succeed but the auction status is not correctly updated.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/auction_all.png&quot; alt=&quot;Stateless Architecture&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;stateful-choice&quot;&gt;Stateful Choice&lt;/h2&gt;
+&lt;p&gt;The discussion above is mainly on the &lt;em&gt;stateless design&lt;/em&gt;. In this section, we discuss a little bit about the &lt;em&gt;stateful design&lt;/em&gt; and see how it would be different from the &lt;em&gt;stateless one&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/auction_stateful.png&quot; alt=&quot;Stateful Architecture&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;We would make &lt;strong&gt;Auction Service&lt;/strong&gt; stateful, which means that it would maintain all bid related data for an auction. Once owner create an auction, it would be randomly assigned to a &lt;strong&gt;Auction Service&lt;/strong&gt; and all bid for this auction would be handled through this instance. To minimize the latency, we could make the state maintained in memory. But similar to &lt;strong&gt;Dispatcher&lt;/strong&gt;, we still need to make it highly available. &lt;em&gt;WAL&lt;/em&gt; + &lt;em&gt;snapshot&lt;/em&gt; or rebuilding from &lt;strong&gt;Auction DB&lt;/strong&gt; are available options.&lt;/p&gt;
+
+&lt;p&gt;If user make a bid, we would leverage the load balancer to route this request to the right &lt;strong&gt;Auction Service&lt;/strong&gt; instance to handle it (&lt;em&gt;service discover&lt;/em&gt;). We don’t need another cron job scheduler to check if there is any bid needs to be executed, all these information is already available within the instance and it could handle that correctly.&lt;/p&gt;
+
+&lt;p&gt;We could take a simple comparison between &lt;em&gt;stateful&lt;/em&gt; and &lt;em&gt;stateless&lt;/em&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt; &lt;/th&gt;
+      &lt;th&gt;stateful&lt;/th&gt;
+      &lt;th&gt;stateless&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;consistency&lt;/td&gt;
+      &lt;td&gt;easier to achieve high consistency as all data related to an auction is handled by a single server, for example we don’t need a separate fulfillment service to check if there is a bid to be executed&lt;/td&gt;
+      &lt;td&gt;more challenging because there could be concurrent data write on the same auction handled by different servers&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;availability&lt;/td&gt;
+      &lt;td&gt;more challenging to achieve as we need to replicate the stateful data&lt;/td&gt;
+      &lt;td&gt;easier to handle as the server is stateless and all state data is handled by external storage&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;scalability&lt;/td&gt;
+      &lt;td&gt;more challenging to scale, especially hotspot&lt;/td&gt;
+      &lt;td&gt;easier to scale as we could add more machines and evenly balance the traffic&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;additional-discussion&quot;&gt;Additional Discussion&lt;/h2&gt;
+&lt;p&gt;In this section, we discuss about several additional points about the design.&lt;/p&gt;
+
+&lt;h3 id=&quot;high-availability&quot;&gt;High Availability&lt;/h3&gt;
+&lt;p&gt;During the high level design discussion, we have touched a little bit about how to achieve high availability in each component. In this section, we summarize the key points and add some additional ones.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Auction Service&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;in the &lt;em&gt;stateless&lt;/em&gt; design, there is not much concern here, if the node is down before response back to client, the client would just retry and another node would help server the request. There might be duplicated write/update but it is fine in our case
+        &lt;ul&gt;
+          &lt;li&gt;the auction creation could use upsert and check if there is the same &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;user_id&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;item_id&lt;/code&gt; combination within a time rage for dedup&lt;/li&gt;
+          &lt;li&gt;the bid is designed to be in appends and only the last one (by request id or injection time) would be used as the user’s final bid&lt;/li&gt;
+          &lt;li&gt;the update to cache is fine regarding duplicated ones&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;in the &lt;em&gt;stateful&lt;/em&gt; design, we need to replicate the service state, by having follower node or snapshot the state to external storage&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Dispatcher&lt;/strong&gt;: this is also a &lt;em&gt;stateful&lt;/em&gt; service and the strategy is similar to the &lt;em&gt;stateful&lt;/em&gt; &lt;strong&gt;Auction Service&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Cache, Auction DB, KV Store&lt;/strong&gt;: different replication strategy could be discussed here, such as single leader, multi leader and quorum based. If you are not familiar with these concepts, please refer to the video below learn more details&lt;/li&gt;
+&lt;/ul&gt;
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/X8IhZx7fg24&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; referrerpolicy=&quot;strict-origin-when-cross-origin&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Bid Update Service&lt;/strong&gt;: even though these service are also stateful because they need to maintain the connection with client, we don’t need to replicate them nor persistent the information similar to other &lt;em&gt;stateful&lt;/em&gt; service. The reason is that: 1. this stateful information is coupled with the liveness of this service, if the node is down, the connection has to be rebuild with other nodes; 2. the stateful information is not shareable with other nodes&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Fulfillment Service&lt;/strong&gt;: this is also stateless and we could have a active standby to take the work once the primary one is done&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;high-scalability&quot;&gt;High Scalability&lt;/h3&gt;
+&lt;p&gt;We didn’t talk too much about how the system could scale.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Auction Service&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;in the &lt;em&gt;stateless&lt;/em&gt; design, it is pretty easy to scale as we could add more nodes to improve the request that we could handle&lt;/li&gt;
+      &lt;li&gt;in the &lt;em&gt;stateful&lt;/em&gt; design, we could scale it via sharding by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;owner_id&lt;/code&gt;; sharding by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;auction_id&lt;/code&gt; is an option if we have a separate id generator to assign it upon the creation request&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Dispatcher&lt;/strong&gt;: the size of the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;subscription_table&lt;/code&gt; is manageable (# of bid update server x 100k x 8 bytes ~ GB level), thus a single sever should be sufficient; however, the size of data is only one dimension we need to consider when scale the system, the QPS would also be a factor that we need to consider. For &lt;strong&gt;Dispatcher&lt;/strong&gt;, it needs to deal with pretty high volume of request, thus we could add read replica to improve the throughput (sync replication for stronger consistency or async for eventual consistency), or we could also shard it by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;auction_id&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Cache, Auction DB, KV Store&lt;/strong&gt;: different sharding strategy could be discussed here, such as partition by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;auction_id&lt;/code&gt; (which offers good co-locate property for the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;auction_table&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bid_table&lt;/code&gt; but has the downside of hotspot); or partition by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;user_id&lt;/code&gt; (which might better distribute the write as is it relative rare for someone that becomes a hotspot and they could be rate limited)&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Bid Update Service&lt;/strong&gt;: it is also easy to scale by adding more nodes because they only keep in-memory &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;subscription_table&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Fulfillment Service&lt;/strong&gt;: we could shard it by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;auction_id&lt;/code&gt; to evenly distribute the processing to more nodes&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;cache-and-auction-db-consistency&quot;&gt;Cache and Auction DB consistency&lt;/h3&gt;
+&lt;p&gt;In our &lt;em&gt;stateless&lt;/em&gt; design, we store all data into &lt;strong&gt;Auction DB&lt;/strong&gt;, and also store highest bid related information for each auction in a cache. We adopted something similar to &lt;em&gt;write through&lt;/em&gt;, in which we write DB first and then update the cache; another option to consider is &lt;em&gt;write back&lt;/em&gt;, in which we update cache first, and then at sometime later right back to DB. &lt;em&gt;Write back&lt;/em&gt; could be used if we decided to in real time update the winning bid into the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;auction_table&lt;/code&gt; to reduce the volume of write request.&lt;/p&gt;
+
+&lt;p&gt;It is possible that we write to DB success but failed to update cache. For example, the request to update cache is failed or the node is down before try to update the cache. Retry could be used here, but it could still possible that the update to cache is failed after several retry. But since our &lt;strong&gt;Fulfillment Service&lt;/strong&gt; reads the cache to execute the bid, it might read some outdated data because of the above potential failure. That is also why we have &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;updated_at&lt;/code&gt; field to track if we should read from DB again to see if the data is up-to-date. Also upon serving request from client on pulling highest bid, we leverage &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;updated_at&lt;/code&gt; to do a &lt;em&gt;read repair&lt;/em&gt; to fix the potential out of date.&lt;/p&gt;
+
+&lt;h3 id=&quot;websocket-and-sse&quot;&gt;Websocket and SSE&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Websocket&lt;/em&gt; and &lt;em&gt;SSE&lt;/em&gt; are 2 common way we build a connection with backend and keep it live to send/receive data; instead of repeatedly creating new request and sent it over. Below is a simple comparison of these 2 approach&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt; &lt;/th&gt;
+      &lt;th&gt;Websocket&lt;/th&gt;
+      &lt;th&gt;SSE&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;communication&lt;/td&gt;
+      &lt;td&gt;bi-direction&lt;/td&gt;
+      &lt;td&gt;single direction&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;support&lt;/td&gt;
+      &lt;td&gt;most modern browser already supported&lt;/td&gt;
+      &lt;td&gt;limited browser support&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;failure&lt;/td&gt;
+      &lt;td&gt;could not reconnect and need to establish a new one&lt;/td&gt;
+      &lt;td&gt;could reconnect&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;data type&lt;/td&gt;
+      &lt;td&gt;support both text and binary data&lt;/td&gt;
+      &lt;td&gt;text data only&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;application&lt;/td&gt;
+      &lt;td&gt;realtime messaging, online gaming&lt;/td&gt;
+      &lt;td&gt;stock monitor, live comment&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;In our current design, we are establish a new SSE whenever user navigate to a new auction. Another design choice here is to let user establish a new connection upon login to our application. And keep a &lt;em&gt;websocket&lt;/em&gt; connection. Whenever user navigate to another auction, it would send this event over the &lt;em&gt;websocket&lt;/em&gt; so that the &lt;strong&gt;Bid Update Service&lt;/strong&gt; could update the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;subscription table&lt;/code&gt;. Depends on the pattern of how general users are interacting with our system, we could optimize the choice of the connection mechanism.&lt;/p&gt;
+
+&lt;h2 id=&quot;reference&quot;&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.infoq.com/presentations/linkedin-play-akka-distributed-systems/&quot;&gt;Streaming a Million Likes/Second: Real-Time Interactions on Live Video&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dropbox.tech/infrastructure/asynchronous-task-scheduling-at-dropbox&quot;&gt;How we designed Dropbox ATF: an async task framework&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dataintensive.net/&quot;&gt;Design Data-Intensive Applications&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.infoq.com/news/2015/11/scaling-stateful-services/&quot;&gt;Scaling Stateful Service&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/5195452/websockets-vs-server-sent-events-eventsource&quot;&gt;Difference between Websockets and Server Sent Events&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf&quot;&gt;Scaling Memcache at Facebook&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.oreilly.com/library/view/stream-processing-with/9781491974285/&quot;&gt;Stream Processing with Apache Flink&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://youtu.be/85uigxGitIg?si=H6JFhiylr0OXphYt&quot;&gt;DDIA Chapter 6 Partition&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/85uigxGitIg?si=cx6C9z5XDto6rj7g&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; referrerpolicy=&quot;strict-origin-when-cross-origin&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+
+&lt;h3 id=&quot;acknowledgement&quot;&gt;Acknowledgement&lt;/h3&gt;
+&lt;p&gt;Thanks Rita and Celia for the great discussion and lots of idea.&lt;/p&gt;
+
+</description>
+        <pubDate>Sat, 06 Apr 2024 00:00:00 -0700</pubDate>
+        <link>https://pyemma.github.io//How-to-design-auction-system/</link>
+        <guid isPermaLink="true">https://pyemma.github.io//How-to-design-auction-system/</guid>
+      </item>
+    
+      <item>
         <title>How to use LLM for recommendation task</title>
         <description>&lt;p&gt;Recently, I have been working with some of my friends (Dalao) on leveraging GPT to do recommendation tasks. This gives me an opportunity to review some paper in this field. In this post, I would like to summarize some of my learnings along the journey.&lt;/p&gt;
 
@@ -1408,297 +1726,6 @@ PS: 数据的截取时间点是5/31/2021&lt;/p&gt;
         <pubDate>Sun, 09 Aug 2020 00:00:00 -0700</pubDate>
         <link>https://pyemma.github.io//Distributed-System-RAFT/</link>
         <guid isPermaLink="true">https://pyemma.github.io//Distributed-System-RAFT/</guid>
-      </item>
-    
-      <item>
-        <title>MIT Distributed System Course - MapReduce</title>
-        <description>&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
-
-&lt;p&gt;This is going to be a series of posts to record my learning of &lt;a href=&quot;https://pdos.csail.mit.edu/6.824/schedule.html&quot;&gt;MIT 6.824 Distributed System&lt;/a&gt;. The post would focus on the course assignments which is to build some distributed systems from scratch using &lt;a href=&quot;https://golang.org/&quot;&gt;Go language&lt;/a&gt;. I would discuss some of the basic ideas that these assignments touched, as well as the reason I reached to the design decision of my implementation. For the code, here is some disclaimers:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;The implementation would guaratee to pass the test script provided by the course&lt;/li&gt;
-  &lt;li&gt;The implementation might not be in the most optimal status, I might have follow up posts to refactor the implementation later&lt;/li&gt;
-  &lt;li&gt;The implementation might not be in the cleanest way, as I’m still learning Go language&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;mapreduce&quot;&gt;MapReduce&lt;/h2&gt;
-&lt;p&gt;MapReduce has been known for a long time as a framework to handle large scale data processing jobs. &lt;strong&gt;&lt;em&gt;The first assignment is to build a simple version of MapReduce to do word count (a classic demo application for MapReduce xD)&lt;/em&gt;&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;p&gt;The original &lt;a href=&quot;https://pdos.csail.mit.edu/6.824/papers/mapreduce.pdf&quot;&gt;MapReduce paper&lt;/a&gt; includes lots of details about how it works overall and some tricks Google applied in their implementation. Here is a summary of some key points.&lt;/p&gt;
-
-&lt;p&gt;There are two types of machines in the system:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Master: Coordinate the entire process, schedule Map/Reduce task to workers, store necessary metadata to track the progress of the process&lt;/li&gt;
-  &lt;li&gt;Worker: Do the actual Map/Reduce task with users’ program&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;and there are two types of task:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Map: Read a split of data assigned and pass it to users’ map functions, generate intermediate key/value paris and store them in local files, propagate intermediate files to master&lt;/li&gt;
-  &lt;li&gt;Reduce: Read all intermediate files according to some partition functions which distribute key/value pairs to different intermediate files, sort key/value pairs and pass to users’ reduce function, then output to final files&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;There are some tricks mentioned in the paper to improve the performance:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Locality, Map task is scheduled to the machine where the input splits stored. This helps save the precious network bandwidth.&lt;/li&gt;
-  &lt;li&gt;Backup task is scheduled to resolve the straggler issue, which is the case that some workers are making progress unexpected slow.&lt;/li&gt;
-  &lt;li&gt;Heartbeat is used by master to check the status of workers&lt;/li&gt;
-  &lt;li&gt;If a worker failed, then all the Map task completed by the worker would be reset to idle. The Map task and Reduce task in progress would also be reset to idle.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;implementation&quot;&gt;Implementation&lt;/h2&gt;
-
-&lt;p&gt;The full implementation is available &lt;a href=&quot;https://github.com/pyemma/mit-distributed-system/tree/master/src/mr&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h3 id=&quot;rpc&quot;&gt;RPC&lt;/h3&gt;
-&lt;p&gt;In this assignment, master and worker communicate via RPC calls. For example, a worker schedules a RPC call to master to get a task to work, and notifies master that the task has been finished via another RPC call. Here is a list of RPC in my implementation:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Master&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RegisterWorkerId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RegisterWorkerIdArgs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RegisterWorkerIdReply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;error&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Master&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RequestJob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RequestJobArgs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RequestJobReply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;error&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Master&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FinishJob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;FinishJobArgs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;FinishJobReply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;error&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;RegisterWorkerId is the first RPC call each worker would schedule once up. This call is to register itself within master’s in memory status tracker so that master is aware of its existence and assigns it a unique identifer. The reason of this behavior is that master might need to reschedule a task to other workers if the original worker is a straggler. And the master need to use this identifier to check if the result is returned from the new worker instead of the staled work for the sake of security.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;RequestJob is a RPC call that workers call repeatedly. Master would assign a task for it if there is any task could be schedule to this worker or reply there is no available task. Once all tasks are done, a dedicated status would be returned to workers so that they could safely exits.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;FinishJob is a RPC call that workers call once the assigned work is done. Worker would also pass necessary information via this RPC call to master.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;master-record-data-structure&quot;&gt;Master Record Data Structure&lt;/h3&gt;
-
-&lt;p&gt;As master is the coordinator for all workers, it is critical for master to keep track of all workers’ progress. In this assignment, I highlight the following points for master to take care of:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Workers that are registered within the system and their identifiers.&lt;/li&gt;
-  &lt;li&gt;Map/Reduce task identifiers. I made a simplification that, number of input files is tantamount to the number of map tasks. The number of reduce tasks is a parameter passed in once master is up.&lt;/li&gt;
-  &lt;li&gt;Map/Reduce task status. There are in total 3 status: Not Scheduled/Pending/Done. If a task is in pending status, we would also record the worker id that is assigned with this task. This information is critical because the worker might fail or be straggle on the task. To avoid infinite waiting, master has a timeout of 10s on each task scheduled. So there might be cases that, some workers are straggle and would respond after 10s when master has already assigned the task to another worker. We would like to reject the response by this straggler worker. So only when the worker identifier matches master’s record, the response would be accepted.&lt;/li&gt;
-  &lt;li&gt;Map task input filenames and intermediate filenames.&lt;/li&gt;
-  &lt;li&gt;2 boolean parameters to check if all map tasks are done and all reduce tasks are done.&lt;/li&gt;
-  &lt;li&gt;A mutex is used to lock the master data structure. The reason is that Go process each RPC call via treads and each tread is sharing the same copy of the record. To avoid racing condition, each thread needs to first acquire the lock and then does the necessary update.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Below is a piece of the code&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Master&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-	&lt;span class=&quot;c&quot;&gt;// need to lock the object in concurrent env&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sync&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Mutex&lt;/span&gt;
-	&lt;span class=&quot;c&quot;&gt;// use an array to record all workers, we need to use this to reject&lt;/span&gt;
-	&lt;span class=&quot;c&quot;&gt;// reply from workers that dead or straggle&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;workers&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;
-	&lt;span class=&quot;c&quot;&gt;// use a array here to store the mapper input filenames, this is&lt;/span&gt;
-	&lt;span class=&quot;c&quot;&gt;// used to generate the mapper task id&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;mapperFilenames&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;
-	&lt;span class=&quot;c&quot;&gt;// use a dict here to store the status of mapper job&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;mapperStatus&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;JobStatus&lt;/span&gt;
-	&lt;span class=&quot;c&quot;&gt;// use a map to store reducer input filenames&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;reducerFilenames&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][]&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;
-	&lt;span class=&quot;c&quot;&gt;// use a dict here to store the status of reducer job&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;reducerStatus&lt;/span&gt;  &lt;span class=&quot;k&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;JobStatus&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;numReducer&lt;/span&gt;     &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;mapperAllDone&lt;/span&gt;  &lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;reducerAllDone&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;master&quot;&gt;Master&lt;/h3&gt;
-
-&lt;p&gt;Master implements the three RPC APIs mentioned in &lt;a href=&quot;#rpc&quot;&gt;RPC&lt;/a&gt;. I would skip RegisterWorkerId as it is pretty straight forward to implement and mainly focus on the RequestJob and FinishJob RPC call.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;&lt;em&gt;RequestJob&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;For RequestJob, all map tasks need to be done before the scheduling of any reduce task. The master would first lock the record, and see if there is any map task available. Once all map tasks are done, the corresponding flag would be enabled, and master would check if there is any available reduce task. Master would reply with a data type RequestJobReply.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RequestJobReply&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;JobType&lt;/span&gt;    &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;// map/reduce job&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;JobId&lt;/span&gt;      &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;// map/reduce job id&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;Filenames&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;// the input filename to map/reduce job&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;NumReducer&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;// number of reduce tasks in total&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;JobType is to tell worker this is Map task or Reduce task.&lt;/li&gt;
-  &lt;li&gt;JobId is the identifier assigned by master to track the job’s status.&lt;/li&gt;
-  &lt;li&gt;Filenames could be the map input filenames or intermediate filenames generated by worker.&lt;/li&gt;
-  &lt;li&gt;NumReducer is required to tell how many intermediate files we need to generate and shard the keys accordingly.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;&lt;em&gt;FinishJob&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;For FinishJob, master would read the result generated by workers and update the corresponding record. The logic of reduce task is pretty simple. For map task, master needs to parse the returned filenames and figures out the target reduce task id. For all map/reduce task, we need to check if the status is Pending and the worker id on record matches the worker id in the request before updating the record.&lt;/p&gt;
-
-&lt;p&gt;Here is the structure of the FinishJob request, which is constructed by worker and send to master:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FinishJobArgs&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;JobType&lt;/span&gt;   &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;JobId&lt;/span&gt;     &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;WorkerId&lt;/span&gt;  &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;// worker id&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;Filenames&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;// filenames that are generated&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;Here is the logic of parsing filenames and updating the corresponding record:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;// Mark the corresponding Map job finished, and flash the intermediate file&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;jobId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;JobId&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;filenames&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Filenames&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;// There might be duplicated job due to straggler, check the status to see if&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;// the reply matches our record&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;jobStatus&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mapperStatus&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jobId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jobStatus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Pending&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jobStatus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;WorkerId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;WorkerId&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mapperStatus&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jobId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JobStatus&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Status&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Done&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WorkerId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;range&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;filenames&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;token&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;strings&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Split&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;-&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;reducerId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;strconv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ParseInt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;token&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;token&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reducerFilenames&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reducerId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reducerFilenames&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reducerId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;&lt;em&gt;CheckStatus&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;As mentioned in &lt;a href=&quot;#master-record-data-structure&quot;&gt;Master Record Data Structure&lt;/a&gt;, master has a timeout of 10s on each task scheduled. Once the task has been timeout, master would put the task back to Not Scheduled status so that it could be allocated to other workers, and clear the worker id on the record. This is achieved by firing a goroutines of func CheckStatus each time we schedule a task to a worker. Function CheckStatus would first sleep 10s and then check the status of the task. If the task is still in Pending status, then it would put it back to Not Scheduled status, otherwise it would directly return.&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Master&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CheckStatus&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jobType&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jobId&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Sleep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Second&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;defer&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Unlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jobType&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Map&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-		&lt;span class=&quot;n&quot;&gt;jobStatus&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mapperStatus&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jobId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-		&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jobStatus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Done&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-			&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mapperStatus&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jobId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JobStatus&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Status&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NotScheduled&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-		&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-		&lt;span class=&quot;n&quot;&gt;jobStatus&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reducerStatus&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jobId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-		&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jobStatus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Done&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-			&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reducerStatus&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jobId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JobStatus&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Status&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NotScheduled&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-		&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;h3 id=&quot;worker&quot;&gt;Worker&lt;/h3&gt;
-
-&lt;p&gt;Worker takes user’s customization map and reduce function as input. In this assignment, this is done via Go plug-ins. Once a worker is up, the first thing it tries to do is to call the RegisterWorkerId RPC to let the master know its existence and assign it an identifier. Each worker would have a unique identifier and this is guaranteed by the master. It then enters an infinite loop. Within the loop, the worker would try to first get a task from the master. Once it gets a map task:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Read in the file content&lt;/li&gt;
-  &lt;li&gt;Pass all content into mapf function, which is the users’ map function&lt;/li&gt;
-  &lt;li&gt;Shard the output according to the num of reduce tasks&lt;/li&gt;
-  &lt;li&gt;Write all content into a temp file and then atomically rename it following the convention of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;out-X-Y&lt;/code&gt;, where X is the map task id and Y is the reduce task id
-    &lt;ul&gt;
-      &lt;li&gt;The reason that we write into a temp file is that we don’t want to expose any partially written file. Only when all content is flushed into the file, we would formally rename it to the acceptable intermediate filename.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Call FinishJob with the map task id, worker id and all intermediate filenames generated to the master&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Filenames&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Open&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;content&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ioutil&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ReadAll&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Close&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;kva&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mapf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;content&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-
-    &lt;span class=&quot;c&quot;&gt;// shard the kv into nReducer splits&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;kvSharded&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;make&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][]&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;KeyValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;kv&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;range&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;kva&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;shard&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ihash&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;numReducer&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;kvSharded&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shard&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kvSharded&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shard&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;kv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;// Flash the result to files&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shard&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;kva&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;range&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;kvSharded&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;tempfile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ioutil&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TempFile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;mr-tempfile&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;c&quot;&gt;// Use json format to store the result in intermeidate file&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;enc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;json&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NewEncoder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tempfile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;enc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Encode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kva&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;tempfile&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Close&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;interFilename&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;mr-&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;strconv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Itoa&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;JobId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;-&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;strconv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Itoa&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shard&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;// mr-X-Y&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Rename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tempfile&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;interFilename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;intermediate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;intermediate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;interFilename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;FinishJob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;workerId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;JobType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;JobId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;intermediate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;Once it gets a reduce task:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Read all intermediate files content&lt;/li&gt;
-  &lt;li&gt;Sort all keys&lt;/li&gt;
-  &lt;li&gt;Pass to reducef. This part of logic is provided by the assignment example&lt;/li&gt;
-  &lt;li&gt;Flush result into temp file and once everything is done rename it to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;out-X&lt;/code&gt; where X is the reduce task id&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-go&quot; data-lang=&quot;go&quot;&gt;&lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Reduce&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;// Read values from all intermediate file&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;kva&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;make&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([]&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;KeyValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;range&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Filenames&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Open&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;dec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;json&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NewDecoder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;kvs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;make&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([]&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;KeyValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;err&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Decode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kvs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;err&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;nil&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fatalf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;fail to read intermediate file&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;kva&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kva&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;kvs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;sort&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Sort&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ByKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kva&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;oname&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;mr-out-&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;strconv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Itoa&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;JobId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;tempfile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ioutil&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TempFile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;mr-tempfile&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;// This part of code is copied from the course example code&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kva&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kva&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;kva&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Key&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;kva&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Key&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;values&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{}&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;values&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;kva&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;output&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reducef&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kva&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-        &lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Fprintf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tempfile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;%v %v&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;kva&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;output&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-        &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;tempfile&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Close&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Rename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tempfile&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;oname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;intermediate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;intermediate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;oname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;FinishJob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;workerId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;JobType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;JobId&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;intermediate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;Once the worker receives None flag from RequestJob response, it would sleep for 2s and then continues. Once it receives AllDone, it would break the loop and exit.&lt;/p&gt;
-
-&lt;h2 id=&quot;future-plan&quot;&gt;Future Plan&lt;/h2&gt;
-
-&lt;p&gt;This is just a naive implementation and there are several points that could be optimized.&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;The master data structure could be simplified, e.g.
-    &lt;ul&gt;
-      &lt;li&gt;Map/Reduce task status could be merged into a single one&lt;/li&gt;
-      &lt;li&gt;We could keep a queue to check if there are still map/reduce tasks not scheduled yet&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;The logic within worker’s map/reduce processing could be optimized, e.g.
-    &lt;ul&gt;
-      &lt;li&gt;When we write and read intermediate file, we are processing sequentially. But we could actually do this concurrently by splitting the work of each intermediate file into a goroutine&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Please leave any comment and feedback you have :)&lt;/p&gt;
-</description>
-        <pubDate>Sat, 25 Jul 2020 00:00:00 -0700</pubDate>
-        <link>https://pyemma.github.io//Distributed-System-Map-Reduce/</link>
-        <guid isPermaLink="true">https://pyemma.github.io//Distributed-System-Map-Reduce/</guid>
       </item>
     
   </channel>
