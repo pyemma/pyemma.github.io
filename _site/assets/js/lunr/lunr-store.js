@@ -153,4 +153,9 @@ var store = [{
         "excerpt":"In this post, let’s discuss a little bit how to design an auction system similar to the one on eBay, where owner could list their items in the system and others could place a bid on it. User with highest bid would be the winner of this auction and could...","categories": [],
         "tags": ["distributed system","system design","auction"],
         "url": "https://pyemma.github.io/How-to-design-auction-system/",
+        "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
+        "title": "那些年，我们追过的 Feature",
+        "excerpt":"在今天的 blog 里面，我将结合我前一阵子面试 machine learning engineering 的经验，跟大家唠唠在 ML design 里面的 feature engineering 相关的问题。在 ML design 里面，我们可能会被问到可以使用什么样的 feature, 以及具体一些 feature 可以被怎么处理以及怎么使用在模型之中。由于我之前主要做的是推荐和广告相关的内容，所以我在这里将主要介绍一下在设计推荐系统的时候，围绕 feature 可以聊的一些点, 来给大家提供一些思路Feature 的种类在推荐系统里面，我们经常要处理的场景是 给定一个用户和一个物品（以及一些可能的 context），预测用户会喜欢（或者其他的 action）这个物品的概率基于上面这个简单化的概括（我们在之后会对这个问题进行适当的展开），我们其实可以比较容易的归纳出 feature 的种类 User Side Feature Item Side Feature User-item Interaction Feature Context Feature除此之外，还有一些相对比较特殊的 feature, 我们之后会单独介绍User Side Feature这种类型的 feature 有时候也会被称作 request level feature, 针对推荐系统来说，一个...","categories": [],
+        "tags": ["machine learning","machine learning design","feature"],
+        "url": "https://pyemma.github.io/Features-in-Recommendation-System/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"}]
