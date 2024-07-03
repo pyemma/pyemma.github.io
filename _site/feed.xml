@@ -8,7 +8,8 @@
     
       <item>
         <title>那些年，我们追过的 Feature</title>
-        <description>&lt;p&gt;在今天的 blog 里面，我将结合我前一阵子面试 machine learning engineering 的经验，跟大家唠唠在 ML design 里面的 feature engineering 相关的问题。在 ML design 里面，我们可能会被问到可以使用什么样的 feature, 以及具体一些 feature 可以被怎么处理以及怎么使用在模型之中。由于我之前主要做的是推荐和广告相关的内容，所以我在这里将主要介绍一下在设计推荐系统的时候，围绕 feature 可以聊的一些点, 来给大家提供一些思路&lt;/p&gt;
+        <description>&lt;p&gt;在今天的 blog 里面，我将结合我前一阵子面试 machine learning engineering 的经验，跟大家唠唠在 ML design 里面的 feature engineering 相关的问题。
+在 ML design 里面，我们可能会被问到可以使用什么样的 feature, 以及具体一些 feature 可以被怎么处理以及怎么使用在模型之中。由于我之前主要做的是推荐和广告相关的内容，所以我在这里将主要介绍一下在设计推荐系统的时候，围绕 feature 可以聊的一些点，来给大家提供一些思路，帮大家更好的准备面试&lt;/p&gt;
 
 &lt;h2 id=&quot;feature-的种类&quot;&gt;Feature 的种类&lt;/h2&gt;
 
@@ -45,7 +46,8 @@
   &lt;li&gt;&lt;em&gt;User embedding&lt;/em&gt;, 或者叫 user profiling, 也是现在非常主流的一种 user feature, 当在面试中提到这部分的时候，基本上一个 follow up 是如何计算出来 user embedding, 以及如何在 inference 的时候进行 serving, 一般的 user embedding 的计算方法有这么几种:
     &lt;ul&gt;
       &lt;li&gt;直接用 item 本身，或者通过一些 heuristic rule 来表示: 比如说，我们可以把所有的 post 分类成 1024 个 category, 那么根据用户曾经看过的 post, 我们就可以用一个 1024 维度的向量来表示用户, 如果用户看过 GUNDAM 类型的 post, 那么 GUNDAM 类别在 1024 向量中的值就设置成 1, 否则就是 0; 这种方法其实非常类似 NLP 里面以前经常使用的 bag of words 的方法来做 sentence embedding; 这种方法的好处就是实现起来比较简单，但是缺点就在于捕捉到的信息比较粗糙，只能根据我们定义的 heuristic rule 来决定，不能根据用户跟物品的交互学习出一些 semantic 的信息（比如喜欢 GUNDAM 的用户可能对于游戏也感兴趣）&lt;/li&gt;
-      &lt;li&gt;通过其他的一些方法来训练出 user embedding, 比如利用全体用户的 interest follow graph 作为数据，利用 collaborative filtering, dedicated model (比如 graph neural network) 来计算出 user embedding, 然后这个 embedding 可以被用作输入送进其他的模型; 比如 Facebook 就采取了用一个专门的模型来对大量的 user feature 进行学习，然后用这个 dedicated model 去生成 user embedding 然后给下游的模型使用，详情可以参考这篇&lt;a href=&quot;https://arxiv.org/pdf/2311.09544&quot;&gt;论文&lt;/a&gt;; s这种方法的好处在于能够学习更具有表征能力的 user embedding, 但是缺点在于 user embedding 需要进行单独的额外维护，以及不能很好的基于 downstream 的 task 来进行微调;&lt;/li&gt;
+      &lt;li&gt;一个这对上面的方法提高的方法，是基于 item 的 embedding 去学习一个 user embedding, 这个方法在 Pinterest 的这篇&lt;a href=&quot;https://arxiv.org/abs/2205.04507&quot;&gt;论文&lt;/a&gt;中得到利用，他们基于 PinSage 出来的 item embedding, 结合用户的 sequence engagement 数据，利用一个模型来学习 user embedding&lt;/li&gt;
+      &lt;li&gt;通过其他的一些方法来训练出 user embedding, 比如利用全体用户的 interest follow graph 作为数据，利用 collaborative filtering, dedicated model (比如 graph neural network) 来计算出 user embedding, 然后这个 embedding 可以被用作输入送进其他的模型; 比如 Facebook 就采取了用一个专门的模型来对大量的 user feature 进行学习，然后用这个 dedicated model 去生成 user embedding 然后给下游的模型使用，详情可以参考这篇&lt;a href=&quot;https://arxiv.org/pdf/2311.09544&quot;&gt;论文&lt;/a&gt;; 这种方法的好处在于能够学习更具有表征能力的 user embedding, 但是缺点在于 user embedding 需要进行单独的额外维护，以及不能很好的基于 downstream 的 task 来进行微调;&lt;/li&gt;
       &lt;li&gt;将用户 id 作为一个 spares feature 输入到模型里面，然后通过一个 embedding lookup table 来 convert 成一个 dense vector, 然后再和其他的 feature 输入 concat 在一起; 这个就是一个经典的如何在 Neural Network 里面使用 sparse feature 的方法，比如 LinkedIn 的这篇 &lt;a href=&quot;https://www.linkedin.com/blog/engineering/feed/enhancing-homepage-feed-relevance-by-harnessing-the-power-of-lar&quot;&gt;blog&lt;/a&gt;; 这种方法的一个好处是在于 user embedding 和模型是一起训练的，所以 embedding 可以理解为针对某个问题的专门优化，那么代价也显而易见，一反面是模型训练的参数量上升，另一方面对于 user embedding 的 reuse 也不是那么的方便了&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
@@ -53,7 +55,7 @@
 
 &lt;h3 id=&quot;item-side-feature&quot;&gt;Item Side Feature&lt;/h3&gt;
 
-&lt;p&gt;Item side feature 其实和 user side feature 本质上是类似的，比如我们也可以有一些 item 的属性信息，比如物品, 产地，物品价格等等，或者 item 的一些历史交互数据，比如过去一周的 impression 数量，过于一周的 CTR 等等；同时我们也可以使用和 user embedding 类似的方法来生成 item embedding 然后用作模型输入; Item side feature 的一个比较具有挑战性的地方在于由于物品 candidate 很多，导致 feature 的计算量可能很大，因此这部分的 feature 一般都会采用一些类似 pre-compute 的方法来提高性能&lt;/p&gt;
+&lt;p&gt;Item side feature 其实和 user side feature 本质上是类似的，比如我们也可以有一些 item 的属性信息，比如物品, 产地，物品价格等等，或者 item 的一些历史交互数据，比如过去一周的 impression 数量，过于一周的 CTR 等等；同时我们也可以使用和 user embedding 类似的方法来生成 item embedding 然后用作模型输入; Item side feature 的一个特点是 feature value 变化不是很频繁，因此这部分的 feature 一般都会采用一些类似 pre-compute 的方法来提高性能&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;一种常见的方法是使用&lt;em&gt;双塔模型&lt;/em&gt;来对 user 和 item embedding 进行训练，然后 user tower 可以在线的去 server request 来实时的计算 user embedding, 但是 item tower 可以离线的把所有的 candidate 的 embedding 计算好然后缓存起来，等需要的时候直接读 pre-compute 好的而不用再实时的计算了&lt;/li&gt;
@@ -147,7 +149,7 @@
   &lt;p&gt;这里插入一些题外话，除了由于 infra limitation 导致我们不能使用所有的 feature 以外，另外一个考虑的因素是 feature coorelation，我们通过 empirical 的研究发现，把 correlated feature 放入到模型里面不会给模型带来任何效果上的提升，而且反而可能会降低模型的效果；不过 correlated feature 倒是有助于提高模型的 robustness，所以这也是一个实际中我们需要 make 的 trade off; 在 Facebook ads 我们是尽可能 minimize feature correlation，从而把尽可能多的有 additional gain 的 signal 放入到模型中&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;Feature importance 可以从算法层面和工程层面两个角度讨论，工程层面的话主要就是涉及到各种 feature metadata 的管理，如何保证 feature candidate pool 是正确的（在复杂的系统中，feature serving 也是一个被高度优化的部分，导致有些 feature 只有在特定的环境下裁可用），如何保证 feature 有足够的 coverage 等等；从算法层面，可以用来计算 feature importance 的方法有: shuffling algorithm, SHAP, integrated gradient 以及 binary stochastic neuron 等，这里就不再展开讨论了&lt;/p&gt;
+&lt;p&gt;Feature importance 可以从算法层面和工程层面两个角度讨论，工程层面的话主要就是涉及到各种 feature metadata 的管理，如何保证 feature candidate pool 是正确的（在复杂的系统中，feature serving 也是一个被高度优化的部分，导致有些 feature 只有在特定的环境下才可用），如何保证 feature 有足够的 coverage 等等；从算法层面，可以用来计算 feature importance 的方法有: shuffling algorithm, SHAP, integrated gradient 以及 binary stochastic neuron 等，这里就不再展开讨论了&lt;/p&gt;
 
 &lt;p&gt;当通过上面提到的方法得到 feature importance score 之后，我们就可以使用 top k 的方法来选取 feature，除了这种简单的 selection strategy 之外，我们还可以引入其他的一些 metrics，比如 feature serving cost, feature storage cost 等等来进行 joint optimization&lt;/p&gt;
 
@@ -165,6 +167,10 @@
   &lt;p&gt;针对 embedding dimension, 目前主流的做法就是用一个 single dimension, 但是有一些研究尝试用 variable dimension, Google 曾经有一篇 paper 但是我现在找不到了，之后找到了再 update 过来&lt;/p&gt;
 &lt;/blockquote&gt;
 
+&lt;h2 id=&quot;acknowledgemment&quot;&gt;Acknowledgemment&lt;/h2&gt;
+
+&lt;p&gt;感谢 Yuan 大佬，Bing 姐和 Yuzhong 大佬提供的修改和补充意见，让这篇 blog 更加的完善&lt;/p&gt;
+
 &lt;h2 id=&quot;reference&quot;&gt;Reference&lt;/h2&gt;
 
 &lt;ul&gt;
@@ -177,6 +183,7 @@
   &lt;li&gt;&lt;a href=&quot;https://arxiv.org/pdf/1907.05171&quot;&gt;Privileged Features Distillation at Taobao Recommendations&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://research.facebook.com/publications/practical-lessons-from-predicting-clicks-on-ads-at-facebook/&quot;&gt;Practical Lessons from Predicting Clicks on Ads at Facebook&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://medium.com/pinterest-engineering/how-we-use-automl-multi-task-learning-and-multi-tower-models-for-pinterest-ads-db966c3dc99e&quot;&gt;How we use AutoML, Multi-task learning and Multi-tower models for Pinterest Ads&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://arxiv.org/abs/2205.04507&quot;&gt;PinnerFormer: Sequence Modeling for User Representation at Pinterest&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
         <pubDate>Mon, 24 Jun 2024 00:00:00 -0700</pubDate>
