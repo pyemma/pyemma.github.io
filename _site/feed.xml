@@ -123,6 +123,7 @@
 &lt;ul&gt;
   &lt;li&gt;在 Youtube 的这篇论文中，他们把一些 feature 用上了 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sqrt&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pow&lt;/code&gt; 等变换，作为新的 feature 和原本的 feature 一起送入模型进行学习&lt;/li&gt;
   &lt;li&gt;我们还可以把不同的 feature 彼此之间做 bi-gram，从而显形的增加 feature interaction (2nd order interaction, 这个也是之前很多研究的一个重点，因此退出了诸如 DCN 等模型架构，不过在这些模型里面， feature interaction 是通过模型表征，而不是在输入上面做文章)&lt;/li&gt;
+  &lt;li&gt;另外一种比较常见的做 feature transformation 的办法是给原本的 feature 添加 breakdown, 比如说我们算一类 item 的 CTR 数据，那么可以根据用户的性别添加一个 breakdown (说个题外话，这种 breakdown 现在也被用于处理用户数据上，从而实现 privacy preserve);&lt;/li&gt;
   &lt;li&gt;更加放飞自我的一种办法，我们可以先 train 一个 gbdt, 然后把 gbdt 的 leave node 作为一个 feature 输入模型（可以考虑作为一个 binary sparse vector，或者带着 leave node 上的 weight）; 在 Facebook 的早期 ads 模型里面，大量的使用了这种方法，详情参考这篇&lt;a href=&quot;https://research.facebook.com/publications/practical-lessons-from-predicting-clicks-on-ads-at-facebook/&quot;&gt;论文&lt;/a&gt;
     &lt;blockquote&gt;
       &lt;p&gt;We found that boosted decision trees are a powerful and very convenient way to implement non-linear and tuple transformations of the kind we just described.&lt;/p&gt;
