@@ -168,4 +168,9 @@ var store = [{
         "excerpt":"这个是读完这篇综述 Efficient Training of Large Language Models on Distributed Infrastructures - A Survey 之后的一个产出，这篇综述文章针对 LLM 的 training 介绍的已经很详细了，但是同时内容过多也不可能全都学完。这里针对自己整理的一些笔记来列一个之后学习的提纲，这个提纲肯定是非常主观的，推荐大家去读读原文来根据自己的情况针对性的准备 PS: 后续会不定期的更新这篇 blog 来争取与时俱进，同时会有专栏来介绍这篇 blog 里面打算深入研究的项目概念性知识 LLM 训练的一些特点 模型架构的一致性，基本都是堆的 transformer, 虽然现在有一些不一样的尝试比如 Mamba 和 TTT, 但是主流的模型还是 transformer 训练的规模和时间也是空前绝后的 Specialized software, 比如 Megatron (这个听说过，去了解一下) LLM 训练的 pipeline 也发生了变化（这一点说的还蛮有道理，我在这个领域有比较多的经验，可以向这个 LLM 的方向研究一下看看有什么机会）。传统的机器学习都是针对某一个问题用对应的数据来训练（domain specific），但是现在 LLM 的主流是在大量的数据做自监督学习，然后再进行 fine-tuning,...","categories": [],
         "tags": ["llm","llm training","distributed training"],
         "url": "https://pyemma.github.io/LLM-LLM-Training-101/",
+        "teaser":"https://pyemma.github.io/assets/violet.jpg"},{
+        "title": "How Workflow Get Scheduled via Plugins in Flyte",
+        "excerpt":"Reading open source code has been a recommended approach for software engineers to learn. However, in my past 8 years career, I didn’t do a good job on that. After working in a startup for 1 year, I accidentally foster the habit to read open source code XD. In this...","categories": [],
+        "tags": ["distributed system","open source","job scheduler"],
+        "url": "https://pyemma.github.io/Flyte-How-Workflow-Get-Scheduled/",
         "teaser":"https://pyemma.github.io/assets/violet.jpg"}]
