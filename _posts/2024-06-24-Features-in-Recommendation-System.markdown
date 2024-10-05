@@ -1,10 +1,9 @@
 ---
-layout: single
 title: 那些年，我们追过的 Feature
-tags:
-- machine learning
-- machine learning design
-- feature
+date: 2024-06-24
+author: pyemma
+categories: [Machine Learning]
+tags: [machine learning design, feature]
 toc: true
 ---
 在今天的 blog 里面，我将结合我前一阵子面试 machine learning engineering 的经验，跟大家唠唠在 ML design 里面的 feature engineering 相关的问题。

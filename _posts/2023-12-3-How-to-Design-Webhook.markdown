@@ -1,10 +1,9 @@
 ---
-layout: single
 title: How to Design Webhook
-tags:
-- distributed system
-- system design
-- webhook
+date: 2023-12-03
+author: pyemma
+categories: [Distributed System]
+tags: [system design, webhook]
 toc: true
 ---
 Today, let's discuss about how to design a system that could let customer to register webhook and send webhook requests to destination.
@@ -48,7 +47,7 @@ I didn't find very crystal requirements on this, the following is some FR I summ
 
 ## High Level Design
 
-I would skip the API design and the back envelop estimation for the sake of sanction of this post. We would start simple to first meet the functional requirements, and then improve the availability, scalability of our system. 
+I would skip the API design and the back envelop estimation for the sake of sanction of this post. We would start simple to first meet the functional requirements, and then improve the availability, scalability of our system.
 
 ### Webhook Registration
 

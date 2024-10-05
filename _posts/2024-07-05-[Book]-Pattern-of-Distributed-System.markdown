@@ -1,10 +1,9 @@
 ---
-layout: single
 title: 读书笔记 - Patterns of Distributed System
-tags:
-- distributed system
-- system design
-- 读书笔记
+date: 2024-07-05
+author: pyemma
+categories: [Distributed System]
+tags: [system design, reading, 读书笔记]
 toc: true
 ---
 
@@ -121,12 +120,12 @@ To store versioned key values, a data structure that allows quick navigation to 
 ### Fixed Partition
 
 先 create logic shard，然后再把 logic shard map 到 physical shard 上面去; 这些 metadata 都可以通过一个 coordination service 来负责 (分 partition 和 存储相应的 metadata); 另外一种做法是每个 physical node 上面的 partition 数量是固定的，也就是 propositional to number of nodes
-      
+
 - Kafka 里面的每一个  topic 就是一个 fixed size partitions
 
 ### Clock Bound Wait
-W
-hile reading or writing, cluster node wait until the clock values on every node in the cluster are guaranteed to be above the timestamp assigned to the value
+
+While reading or writing, cluster node wait until the clock values on every node in the cluster are guaranteed to be above the timestamp assigned to the value
 
 - Google TrueTime, AWS Time Sync Service, 使用 atomic clock 和 GPS 来确保 clock drift across their cluster node is kept below a few milliseconds
 - 这个概念有点复杂，需要再找一个好的资料学习理解一下这里的思想
