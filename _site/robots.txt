@@ -1,1 +1,5 @@
+User-agent: *
+
+Disallow: /norobots/
+
 Sitemap: https://pyemma.github.io/sitemap.xml

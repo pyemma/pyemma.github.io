@@ -1,10 +1,9 @@
 ---
-layout: single
 title: LLM Training 101
-tags:
-- llm
-- llm training
-- distributed training
+date: 2024-09-01
+author: pyemma
+categories: [Distributed Training]
+tags: [llm, llm training]
 toc: true
 ---
 

@@ -1,10 +1,9 @@
 ---
-layout: single
 title: How Workflow Get Scheduled via Plugins in Flyte
-tags:
-- distributed system
-- open source
-- job scheduler
+date: 2024-09-12
+author: pyemma
+categories: [Distributed System]
+tags: [open source, job scheduler]
 toc: true
 ---
 
