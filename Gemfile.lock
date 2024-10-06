@@ -142,7 +142,7 @@ GEM
 
 PLATFORMS
   arm64-darwin
-  x86_64-darwin
+  x86_64-darwin-22
 
 DEPENDENCIES
   html-proofer (~> 5.0)
