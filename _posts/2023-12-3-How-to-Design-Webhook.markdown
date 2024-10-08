@@ -74,7 +74,8 @@ In this design, we adopted a *single responsibility strategy* and separate the d
   - controller don't need to wait for the current webhook request to be delivered to process the next one (it is async okay). This not only saves resource, but also increases robustness (e.g. if worker failed, controller could still make progress and put job onto the queue instead of being blocked).
   - if there is a burst of events come in, message queue could help buffer the increased volume of task so that worker won't be throttling.
 - **Webhook Worker** is responsible for consume webhook request task from the queue, and send the actual HTTP POST request to the endpoint. The payload of the HTTP POST request could be something like this
-{% highlight json %}
+
+```json
 {
     "id": str
     "event_type": str
@@ -85,7 +86,7 @@ In this design, we adopted a *single responsibility strategy* and separate the d
         ...
     }
 }
-{% endhighlight %}
+```
 
 Worker would need to wait for the response from the endpoints, to know if the request has been successfully received. If received, then worker could update the record's `request_status` in the *Webhook Delivery Log* database to `SUCCEED`; otherwise, different strategy of retry could be adopted to resent the webhook request. Supporting retry also means that we are providing **at least once** semantic, which could result in duplicated request sent to endpoints. We expect these endpoints need to be idempotent, which is doable with the `id` sent along with the HTTP POST request.
 
@@ -160,3 +161,9 @@ Here is our final design
 4. [Shopify Webhook Best Practices](https://shopify.dev/docs/apps/webhooks/best-practices)
 5. [Add Webhooks to Your API the Right Way](https://zapier.com/engineering/webhook-design/)
 6. [Phoenix Architecture](https://icyfenix.cn/architect-perspective/general-architecture/system-security/confidentiality.html)
+
+---
+
+If you find this post helpful, feel free to scan the QR code below to support me and treat me to a cup of coffee
+
+![Thank You](/assets/qr%20code.png){: width="300" height="300" }
