@@ -121,3 +121,7 @@ Failure tolerance 主流的还是使用 checkpoint
 - [**Tectonic**](https://www.usenix.org/system/files/fast21-pan.pdf): Meta’s distributed filesystem, enables thousands of GPUs to save and load model checkpoints simultaneously, providing efficient and scalable storage solutions for extensive training operations
 - 现在貌似主要用来对 checkpoint 用来存储的都是 object store, 这个可以去研究下看看各个公司都用啥（比如 AWS 是不是都上 S3）
 - Live migration leverages the inherent redundancy present in distributed LLM training setups, particularly the model replicas across different data parallel pipelines, to restore model states in case of failure. 这个感觉其实有点类似使用 Cassandra 里 consistency hashing 里面的 hinted hand off
+
+If you find this post helpful, feel free to scan the QR code below to support me and treat me to a cup of coffee
+
+![Thank You](/assets/qr%20code.png){: width="300" height="300" }

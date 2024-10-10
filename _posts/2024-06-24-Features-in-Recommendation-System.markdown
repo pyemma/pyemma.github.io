@@ -147,3 +147,7 @@ Feature importance 可以从算法层面和工程层面两个角度讨论，工�
 - [Practical Lessons from Predicting Clicks on Ads at Facebook](https://research.facebook.com/publications/practical-lessons-from-predicting-clicks-on-ads-at-facebook/)
 - [How we use AutoML, Multi-task learning and Multi-tower models for Pinterest Ads](https://medium.com/pinterest-engineering/how-we-use-automl-multi-task-learning-and-multi-tower-models-for-pinterest-ads-db966c3dc99e)
 - [PinnerFormer: Sequence Modeling for User Representation at Pinterest](https://arxiv.org/abs/2205.04507)
+
+If you find this post helpful, feel free to scan the QR code below to support me and treat me to a cup of coffee
+
+![Thank You](/assets/qr%20code.png){: width="300" height="300" }

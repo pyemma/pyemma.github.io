@@ -72,6 +72,7 @@ For the second problem, one naive approach is to write all bids into DB and let 
 ![Auction Bid Update](/assets/auction_bid_update.png){: width="700" height="400" }
 
 When user first navigate to an auction page, we would retrieve the information about the auction through *Auction Service* via regular HTTP request. If the auction is still in `ACTIVE` status, user would build a SSE connection with one **Bid Update Service** (Load Balancer could randomly pick one). The **Bid Update Service** `bus1` would update its in-memory *subscription table* to record that a user `u1` is viewing auction `a1`. Also, this server would also make a request to **Dispatcher** specifying that itself is listening to `a1` and **Dispatcher** would also update its in-memory *subscription table*.
+
 ```python
 # bus1 subscription table
 {
@@ -83,6 +84,7 @@ When user first navigate to an auction page, we would retrieve the information a
     'a2': ['bus2'],
 }
 ```
+
 When user make a bid, client would send a HTTP request to **Auction Service**, the node that handle the request would also make a request towards **Dispatcher**. The **Dispatcher** would check its internal *subscription table* to figure out which **Bid Update Service** (in this case `bus1`) needs this update. Once `bus1` receives the request, it would also check its internal *subscription table* to figure out which connected user it needs to send this update.
 
 In the version we just described, **Dispatcher** is a *stateful* service because it needs to maintain the *subscription table*. If it is down, we won't able to forward bid update anymore and thus making it highly available is critical to our system. The following options could be considered:
@@ -236,3 +238,7 @@ In our current design, we are establish a new SSE whenever user navigate to a ne
 ### Acknowledgement
 
 Thanks Rita and Celia for the great discussion and lots of idea.
+
+If you find this post helpful, feel free to scan the QR code below to support me and treat me to a cup of coffee
+
+![Thank You](/assets/qr%20code.png){: width="300" height="300" }
