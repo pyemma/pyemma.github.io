@@ -153,6 +153,11 @@ There are couple of other optimizations we could add to our system to make it mo
 Here is our final design
 ![Final Design](/assets/webhook-final.png)
 
+> If you find this post helpful, feel free to scan the QR code below to support me and treat me to a cup of coffee
+{: .prompt-tip }
+
+![Thank You](/assets/qr%20code.png){: width="300" height="300" }
+
 ### Reference
 
 1. [Building Webhooks Into Your Application: Guidelines and Best Practices](https://workos.com/blog/building-webhooks-into-your-application-guidelines-and-best-practices)
@@ -161,9 +166,3 @@ Here is our final design
 4. [Shopify Webhook Best Practices](https://shopify.dev/docs/apps/webhooks/best-practices)
 5. [Add Webhooks to Your API the Right Way](https://zapier.com/engineering/webhook-design/)
 6. [Phoenix Architecture](https://icyfenix.cn/architect-perspective/general-architecture/system-security/confidentiality.html)
-
----
-
-If you find this post helpful, feel free to scan the QR code below to support me and treat me to a cup of coffee
-
-![Thank You](/assets/qr%20code.png){: width="300" height="300" }

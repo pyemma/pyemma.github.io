@@ -131,6 +131,11 @@ Feature importance 可以从算法层面和工程层面两个角度讨论，工�
 
 > 针对 embedding dimension, 目前主流的做法就是用一个 single dimension, 但是有一些研究尝试用 variable dimension, Google 曾经有一篇 paper 但是我现在找不到了，之后找到了再 update 过来
 
+> If you find this post helpful, feel free to scan the QR code below to support me and treat me to a cup of coffee
+{: .prompt-tip }
+
+![Thank You](/assets/qr%20code.png){: width="300" height="300" }
+
 ## Acknowledgemment
 
 感谢 Yuan 大佬，Bing 姐和 Yuzhong 大佬提供的修改和补充意见，让这篇 blog 更加的完善
@@ -147,7 +152,3 @@ Feature importance 可以从算法层面和工程层面两个角度讨论，工�
 - [Practical Lessons from Predicting Clicks on Ads at Facebook](https://research.facebook.com/publications/practical-lessons-from-predicting-clicks-on-ads-at-facebook/)
 - [How we use AutoML, Multi-task learning and Multi-tower models for Pinterest Ads](https://medium.com/pinterest-engineering/how-we-use-automl-multi-task-learning-and-multi-tower-models-for-pinterest-ads-db966c3dc99e)
 - [PinnerFormer: Sequence Modeling for User Representation at Pinterest](https://arxiv.org/abs/2205.04507)
-
-If you find this post helpful, feel free to scan the QR code below to support me and treat me to a cup of coffee
-
-![Thank You](/assets/qr%20code.png){: width="300" height="300" }

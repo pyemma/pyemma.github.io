@@ -85,3 +85,8 @@ In this [blog](https://newsroom.aboutrobinhood.com/part-i-scaling-robinhood-clea
 - But what if one consumer in the middle failed, how to resume and avoid duplicated write?
   - Use Kafka commit log to resume where left
   - When do the DB write, first update the lookup table, then the duplicated write would be no-op
+
+> If you find this post helpful, feel free to scan the QR code below to support me and treat me to a cup of coffee
+{: .prompt-tip }
+
+![Thank You](/assets/qr%20code.png){: width="300" height="300" }

@@ -222,6 +222,11 @@ It is possible that we write to DB success but failed to update cache. For examp
 
 In our current design, we are establish a new SSE whenever user navigate to a new auction. Another design choice here is to let user establish a new connection upon login to our application. And keep a *websocket* connection. Whenever user navigate to another auction, it would send this event over the *websocket* so that the **Bid Update Service** could update the `subscription table`. Depends on the pattern of how general users are interacting with our system, we could optimize the choice of the connection mechanism.
 
+> If you find this post helpful, feel free to scan the QR code below to support me and treat me to a cup of coffee
+{: .prompt-tip }
+
+![Thank You](/assets/qr%20code.png){: width="300" height="300" }
+
 ## Reference
 
 - [Streaming a Million Likes/Second: Real-Time Interactions on Live Video](https://www.infoq.com/presentations/linkedin-play-akka-distributed-systems/)
@@ -238,7 +243,3 @@ In our current design, we are establish a new SSE whenever user navigate to a ne
 ### Acknowledgement
 
 Thanks Rita and Celia for the great discussion and lots of idea.
-
-If you find this post helpful, feel free to scan the QR code below to support me and treat me to a cup of coffee
-
-![Thank You](/assets/qr%20code.png){: width="300" height="300" }
