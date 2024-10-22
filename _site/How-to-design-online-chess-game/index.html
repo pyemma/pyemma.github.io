@@ -1,0 +1,312 @@
+<!doctype html><html lang="en" ><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f7"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b1b1e"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="viewport" content="width=device-width, user-scalable=no initial-scale=1, shrink-to-fit=no, viewport-fit=cover" ><meta name="generator" content="Jekyll v4.3.4" /><meta property="og:title" content="How to Design Online Chess Game" /><meta name="author" content="Coding Monkey" /><meta property="og:locale" content="en" /><meta name="description" content="I have been a fan of online game since my parent bought me a PC when I was in 5th grade. I could still feel the excitement when every Thursday night I rushed home and played DaHuaXiYou 2 with my friends. This is also the direct reason why I decided to major in computer science in college. Today, let’s discuss something related to online game: how to design an online chess game." /><meta property="og:description" content="I have been a fan of online game since my parent bought me a PC when I was in 5th grade. I could still feel the excitement when every Thursday night I rushed home and played DaHuaXiYou 2 with my friends. This is also the direct reason why I decided to major in computer science in college. Today, let’s discuss something related to online game: how to design an online chess game." /><link rel="canonical" href="https://pyemma.github.io/How-to-design-online-chess-game/" /><meta property="og:url" content="https://pyemma.github.io/How-to-design-online-chess-game/" /><meta property="og:site_name" content="Coding Monkey" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2024-10-10T00:00:00-07:00" /><meta name="twitter:card" content="summary" /><meta property="twitter:title" content="How to Design Online Chess Game" /><meta name="twitter:site" content="@" /><meta name="twitter:creator" content="@pyemma" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Coding Monkey","url":"https://github.com/pyemma"},"dateModified":"2024-10-10T00:00:00-07:00","datePublished":"2024-10-10T00:00:00-07:00","description":"I have been a fan of online game since my parent bought me a PC when I was in 5th grade. I could still feel the excitement when every Thursday night I rushed home and played DaHuaXiYou 2 with my friends. This is also the direct reason why I decided to major in computer science in college. Today, let’s discuss something related to online game: how to design an online chess game.","headline":"How to Design Online Chess Game","mainEntityOfPage":{"@type":"WebPage","@id":"https://pyemma.github.io/How-to-design-online-chess-game/"},"url":"https://pyemma.github.io/How-to-design-online-chess-game/"}</script><title>How to Design Online Chess Game | Coding Monkey</title><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="shortcut icon" href="/assets/img/favicons/favicon.ico"><meta name="apple-mobile-web-app-title" content="Coding Monkey"><meta name="application-name" content="Coding Monkey"><meta name="msapplication-TileColor" content="#da532c"><meta name="msapplication-config" content="/assets/img/favicons/browserconfig.xml"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.googleapis.com" ><link rel="dns-prefetch" href="https://fonts.googleapis.com" ><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="dns-prefetch" href="https://fonts.gstatic.com" ><link rel="preconnect" href="https://cdn.jsdelivr.net" ><link rel="dns-prefetch" href="https://cdn.jsdelivr.net" ><link rel="stylesheet" href="/assets/css/jekyll-theme-chirpy.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Source+Sans+Pro:wght@400;600;700;900&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tocbot@4.29.0/dist/tocbot.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/loading-attribute-polyfill@2.1.1/dist/loading-attribute-polyfill.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox@3.3.0/dist/css/glightbox.min.css"> <script type="text/javascript"> class ModeToggle { static get MODE_KEY() { return 'mode'; } static get MODE_ATTR() { return 'data-mode'; } static get DARK_MODE() { return 'dark'; } static get LIGHT_MODE() { return 'light'; } static get ID() { return 'mode-toggle'; } constructor() { let self = this;this.sysDarkPrefers.addEventListener('change', () => { if (self.hasMode) { self.clearMode(); } self.notify(); }); if (!this.hasMode) { return; } if (this.isDarkMode) { this.setDark(); } else { this.setLight(); } } get sysDarkPrefers() { return window.matchMedia('(prefers-color-scheme: dark)'); } get isPreferDark() { return this.sysDarkPrefers.matches; } get isDarkMode() { return this.mode === ModeToggle.DARK_MODE; } get hasMode() { return this.mode != null; } get mode() { return sessionStorage.getItem(ModeToggle.MODE_KEY); }get modeStatus() { if (this.hasMode) { return this.mode; } else { return this.isPreferDark ? ModeToggle.DARK_MODE : ModeToggle.LIGHT_MODE; } } setDark() { document.documentElement.setAttribute(ModeToggle.MODE_ATTR, ModeToggle.DARK_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE); } setLight() { document.documentElement.setAttribute(ModeToggle.MODE_ATTR, ModeToggle.LIGHT_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE); } clearMode() { document.documentElement.removeAttribute(ModeToggle.MODE_ATTR); sessionStorage.removeItem(ModeToggle.MODE_KEY); }notify() { window.postMessage( { direction: ModeToggle.ID, message: this.modeStatus }, '*' ); } flipMode() { if (this.hasMode) { this.clearMode(); } else { if (this.isPreferDark) { this.setLight(); } else { this.setDark(); } } this.notify(); } } const modeToggle = new ModeToggle(); </script><body><aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end"><header class="profile-wrapper"> <a href="/" id="avatar" class="rounded-circle"><img src="/assets/profile.png" width="112" height="112" alt="avatar" onerror="this.style.display='none'"></a><h1 class="site-title"> <a href="/">Coding Monkey</a>
+</h1>
+<p class="site-subtitle fst-italic mb-0">Journey to become a legendary coding monkey</p></header><nav class="flex-column flex-grow-1 w-100 ps-0"><ul class="nav">
+<li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home"></i> <span>HOME</span> </a>
+</li>
+<li class="nav-item"> <a href="/categories/" class="nav-link"> <i class="fa-fw fas fa-stream"></i> <span>CATEGORIES</span> </a>
+</li>
+<li class="nav-item"> <a href="/tags/" class="nav-link"> <i class="fa-fw fas fa-tags"></i> <span>TAGS</span> </a>
+</li>
+<li class="nav-item"> <a href="/archives/" class="nav-link"> <i class="fa-fw fas fa-archive"></i> <span>ARCHIVES</span> </a>
+</li>
+<li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle"></i> <span>ABOUT</span> </a>
+</li>
+</ul></nav><div class="sidebar-bottom d-flex flex-wrap align-items-center w-100"> <button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle"> <i class="fas fa-adjust"></i> </button> <span class="icon-border"></span> <a href="https://github.com/pyemma" aria-label="github" target="_blank" rel="noopener noreferrer"> <i class="fab fa-github"></i> </a> <a href="https://twitter.com/" aria-label="twitter" target="_blank" rel="noopener noreferrer"> <i class="fa-brands fa-x-twitter"></i> </a> <a href="javascript:location.href%20=%20'mailto:'%20+%20['pyemma1991','gmail.com'].join('@')" aria-label="email"> <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss"> <i class="fas fa-rss"></i> </a>
+</div></aside><div id="main-wrapper" class="d-flex justify-content-center">
+<div class="container d-flex flex-column px-xxl-5">
+<header id="topbar-wrapper" aria-label="Top Bar"><div id="topbar" class="d-flex align-items-center justify-content-between px-lg-3 h-100">
+<nav id="breadcrumb" aria-label="Breadcrumb"> <span> <a href="/">Home</a> </span> <span>How to Design Online Chess Game</span></nav><button type="button" id="sidebar-trigger" class="btn btn-link"> <i class="fas fa-bars fa-fw"></i> </button><div id="topbar-title"> Post</div>
+<button type="button" id="search-trigger" class="btn btn-link"> <i class="fas fa-search fa-fw"></i> </button> <search id="search" class="align-items-center ms-3 ms-lg-0"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="Search..."> </search> <button type="button" class="btn btn-link text-decoration-none" id="search-cancel">Cancel</button>
+</div></header><div class="row flex-grow-1">
+<main aria-label="Main Content" class="col-12 col-lg-11 col-xl-9 px-md-4"><article class="px-1"><header><h1 data-toc-skip>How to Design Online Chess Game</h1>
+<div class="post-meta text-muted"> <span> Posted <time data-ts="1728543600" data-df="ll" data-bs-toggle="tooltip" data-bs-placement="bottom"> Oct 10, 2024 </time> </span><div class="d-flex justify-content-between"> <span> By <em> <a href="https://github.com/pyemma">Coding Monkey</a> </em> </span><div> <span class="readtime" data-bs-toggle="tooltip" data-bs-placement="bottom" title="4311 words"> <em>23 min</em> read</span>
+</div>
+</div>
+<div style="text-align: right;"> <span> <a href="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fpyemma.github.io%2F/How-to-design-online-chess-game/&amp;count_bg=%2379C83D&amp;title_bg=%23555555&amp;icon=&amp;icon_color=%23E7E7E7&amp;title=views&amp;edge_flat=false" class="popup img-link shimmer"><img style="width: inherit;" src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fpyemma.github.io%2F/How-to-design-online-chess-game/&amp;count_bg=%2379C83D&amp;title_bg=%23555555&amp;icon=&amp;icon_color=%23E7E7E7&amp;title=views&amp;edge_flat=false" alt="Views" loading="lazy"></a> </span>
+</div>
+</div></header><div class="content">
+<p>I have been a fan of online game since my parent bought me a PC when I was in 5th grade. I could still feel the excitement when every Thursday night I rushed home and played DaHuaXiYou 2 with my friends. This is also the direct reason why I decided to major in computer science in college. Today, let’s discuss something related to online game: how to design an online chess game.</p>
+<h2 id="functional-requirements">
+<span class="me-2">Functional Requirements</span><a href="#functional-requirements" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h2>
+<p>Here is a minimal set of functional requirements for our online chess game:</p>
+<ol>
+<li>Two users could play chess against each other, 1-1 game, take move by turns</li>
+<li>Player could revert their last move if their opponent hasn’t made a move yet</li>
+<li>Player could resume from temporary disconnection and join back the same game</li>
+</ol>
+<h2 id="non-functional-requirements">
+<span class="me-2">Non Functional Requirements</span><a href="#non-functional-requirements" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h2>
+<ol>
+<li>High availability, no single point of failure</li>
+<li>Low latency</li>
+<li>High scalability</li>
+<li>Consistency, both player should see the same board state</li>
+</ol>
+<h2 id="assumptions">
+<span class="me-2">Assumptions</span><a href="#assumptions" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h2>
+<p>These are some basic assumptions we would made in our design. In real world system design interview, these would be some good questions to get clarification from the interviewer:</p>
+<ol>
+<li>In this discussion, we would only focus on the core logic of the game. Additional features, e.g. player ranking, profile system and player matching, would be out of the scope for today’s post and I plan to have a separate post to discuss them</li>
+<li>We also assume that each player could be at most one game at a time, this would help us to simplify our discussion. However, it should be relative straightforward to integrate <code class="language-plaintext highlighter-rouge">session</code> management</li>
+</ol>
+<h2 id="backend-envelope-estimation">
+<span class="me-2">Backend Envelope Estimation</span><a href="#backend-envelope-estimation" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h2>
+<p>We would assume that our online chess game is pretty popular and have a DAU of 100 million based on this <a href="https://en.wikipedia.org/wiki/Chess.com#:~:text=Chess.com%20said%20it%20reached,users%20as%20of%20April%202023">source</a>. And since its a chess game, user need to take turns to make a move, we could assume that on average each player takes 10 second to make a move. We assume each player would play 10 games every day. This translate to about $100 million / 10^5 * 10 (games / day) * 0.1 (move / sec) = 1000 QPS$. We could assume that at peak time, the QPS could be 5x which gives us 5000 QPS.</p>
+<p>On the storage part, we actually don’t need to have too much storage (which we would discuss more in details in the next section), as either the game state nor the moves take much space to store. For the visualization element such as the picture of the board, they could be shared across all games and is some statistic resource, which could be stored in CDN. We assume that each game would require 10KB storage, which gives us about 1TB storage per day.</p>
+<h2 id="key-challenges">
+<span class="me-2">Key Challenges</span><a href="#key-challenges" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h2>
+<p>Here is some technical challenges on top of my mind, we would discuss how different design choices going to affect the answer of these questions:</p>
+<ol>
+<li>How to maintain the state of the game?</li>
+<li>How to keep users connected with each other to paly the game?</li>
+<li>How to handle difference racing conditions? (e.g. Player A make a move while Player B tries to revert move)</li>
+<li>How to handle different failure mode? (e.g. Player A is disconnected due to network issue)</li>
+</ol>
+<h2 id="high-level-design">
+<span class="me-2">High Level Design</span><a href="#high-level-design" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h2>
+<p>In this post, we would introduce 2 different architectures. There are 2 different philosophies on how to represent game state: keeping a latest view of the game, which is pretty common practice in database community; or keeping a series of event that has happened, a.k.a event sourcing, which is a relative new practice in the world of distributed system. These 2 different philosophies lead to 2 different design choices: <strong>stateful game server</strong> and <strong>pub/sub based architecture</strong>.</p>
+<h3 id="stateful-game-server">
+<span class="me-2">Stateful Game Server</span><a href="#stateful-game-server" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h3>
+<p>A high level design of this approach is shown below:</p>
+<p><a href="/assets/online-chess-game-server.png" class="popup img-link shimmer"><img src="/assets/online-chess-game-server.png" alt="Stateful Game Server" width="700" height="400" loading="lazy"></a></p>
+<p>The <code class="language-plaintext highlighter-rouge">Game Server</code> component would be responsible for maintaining the game state and connection with players. The game state is relative simple, it could some something like this:</p>
+<div class="language-python highlighter-rouge">
+<div class="code-header"> <span data-label-text="Python"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button>
+</div>
+<div class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td>
+<td class="rouge-code"><pre><span class="c1"># game state
+</span><span class="n">board</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># A 8x8 board represented as a string, different characters represent different pieces, e.g. 'Q' for queen
+</span><span class="n">current_turn</span><span class="p">:</span> <span class="nb">bool</span> <span class="c1"># True if it's player 1's turn, False if it's player 2's turn
+</span><span class="n">is_win</span><span class="p">:</span> <span class="nb">bool</span> <span class="c1"># True if the game is won, False otherwise
+</span></pre></td>
+</tr></tbody></table></code></div>
+</div>
+<p>The game state is not large and we could maintain it in memory together with other game metadata such as <code class="language-plaintext highlighter-rouge">game_id</code>, <code class="language-plaintext highlighter-rouge">player_id</code> for the lowest latency. The game logic would also be implemented on the game server, which we would check if the move is valid and update the game state accordingly. Upon the creation of the game and both players have connected with the <code class="language-plaintext highlighter-rouge">Game Server</code>, the server would write a record into the <code class="language-plaintext highlighter-rouge">Game DB</code>. The schema of the table is shown below:</p>
+<p><a href="/assets/online-chess-game-db.png" class="popup img-link shimmer"><img src="/assets/online-chess-game-db.png" alt="Game DB" width="500" height="300" loading="lazy"></a></p>
+<p>The <code class="language-plaintext highlighter-rouge">game_table</code> records all critical metadata about the game, such as the <code class="language-plaintext highlighter-rouge">player_id</code>, <code class="language-plaintext highlighter-rouge">status</code> and <code class="language-plaintext highlighter-rouge">winner</code> information. Once the record is created, the <code class="language-plaintext highlighter-rouge">status</code> of the game would be set to <code class="language-plaintext highlighter-rouge">RUNNING</code> and once one player wins, the <code class="language-plaintext highlighter-rouge">Game Server</code> would update the <code class="language-plaintext highlighter-rouge">status</code> to <code class="language-plaintext highlighter-rouge">DONE</code> and record the <code class="language-plaintext highlighter-rouge">winner</code> information. You could also notice that we have created a <code class="language-plaintext highlighter-rouge">game_history_table</code> to record all the moves of the game. This table is optional in this stateful design (but would be critical for the next design choice), it captures a trajectory of the game state (each move that is accepted by the game server) and we could rebuild the game state from this table in certain failure scenarios (we would explain more in the next section).</p>
+<p>We could use SQL or NoSQL database to store <code class="language-plaintext highlighter-rouge">game_table</code> and <code class="language-plaintext highlighter-rouge">game_history_table</code>. The read/write ratio of the <code class="language-plaintext highlighter-rouge">game_table</code> is relative low and it is keeping critical information about the game, we could use relational database to handle it (although we loss the flexibility of things such as schemaless, horizontal scalability). For the <code class="language-plaintext highlighter-rouge">game_history_table</code>, it would expect relative high write QPS as each move needs to be recorded, we could consider using columnar database to handle it (relational database in append only mode would also work).</p>
+<p>Having talked about the game state and the storage, let’s move our focus onto how players are connected and how the game is played. There are multiple approaches for connection, such as long polling, server sent event and websocket (you could refer <a href="/How-to-design-auction-system/#websocket-and-sse">my pervious post</a> for a comparison of websocket and SSE). Since all players need to continuously make moves and receive updates (<em>bi-directional</em>) during the game, <strong>websocket</strong> would be a good fit in this case (this is different from the auction system’s choice due to the scenarios are different, check <a href="/How-to-design-auction-system/#auction-bid-place-and-update">here</a> for more details).</p>
+<p>The <code class="language-plaintext highlighter-rouge">Game Server</code> would maintain a websocket connection with players. When one player make a move, the client would send a message to the server via the websocket connection. The <code class="language-plaintext highlighter-rouge">Game Server</code> would then check if the request is valid or not and apply it to its in memory game state. If we would like to record the step into <code class="language-plaintext highlighter-rouge">game_history_table</code>, then we need to make sure the write is confirmed by the database and then apply the change to in memory game state to keep it consistent. Once the game state is updated, then the server would send the updated game state to both players to make sure both players are in sync.</p>
+<p>The benefits of this stateful game server design is that, for each game we have a single brain to decide what the game should be like in the case of concurrent move requests from players. If player A tries to revert move while player B tries to make a new move and they both send out the request at the same time, then the <code class="language-plaintext highlighter-rouge">Game Server</code> would be the single place to make a decision on which request to accept and which to reject (maybe based on which request first hit the <code class="language-plaintext highlighter-rouge">Game Server</code>). For example, if player A’s revert request hit first, then player B’s move request would be rejected as the move would be illegal; the new game state would be sent back to both player and it would still be player A’s turn to make move, vice verse. However, any coin has two sides, the beneficial of handling concurrent request gracefully comes with the cost of a single point of failure. We would discuss more on this in the <a href="#high-availability">high availability</a> section.</p>
+<p>Besides the <code class="language-plaintext highlighter-rouge">Game Server</code>, we also included a <code class="language-plaintext highlighter-rouge">Coordination Service</code> component. This component is responsible for keeping the liveness information of the <code class="language-plaintext highlighter-rouge">Game Server</code> as well as playing a role on <strong>service discovery</strong> by storing associated metadata about the <code class="language-plaintext highlighter-rouge">game_id</code> and <code class="language-plaintext highlighter-rouge">server_id</code>. The liveness is used for <a href="#high-availability">high availability</a> discussed later. The <strong>service discovery</strong> is used for the player to rejoin the game after they have been disconnected. Upon the creation of the game, the <code class="language-plaintext highlighter-rouge">Game Server</code> would also register this serving information into <code class="language-plaintext highlighter-rouge">Coordination Service</code>, which essentially is a mapping from <code class="language-plaintext highlighter-rouge">game_id</code> to <code class="language-plaintext highlighter-rouge">server_id</code>. When player disconnected, they could rejoin the same game as follow:</p>
+<ol>
+<li>We could cache the server id information in the client side as well (although this is going to expose some internal information about our cluster and expose certain security issue), if player disconnected due to network issue, then they could reconnect to the same <code class="language-plaintext highlighter-rouge">Game Server</code> by this cached information</li>
+<li>We could also not caching any server id information in the client side, or the client’s application crash and the cached information is all lost. In this case, the player would be directed by <strong>load balancer</strong> to any <code class="language-plaintext highlighter-rouge">Game Server</code> (which might not be the one that is hosting the game), and the <code class="language-plaintext highlighter-rouge">Game Server</code> would check if the player’s game is on itself. It send a request to <code class="language-plaintext highlighter-rouge">Game DB</code> to retrieve the <code class="language-plaintext highlighter-rouge">RUNNING</code> game that the player is still in and then check the <code class="language-plaintext highlighter-rouge">server_id</code> from the <code class="language-plaintext highlighter-rouge">Coordination Service</code>. Once obtain the correct <code class="language-plaintext highlighter-rouge">server_id</code>, it would then redirect the player to connect to that server. And once connected, the game could be resumed from where it is left (the rejoined player would be sent with latest game state to make sure in sync)</li>
+</ol>
+<p>On the client side, since the game state is synced from the <code class="language-plaintext highlighter-rouge">Game Server</code>, we could implement a simple logic that only if the current turn is the player’s turn, then we would send player’s move to the <code class="language-plaintext highlighter-rouge">Game Server</code>. This could help us to reduce the volume of the message sent over the websocket connection to save the network bandwidth.</p>
+<h3 id="pubsub-based-architecture">
+<span class="me-2">Pub/Sub Based Architecture</span><a href="#pubsub-based-architecture" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h3>
+<p>A high level design of this approach is shown below:</p>
+<p><a href="/assets/online-chess-pub-sub.png" class="popup img-link shimmer"><img src="/assets/online-chess-pub-sub.png" alt="Pub/Sub Based Architecture" width="700" height="400" loading="lazy"></a></p>
+<p>In this design, there is no <code class="language-plaintext highlighter-rouge">Game Server</code> to maintain the game state. Instead, all player’s move are represented as an event and published to a message queue and the game state is obtained by applying this sequence of events from beginning to end. Here we would adopt message queue that support message persistence, such as <em>log based</em> message queue, so that we could support certain failure mode such as player disconnection.</p>
+<p>Upon the creation of the game, both players would connect to a <code class="language-plaintext highlighter-rouge">Websocket Server</code>, which is responsible for keeping the websocket connection with the player, and publish/subscribe to the topic that stores each move. Along with the creation of the game, a dedicated topic for this game would also be created in the message queue, with the format such as <code class="language-plaintext highlighter-rouge">chess-game-{game-id}</code>. The <code class="language-plaintext highlighter-rouge">Websocket Server</code> would publish player’s move to this topic and also subscribe to this topic to obtain other player’s moves. When player makes a move, a message would be sent over the websocket connection to the <code class="language-plaintext highlighter-rouge">Websocket Server</code> and then publish to the topic. To guarantee the consistency of the game, <code class="language-plaintext highlighter-rouge">Websocket Server</code> would wait for <em>ack</em> from the message queue to make sure that the message is published successfully. Once <code class="language-plaintext highlighter-rouge">Websocket Server</code> received one new message from the topic, it would relay this message to the player via the websocket connection. From the client side, after sending the move to the server, it would wait for certain threshold time to receive the message back from the server. This message could be the player’s pervious move, or the opponent’s concurrent move. Based on what is received, game state is changed and corresponding logic would be applied (e.g. lock player’s move and wait for opponent’s move, game is done or still player’s turn and pervious move is ignored). Upon timeout, the client would retry sending the move again.</p>
+<p>Notice that in this design, there is no game server on our backend that have a <em>current</em> view of the game. We delegate this responsibility to the client side, which means that the client would maintain the game state, as well as game logic such as checking if the player’s move is legal or not. Once one player win, a special message would be sent to <code class="language-plaintext highlighter-rouge">Websocket Server</code>, and the server would update the <code class="language-plaintext highlighter-rouge">game_table</code> in <code class="language-plaintext highlighter-rouge">Game DB</code> to record the winner information.</p>
+<p>One benefits of using message queue to record the event is that, we could still maintain a single view of the sequence of the events happened and avoid the potential <em>split brain</em> problem in the world of concurrency (but this also depends on message queue’s replication strategy). Let’s discuss a little bit about different scenarios and see how we could still maintain a valid game state:</p>
+<ul>
+<li>Player A tries to revert move while Player B tries to make a new move<ul><li>In this case, we would write 2 message into the message queue: one is a revert message and one is a new move message. Even though they are conflicting with each other, the single topic would still guarantee that only one sequence would be stored, <code class="language-plaintext highlighter-rouge">player a, player b</code> or <code class="language-plaintext highlighter-rouge">player b, player a</code> (depending on which message first get to the message queue broker); thus on the client side, we would still receive the same sequence, and thus we could have logic to ignore the invalid message to make sure both player’s are in sync and the game state is valid</li></ul>
+</li>
+<li>Player A made a move, but there is some network delay to receive if the message is published successfully, and thus retried; in the meanwhile, Player B received A’s move already and made a move<ul>
+<li>This is a slightly more complicated concurrency issue. There are 2 possible approaches to solve it: 1. use the vector lock to capture the casual relationship among the events and ignore the message that is invalid; 2. use an idempotence key and deduplicate the message that has been processed already. Both solution works, one add additional complexity to the game logic and the other add complexity to the design as additional component need to be added.</li>
+<li>With vector lock, the player would bump the version number from the previous player’s version. In the above scenario, we would see message sequence like the code below in the topic. Retried message could be ignored as the version number is smaller than the pervious one</li>
+</ul>
+<div class="language-python highlighter-rouge">
+<div class="code-header"> <span data-label-text="Python"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button>
+</div>
+<div class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre>  <span class="p">[</span>
+      <span class="p">(</span><span class="n">p1</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">move</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> 
+      <span class="p">(</span><span class="n">p2</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">move</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span>
+      <span class="p">(</span><span class="n">p1</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="n">move</span><span class="o">-</span><span class="mi">3</span><span class="p">),</span>
+      <span class="p">(</span><span class="n">p2</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="n">move</span><span class="o">-</span><span class="mi">4</span><span class="p">),</span> <span class="c1"># delay happens here
+</span>      <span class="p">(</span><span class="n">p1</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="n">move</span><span class="o">-</span><span class="mi">3</span><span class="p">),</span> <span class="c1"># retry
+</span>      <span class="p">(</span><span class="n">p1</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="n">move</span><span class="o">-</span><span class="mi">3</span><span class="p">),</span> <span class="c1"># retry
+</span>      <span class="bp">...</span>
+  <span class="p">]</span>
+</pre></td>
+</tr></tbody></table></code></div>
+</div>
+<ul><li>With idempotence key, we could use a simple cache to record if the move has been already processed or not and avoid publish the retried message into the topic</li></ul>
+</li>
+<li>Player A made a move, received the message back and wait for Player B’s move, but Player B haven’t received Player A’s move yet and is waiting for Player A’s move<ul><li>In this case, it is similar to a deadlock situation where both player is waiting for the move due to the out-of-sync. The good news is that there is no new message being written into the topic and the game state is still valid. The reason of the deadlock could be that the <code class="language-plaintext highlighter-rouge">Websocket Server</code> connected with player B is temporarily portioned from the message queue broker. We could add a retry mechanism in the client side if there is no new message received from the server, we terminate the current websocket connection and establish a new one through <em>Load Balancer</em>.</li></ul>
+</li>
+</ul>
+<p>In this design, once player is disconnected, they don’t have to connect to the original <code class="language-plaintext highlighter-rouge">Websocket Server</code> as the game state is stored in the message queue. The player could connect to any <code class="language-plaintext highlighter-rouge">Websocket Server</code>, and query <code class="language-plaintext highlighter-rouge">game_table</code> to retrieve the ongoing <code class="language-plaintext highlighter-rouge">game_id</code> information, and then subscribe to the topic, consuming the messages from the beginning of the topic to rebuild the game state.</p>
+<p>As message queue is not intended for persistent storage, we could move the message to a database table such as <code class="language-plaintext highlighter-rouge">game_event_table</code> to free up the resource in message queue. This could be done via a offline daily job, that scan the <code class="language-plaintext highlighter-rouge">game_table</code> to find all game that has already been finished, and them move the message data from the message queue to <code class="language-plaintext highlighter-rouge">game_event_table</code>. This could be done via a dedicated in-house service, or some solution offered by the eco-system of the message queue.</p>
+<h2 id="high-availability">
+<span class="me-2">High Availability</span><a href="#high-availability" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h2>
+<p>In this section, let’s discuss how to achieve high availability for our online chess game.</p>
+<h3 id="game-db">
+<span class="me-2">Game DB</span><a href="#game-db" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h3>
+<p>The <code class="language-plaintext highlighter-rouge">Game DB</code> is one critical component as it stores all metadata about the game. We need to make sure the data stored is replicated to avoid it being the single point of failure. There is different strategy to achieve this: <strong>Single Leader Replication</strong>, <strong>Multi Leader Replication</strong> and <strong>Quorum Based Replication</strong>, as well as <strong>Synchronized</strong> and <strong>Asynchronized</strong> message replication among the replicas. I would not expand too much on this topic, you could refer to my video on <a href="https://www.youtube.com/watch?v=X8IhZx7fg24">DDIA Chapter 5</a> for more details.</p>
+<iframe class="embed-video" loading="lazy" src="https://www.youtube.com/embed/X8IhZx7fg24" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe><h3 id="message-queue">
+<span class="me-2">Message Queue</span><a href="#message-queue" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h3>
+<p>The message queue is another critical component in the <strong>pub/sub based architecture</strong> as all events data are stored there. We could use the similar strategy we used in <code class="language-plaintext highlighter-rouge">Game DB</code> to achieve high availability here. However, if we adopt <strong>Multi Leader Replication</strong> or <strong>Quorum Based Replication</strong>, there could be write conflict (e.g. player A’s revert and player B’s move) and it is challenging to resolve it (we could not directly merge them like a shop cart, nor we could ask client to do a custom fix as there are 2 players). Using <strong>Single Leader Replication</strong> would be a good choice for us to easier handle the consistency of the game, which is critical to online chess game. Also if we use <strong>Asynchronized</strong> replication, we might loss some events as the message is not replicated from leader to followers yet. Players would see that the game state transition back to the pervious status, and this might cause some issue especially in such turn-based competing game (you read the opponent’s move <img class="emoji" title=":joy_cat:" alt=":joy_cat:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f639.png" height="20" width="20">). So in this case, adopt <strong>Synchronized</strong> replication might be a better option.</p>
+<h3 id="game-server">
+<span class="me-2">Game Server</span><a href="#game-server" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h3>
+<p>The <code class="language-plaintext highlighter-rouge">Game Server</code> component is critical in the <strong>stateful game server</strong> design as it is maintaining the state of the game. There are several options to make it fault tolerant:</p>
+<ul>
+<li>
+<strong>WAL</strong>, this might be useful in the case that the <code class="language-plaintext highlighter-rouge">Game Server</code> is managing each game via multiple threads or processes, and the thread/process crash accidentally. The <code class="language-plaintext highlighter-rouge">Game Server</code> in this case could quickly rebuild the game state by reading the content in <strong>WAL</strong> file</li>
+<li>
+<strong>KV Cache</strong>, if the <code class="language-plaintext highlighter-rouge">Game Server</code> crash, then we need to store the game state somewhere aside from the server to make it possible to resume the game from a new server instead of waiting for the original server to become alive. We could use a <strong>KV store</strong> to store the game state periodically. If the original game server crash and we need to have a new server to take over, the new server could read the game state from the <strong>KV store</strong> and resume the game</li>
+<li>
+<strong>Replicate on other Game Server</strong>, nothing blocks us from replicating the game state to other game servers similar to what we do for <code class="language-plaintext highlighter-rouge">Game DB</code> and message queue. We could run a simple <em>leader election</em> upon the creation of the game to decided which server would be the leader to handle all the read/write requests, and replicate the game state some some other selected game servers. These information would be stored in <code class="language-plaintext highlighter-rouge">Coordination Service</code>. Also each game server would also send heartbeat to <code class="language-plaintext highlighter-rouge">Coordination Service</code> for the liveness check. If one replica find that the leader is dead, it could initiate a new leader election and nominate itself as the new leader. Once new leader is elected, players (right now should be retrying connecting) would be redirected to the new leader and the game would resume from there. Similar to the discussion in the above section, adopting <strong>Synchronized</strong> replication might be a better option to avoid the traverse back issue. If we don’t use the <code class="language-plaintext highlighter-rouge">Coordination Service</code> to handle the leader election, we could also run a consensus algorithm such as RAFT under the hood to select a server as the leader of a game and other servers could be followers. However, running consensus algorithm on a large cluster would cause high performance cost.</li>
+</ul>
+<p>Adopting <strong>KV store</strong> seems to be a attractive option, but there are some additional points we should bear in mind to have a more comprehensive understanding on this option. One thing is the frequency to store the game state, a.k.a snapshotting. We could snapshot at each move, but this would cause large delay; or we could snapshot after certain batch of moves or certain period of time, but this has the risk of losing part of the game state. This is a trade off we need to discuss based on the scenario. In the case of online chess game, since majority of time is spent by players thinking about their next move, thus the delay incurred by snapshotting after each move is relatively low.</p>
+<p>In both the <strong>KV store</strong> and <strong>Replication on other Game Server</strong> approach, it is critical to have a single server as the leader on the game and have the single authority to determine the game state as well as store it. This is the reason why we have <code class="language-plaintext highlighter-rouge">Coordination Service</code> to help achieve this. <strong>Replication on other Game Server</strong> could leverage the <code class="language-plaintext highlighter-rouge">Coordination Service</code> for the leader election (e.g. <a href="https://zookeeper.apache.org/doc/current/recipes.html">use sequential/ephemeral node in Zookeeper</a> or use <a href="https://github.com/etcd-io/etcd/blob/main/client/v3/concurrency/election.go">etcd leader election API</a>). In the <strong>KV store</strong> approach, the <code class="language-plaintext highlighter-rouge">Coordination Service</code> would act as a lease manager to make sure that at any time, only one server could hold the lease and thus be the leader of the game. For example, if <code class="language-plaintext highlighter-rouge">Game Server A</code> is the current leader part suddenly portioned from the <code class="language-plaintext highlighter-rouge">Coordination Service</code>, the <code class="language-plaintext highlighter-rouge">Coordination Service</code> would wait for certain time to make sure the lease has passed to guarantee that any remaining write from <code class="language-plaintext highlighter-rouge">Game Server A</code> has been applied to the <code class="language-plaintext highlighter-rouge">KV cache</code>, and then a new server could acquire the lease and become the new leader, start reading the snapshot from the <code class="language-plaintext highlighter-rouge">KV cache</code> and resume the game. We also need to be able to pause the game from the old server and redirect the player to the new server, this could be done by having a check to see if the game server still receive heartbeat ack from the <code class="language-plaintext highlighter-rouge">Coordination Service</code>, if not, then after the lease timeout, it would disable the connection it is holding so that players would trigger the reconnection logic to be direct to the new game server.</p>
+<h3 id="coordination-service">
+<span class="me-2">Coordination Service</span><a href="#coordination-service" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h3>
+<p>This is usually some third party service that is running on a small quorum of nodes with some distributed consensus algorithm such as <a href="https://raft.github.io">RAFT</a> to achieve high availability. Discussion into the details of these algorithm is usually out the scope of traditional system design interview. But I still recommend to learn about these algorithm as they are critical to understand the underlying principle of distributed system.</p>
+<p>Here is a final view of the <strong>stateful game server</strong> design with high availability consideration:</p>
+<p><a href="/assets/online-chess-game-server-ha.png" class="popup img-link shimmer"><img src="/assets/online-chess-game-server-ha.png" alt="Stateful Game Server with High Availability" width="700" height="400" loading="lazy"></a></p>
+<h3 id="websocket-server">
+<span class="me-2">Websocket Server</span><a href="#websocket-server" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h3>
+<p>There is no special treatment for the <code class="language-plaintext highlighter-rouge">Websocket Server</code> to make it highly available. As their primary goal is to keep the websocket connection with players. If one server is down, the player could connect to another server and resume the game from there.</p>
+<h2 id="high-scalability">
+<span class="me-2">High Scalability</span><a href="#high-scalability" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h2>
+<p>The scalability of the 2 design choice is slightly different. The <strong>pub/sub based architecture</strong> is more scalable due to the following factors:</p>
+<ul><li>The decoupling of player connection and game state storage. As the number of players increasing, the number of websocket connections and the game state need to be stored also increase. In <strong>pub/sub based architecture</strong>, as we have decoupled these 2 properties into different components, we have the freedom to scale them independently. While in the <strong>stateful game server</strong> design, these 2 properties are coupled on the same game server and make it hard to scale appropriately</li></ul>
+<p>In both design, the data could be distributed across multiple nodes by sharding on <code class="language-plaintext highlighter-rouge">game_id</code> with hashing functions. Key range based sharding might not be a good choice here due to the imbalanced distribution of the data. For all the tables we stored in <code class="language-plaintext highlighter-rouge">Game DB</code>, such as <code class="language-plaintext highlighter-rouge">game_table</code> and <code class="language-plaintext highlighter-rouge">game_event_table</code>, we could also shard them by the <code class="language-plaintext highlighter-rouge">game_id</code>.</p>
+<h2 id="comparison">
+<span class="me-2">Comparison</span><a href="#comparison" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h2>
+<p>Overall, <strong>stateful game server</strong> is relative easier to maintain and achieve the consistency requirement; while <strong>pub/sub based architecture</strong> is more scalable.</p>
+<div class="table-wrapper"><table>
+<thead><tr>
+<th> </th>
+<th>Stateful Game Server</th>
+<th>Pub/Sub Based Architecture</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Game state</td>
+<td>Final state</td>
+<td>Sequence of events</td>
+</tr>
+<tr>
+<td>Complexity</td>
+<td>Low, easier to reason about</td>
+<td>High, need to reason about the events and handle the potential illegal ones</td>
+</tr>
+<tr>
+<td>Latency</td>
+<td>Low, single round of connection</td>
+<td>Higher, 2 step of connection</td>
+</tr>
+<tr>
+<td>High Availability</td>
+<td>Achieved by snapshotting game state</td>
+<td>Achieved by replication strategy of message queue</td>
+</tr>
+<tr>
+<td>Scalability</td>
+<td>Need to trade off between connection, CPU/Mem usage</td>
+<td>Easier to scale horizontally and individually</td>
+</tr>
+<tr>
+<td>Debugability</td>
+<td>Low, need additional setup such as <code class="language-plaintext highlighter-rouge">game_history_table</code>
+</td>
+<td>High, natively support that</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote class="prompt-tip"><p>If you find this post helpful, feel free to scan the QR code below to support me and treat me to a cup of coffee</p></blockquote>
+<h2 id="reference">
+<span class="me-2">Reference</span><a href="#reference" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h2>
+<ul>
+<li><a href="https://www.usenix.org/legacy/event/atc10/tech/full_papers/Hunt.pdf">Zookeeper</a></li>
+<li><a href="https://etcd.io">Etcd</a></li>
+<li><a href="https://mp.weixin.qq.com/s/kI0HUTFVr4YEBpLRZWLEDg">我用消息队列做了一个联机小游戏</a></li>
+<li><a href="https://raft.github.io">Raft</a></li>
+<li><a href="https://websockets.readthedocs.io/en/stable/intro/tutorial1.html">Python Websocket</a></li>
+<li><a href="https://pulsar.apache.org/docs/3.3.x/concepts-architecture-overview/">Pulsar</a></li>
+</ul>
+</div>
+<div class="post-tail-wrapper text-muted">
+<div class="post-meta mb-3"> <i class="far fa-folder-open fa-fw me-1"></i> <a href="/categories/distributed-system/">Distributed System</a>
+</div>
+<div class="post-tags"> <i class="fa fa-tags fa-fw me-1"></i> <a href="/tags/distributed-system/" class="post-tag no-text-decoration">distributed system</a> <a href="/tags/stateful-service/" class="post-tag no-text-decoration">stateful service</a> <a href="/tags/message-queue/" class="post-tag no-text-decoration">message queue</a>
+</div>
+<div class=" post-tail-bottom d-flex justify-content-between align-items-center mt-5 pb-2 ">
+<div class="license-wrapper"> This post is licensed under <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> by the author.</div>
+<div class="share-wrapper d-flex align-items-center"> <span class="share-label text-muted">Share</span> <span class="share-icons"> <a href="https://twitter.com/intent/tweet?text=How%20to%20Design%20Online%20Chess%20Game%20-%20Coding%20Monkey&amp;url=https%3A%2F%2Fpyemma.github.io%2FHow-to-design-online-chess-game%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Twitter" aria-label="Twitter"> <i class="fa-fw fa-brands fa-square-x-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=How%20to%20Design%20Online%20Chess%20Game%20-%20Coding%20Monkey&amp;u=https%3A%2F%2Fpyemma.github.io%2FHow-to-design-online-chess-game%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Facebook" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=https%3A%2F%2Fpyemma.github.io%2FHow-to-design-online-chess-game%2F&amp;text=How%20to%20Design%20Online%20Chess%20Game%20-%20Coding%20Monkey" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Telegram" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <button id="copy-link" aria-label="Copy link" class="btn small" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy link" data-title-succeed="Link copied successfully!"> <i class="fa-fw fas fa-link pe-none fs-6"></i> </button> </span>
+</div>
+</div>
+</div></article></main><aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 mb-5 text-muted"><div class="access">
+<section id="access-lastmod"><h2 class="panel-heading">Recently Updated</h2>
+<ul class="content list-unstyled ps-0 pb-1 ms-1 mt-2">
+<li class="text-truncate lh-lg"> <a href="/DDIA-Stream-Processing-I/">DDIA Chapter 11 Stream Processing Part I</a>
+</li>
+<li class="text-truncate lh-lg"> <a href="/How-to-Design-Webhook/">How to Design Webhook</a>
+</li>
+<li class="text-truncate lh-lg"> <a href="/How-to-design-auction-system/">How to Design Auction System</a>
+</li>
+<li class="text-truncate lh-lg"> <a href="/Features-in-Recommendation-System/">那些年，我们追过的 Feature</a>
+</li>
+<li class="text-truncate lh-lg"> <a href="/How-to-design-online-chess-game/">How to Design Online Chess Game</a>
+</li>
+</ul></section><section><h2 class="panel-heading">Trending Tags</h2>
+<div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/tags/system-design/">system design</a> <a class="post-tag btn btn-outline-primary" href="/tags/llm/">llm</a> <a class="post-tag btn btn-outline-primary" href="/tags/message-queue/">message queue</a> <a class="post-tag btn btn-outline-primary" href="/tags/realtime-system/">realtime system</a> <a class="post-tag btn btn-outline-primary" href="/tags/auction/">auction</a> <a class="post-tag btn btn-outline-primary" href="/tags/distributed-system/">distributed system</a> <a class="post-tag btn btn-outline-primary" href="/tags/feature/">feature</a> <a class="post-tag btn btn-outline-primary" href="/tags/job-scheduler/">job scheduler</a> <a class="post-tag btn btn-outline-primary" href="/tags/llm-training/">llm training</a> <a class="post-tag btn btn-outline-primary" href="/tags/machine-learning-design/">machine learning design</a>
+</div></section>
+</div>
+<section id="toc-wrapper" class="d-none ps-0 pe-4"><h2 class="panel-heading ps-3 mb-2">Contents</h2>
+<nav id="toc"></nav></section></aside>
+</div>
+<div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 px-md-4">
+<aside id="related-posts" aria-labelledby="related-label"><h3 class="mb-4" id="related-label">Further Reading</h3>
+<nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4"><article class="col"> <a href="/DDIA-Stream-Processing-I/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1700553600" data-df="ll"> Nov 21, 2023 </time><h4 class="pt-0 my-2">DDIA Chapter 11 Stream Processing Part I</h4>
+<div class="text-muted"><p>In this post, we would introduce stream processing. Since it is a large topic, we would break it down into 2 part, and in the first part, we would focus on the component that is related to the “flo...</p></div>
+</div></a></article><article class="col"> <a href="/Flyte-How-Workflow-Get-Scheduled/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1726124400" data-df="ll"> Sep 12, 2024 </time><h4 class="pt-0 my-2">How Workflow Get Scheduled via Plugins in Flyte</h4>
+<div class="text-muted"><p>Reading open source code has been a recommended approach for software engineers to learn. However, in my past 8 years career, I didn’t do a good job on that. After working in a startup for 1 year, ...</p></div>
+</div></a></article><article class="col"> <a href="/Book-Pattern-of-Distributed-System/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1720162800" data-df="ll"> Jul 5, 2024 </time><h4 class="pt-0 my-2">读书笔记 - Patterns of Distributed System</h4>
+<div class="text-muted"><p>最近读了一本和 distributed system 相关的书籍，介绍了在 distributed system 里面常用的一些 pattern. 这是一篇简要的读书笔记，把书中提到的几个 pattern 总结了下来; 我计划会经常更新这篇 blog, 把我新学习到的或者总结出来的一些 pattern 记录在这里; 希望能起到一个引导性的作用，给大家提供一个提纲挈领的思路 Patterns...</p></div>
+</div></a></article></nav></aside><nav class="post-navigation d-flex justify-content-between" aria-label="Post Navigation"> <a href="/Flyte-How-Workflow-Get-Scheduled/" class="btn btn-outline-primary" aria-label="Older"><p>How Workflow Get Scheduled via Plugins in Flyte</p></a><div class="btn btn-outline-primary disabled" aria-label="Newer"><p>-</p></div></nav><div id="disqus_thread"><p class="text-center text-muted small">Comments powered by <a href="https://disqus.com/">Disqus</a>.</p></div>
+<script type="text/javascript"> var disqus_config = function () { this.page.url = 'https://pyemma.github.io/How-to-design-online-chess-game/'; this.page.identifier = '/How-to-design-online-chess-game/'; };var disqus_observer = new IntersectionObserver( function (entries) { if (entries[0].isIntersecting) { (function () { var d = document, s = d.createElement('script'); s.src = 'https://pyemma.disqus.com/embed.js'; s.setAttribute('data-timestamp', +new Date()); (d.head || d.body).appendChild(s); })(); disqus_observer.disconnect(); } }, { threshold: [0] } ); disqus_observer.observe(document.getElementById('disqus_thread'));function reloadDisqus() { if (event.source === window && event.data && event.data.direction === ModeToggle.ID) {if (typeof DISQUS === 'undefined') { return; } if (document.readyState == 'complete') { DISQUS.reset({ reload: true, config: disqus_config }); } } } if (document.getElementById('mode-toggle')) { window.addEventListener('message', reloadDisqus); } </script><footer aria-label="Site Info" class=" d-flex flex-column justify-content-center text-muted flex-lg-row justify-content-lg-between align-items-lg-center pb-lg-3 "><p>© <time>2024</time> <a href="https://github.com/pyemma">Coding Monkey</a>. <span data-bs-toggle="tooltip" data-bs-placement="top" title="Except where otherwise noted, the blog posts on this site are licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License by the author.">Some rights reserved.</span></p>
+<p>Using the <a data-bs-toggle="tooltip" data-bs-placement="top" title="v7.1.1" href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener">Chirpy</a> theme for <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a>.</p></footer>
+</div></div>
+<div id="search-result-wrapper" class="d-flex justify-content-center d-none"><div class="col-11 content">
+<div id="search-hints"><section><h2 class="panel-heading">Trending Tags</h2>
+<div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/tags/system-design/">system design</a> <a class="post-tag btn btn-outline-primary" href="/tags/llm/">llm</a> <a class="post-tag btn btn-outline-primary" href="/tags/message-queue/">message queue</a> <a class="post-tag btn btn-outline-primary" href="/tags/realtime-system/">realtime system</a> <a class="post-tag btn btn-outline-primary" href="/tags/auction/">auction</a> <a class="post-tag btn btn-outline-primary" href="/tags/distributed-system/">distributed system</a> <a class="post-tag btn btn-outline-primary" href="/tags/feature/">feature</a> <a class="post-tag btn btn-outline-primary" href="/tags/job-scheduler/">job scheduler</a> <a class="post-tag btn btn-outline-primary" href="/tags/llm-training/">llm training</a> <a class="post-tag btn btn-outline-primary" href="/tags/machine-learning-design/">machine learning design</a>
+</div></section></div>
+<div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div>
+</div></div>
+</div>
+<aside aria-label="Scroll to Top"> <button id="back-to-top" type="button" class="btn btn-lg btn-box-shadow"> <i class="fas fa-angle-up"></i> </button></aside>
+</div><div id="mask"></div><aside id="notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-animation="true" data-bs-autohide="false"><div class="toast-header"> <button type="button" class="btn-close ms-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+</div>
+<div class="toast-body text-center pt-0">
+<p class="px-2 mb-3">A new version of content is available.</p>
+<button type="button" class="btn btn-primary" aria-label="Update"> Update </button>
+</div></aside><script src="https://cdn.jsdelivr.net/combine/npm/simple-jekyll-search@1.10.0/dest/simple-jekyll-search.min.js,npm/loading-attribute-polyfill@2.1.1/dist/loading-attribute-polyfill.umd.min.js,npm/glightbox@3.3.0/dist/js/glightbox.min.js,npm/clipboard@2.0.11/dist/clipboard.min.js,npm/dayjs@1.11.13/dayjs.min.js,npm/dayjs@1.11.13/locale/en.js,npm/dayjs@1.11.13/plugin/relativeTime.js,npm/dayjs@1.11.13/plugin/localizedFormat.js,npm/tocbot@4.29.0/dist/tocbot.min.js"></script> <script src="/assets/js/dist/post.min.js"></script> <script defer src="/app.min.js?baseurl=&amp;register=true"></script> <script defer src="https://www.googletagmanager.com/gtag/js?id=G-M1GM2SJR6M"></script> <script> document.addEventListener('DOMContentLoaded', function (event) { window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-M1GM2SJR6M'); }); </script> <script>SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<article class="px-1 px-sm-2 px-lg-4 px-xl-0"><header><h2><a href="{url}">{title}</a></h2><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div></header><p>{snippet}</p></article>', noResultsText: '<p class="mt-5">Oops! No results found.</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="me-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); </script>
