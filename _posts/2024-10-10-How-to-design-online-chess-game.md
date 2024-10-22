@@ -189,6 +189,8 @@ Overall, **stateful game server** is relative easier to maintain and achieve the
 > If you find this post helpful, feel free to scan the QR code below to support me and treat me to a cup of coffee
 {: .prompt-tip }
 
+![Thank You](/assets/qr%20code.png){: width="300" height="300" }
+
 ## Reference
 
 - [Zookeeper](https://www.usenix.org/legacy/event/atc10/tech/full_papers/Hunt.pdf)
