@@ -16,7 +16,7 @@ timezone:
 
 title: Coding Monkey # the main title
 
-tagline: I'm also providing coaching to help you become more success in your career, <a href="https://bit.ly/41vi77B">book a session</a> # it will display as the subtitle
+tagline: I’m a staff software engineer with rich experience in recommendation system and machine learning infrastructure. I spent my last 8 years in both Big-Tech (Meta & LinkedIn) and startups (Aven), and I’m glad to see if my past experience and learnings could help boost your career growth, <a href="https://bit.ly/41vi77B">book a session now :)</a> # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
   I am a coding monkey, and I am proud of it. I have done lots of work in machine learning area, especially recommendation system and AutoML. This blog summarize my journey to become an expert monkey in distributed system and LLM.
