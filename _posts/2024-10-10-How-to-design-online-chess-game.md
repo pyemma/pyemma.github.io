@@ -5,7 +5,7 @@ author: pyemma
 categories: [Distributed System]
 tags: [distributed system, stateful service, message queue]
 toc: true
-match: true
+math: true
 ---
 
 I have been a fan of online game since my parent bought me a PC when I was in 5th grade. I could still feel the excitement when every Thursday night I rushed home and played DaHuaXiYou 2 with my friends. This is also the direct reason why I decided to major in computer science in college. Today, let's discuss something related to online game: how to design an online chess game.

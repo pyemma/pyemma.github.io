@@ -45,7 +45,12 @@
 <lastmod>2025-01-04T00:00:00-08:00</lastmod>
 </url>
 <url>
+<loc>https://pyemma.github.io/How-to-design-slack/</loc>
+<lastmod>2025-02-01T00:00:00-08:00</lastmod>
+</url>
+<url>
 <loc>https://pyemma.github.io/categories/</loc>
+<<<<<<< HEAD
 <lastmod>2025-02-04T21:26:37-08:00</lastmod>
 </url>
 <url>
@@ -59,6 +64,21 @@
 <url>
 <loc>https://pyemma.github.io/about/</loc>
 <lastmod>2025-02-04T21:26:37-08:00</lastmod>
+=======
+<lastmod>2025-02-03T20:07:54-08:00</lastmod>
+</url>
+<url>
+<loc>https://pyemma.github.io/tags/</loc>
+<lastmod>2025-02-03T20:07:54-08:00</lastmod>
+</url>
+<url>
+<loc>https://pyemma.github.io/archives/</loc>
+<lastmod>2025-02-03T20:07:54-08:00</lastmod>
+</url>
+<url>
+<loc>https://pyemma.github.io/about/</loc>
+<lastmod>2025-02-03T20:07:54-08:00</lastmod>
+>>>>>>> 3e2ba94f (Design slack blog)
 </url>
 <url>
 <loc>https://pyemma.github.io/</loc>
@@ -113,6 +133,9 @@
 </url>
 <url>
 <loc>https://pyemma.github.io/tags/embeddings/</loc>
+</url>
+<url>
+<loc>https://pyemma.github.io/tags/websocket/</loc>
 </url>
 <url>
 <loc>https://pyemma.github.io/categories/distributed-system/</loc>
