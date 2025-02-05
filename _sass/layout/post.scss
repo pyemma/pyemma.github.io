@@ -2,6 +2,9 @@
   Post-specific style
 */
 
+@use 'addon/variables';
+@use 'addon/module';
+
 %btn-post-nav {
   width: 50%;
   position: relative;
@@ -115,7 +118,7 @@ header {
 
 .share-mastodon {
   /* See: https://github.com/justinribeiro/share-to-mastodon#properties */
-  --wc-stm-font-family: $font-family-base;
+  --wc-stm-font-family: variables.$font-family-base;
   --wc-stm-dialog-background-color: var(--card-bg);
   --wc-stm-form-button-border: 1px solid var(--btn-border-color);
   --wc-stm-form-submit-background-color: var(--sidebar-btn-bg);
@@ -173,12 +176,12 @@ header {
     }
 
     &:first-child {
-      border-radius: $radius-lg 0 0 $radius-lg;
+      border-radius: variables.$radius-lg 0 0 variables.$radius-lg;
       left: 0.5px;
     }
 
     &:last-child {
-      border-radius: 0 $radius-lg $radius-lg 0;
+      border-radius: 0 variables.$radius-lg variables.$radius-lg 0;
       right: 0.5px;
     }
   }
@@ -294,7 +297,7 @@ header {
 
 #related-posts {
   > h3 {
-    @include label(1.1rem, 600);
+    @include module.label(1.1rem, 600);
   }
 
   time {
@@ -335,7 +338,7 @@ header {
 }
 
 .share-label {
-  @include label(inherit, 400, inherit);
+  @include module.label(inherit, 400, inherit);
 
   &::after {
     content: ':';

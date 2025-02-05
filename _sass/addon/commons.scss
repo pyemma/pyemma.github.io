@@ -1,27 +1,32 @@
 /* The common styles */
 
+@use 'colors/typography-light';
+@use 'colors/typography-dark';
+@use 'variables';
+@use 'module';
+
 html {
   font-size: 16px;
 
   @media (prefers-color-scheme: light) {
     &:not([data-mode]),
     &[data-mode='light'] {
-      @include light-scheme;
+      @include typography-light.light-scheme;
     }
 
     &[data-mode='dark'] {
-      @include dark-scheme;
+      @include typography-dark.dark-scheme;
     }
   }
 
   @media (prefers-color-scheme: dark) {
     &:not([data-mode]),
     &[data-mode='dark'] {
-      @include dark-scheme;
+      @include typography-dark.dark-scheme;
     }
 
     &[data-mode='light'] {
-      @include light-scheme;
+      @include typography-light.light-scheme;
     }
   }
 }
@@ -32,7 +37,7 @@ body {
     env(safe-area-inset-bottom) env(safe-area-inset-left);
   color: var(--text-color);
   -webkit-font-smoothing: antialiased;
-  font-family: $font-family-base;
+  font-family: variables.$font-family-base;
 }
 
 /* --- Typography --- */
@@ -117,10 +122,10 @@ blockquote {
     }
   }
 
-  @include prompt('tip', '\f0eb', $fa-style: 'regular');
-  @include prompt('info', '\f06a', $rotate: 180);
-  @include prompt('warning', '\f06a');
-  @include prompt('danger', '\f071');
+  @include module.prompt('tip', '\f0eb', $fa-style: 'regular');
+  @include module.prompt('info', '\f06a', $rotate: 180);
+  @include module.prompt('warning', '\f06a');
+  @include module.prompt('danger', '\f071');
 }
 
 kbd {
@@ -134,7 +139,7 @@ kbd {
   padding-top: 0.1rem;
   color: var(--kbd-text-color);
   background-color: var(--kbd-bg-color);
-  border-radius: $radius-sm;
+  border-radius: variables.$radius-sm;
   border: solid 1px var(--kbd-wrap-color);
   box-shadow: inset 0 -2px 0 var(--kbd-wrap-color);
 }
@@ -146,7 +151,7 @@ hr {
 
 footer {
   background-color: var(--main-bg);
-  height: $footer-height;
+  height: variables.$footer-height;
   border-top: 1px solid var(--main-border-color);
 
   @extend %text-xs;
@@ -210,7 +215,7 @@ i {
     font-family: inherit;
     line-height: inherit;
 
-    @include label(inherit);
+    @include module.label(inherit);
   }
 
   .post-tag {
@@ -231,7 +236,7 @@ i {
     color: inherit;
 
     &:hover {
-      @extend %link-hover;
+      @extend %link-hover !optional;
     }
 
     @extend %no-bottom-border;
@@ -259,8 +264,8 @@ i {
 
 .footnote {
   @at-root a#{&} {
-    @include ml-mr(1px);
-    @include pl-pr(2px);
+    @include module.ml-mr(1px);
+    @include module.pl-pr(2px);
 
     border-bottom-style: none !important;
   }
@@ -384,7 +389,7 @@ main {
   p {
     > a.popup {
       &:not(.normal):not(.left):not(.right) {
-        @include align-center;
+        @include module.align-center;
       }
     }
   }
@@ -421,7 +426,7 @@ main {
     &.popup {
       @extend %no-cursor;
       @extend %img-caption;
-      @include mt-mb(0.5rem);
+      @include module.mt-mb(0.5rem);
 
       cursor: zoom-in;
     }
@@ -680,14 +685,14 @@ $btn-border-width: 3px;
 $btn-mb: 0.5rem;
 
 #sidebar {
-  @include pl-pr(0);
+  @include module.pl-pr(0);
 
   position: fixed;
   top: 0;
   left: 0;
   height: 100%;
   overflow-y: auto;
-  width: $sidebar-width;
+  width: variables.$sidebar-width;
   z-index: 99;
   background: var(--sidebar-bg);
   border-right: 1px solid var(--sidebar-border-color);
@@ -729,7 +734,7 @@ $btn-mb: 0.5rem;
   }
 
   .profile-wrapper {
-    @include mt-mb(2.5rem);
+    @include module.mt-mb(2.5rem);
     @extend %clickable-transition;
 
     padding-left: 2.5rem;
@@ -775,7 +780,7 @@ $btn-mb: 0.5rem;
       padding-right: 1.5rem;
 
       a.nav-link {
-        @include pt-pb(0.6rem);
+        @include module.pt-pb(0.6rem);
 
         display: flex;
         align-items: center;
@@ -849,7 +854,7 @@ $btn-mb: 0.5rem;
       @extend %clickable-transition;
 
       &:not(:last-child) {
-        margin-right: $sb-btn-gap;
+        margin-right: variables.$sb-btn-gap;
       }
     }
 
@@ -865,7 +870,7 @@ $btn-mb: 0.5rem;
 
     .icon-border {
       @extend %no-cursor;
-      @include ml-mr(calc(($sb-btn-gap - $btn-border-width) / 2));
+      @include module.ml-mr(calc((variables.$sb-btn-gap - $btn-border-width) / 2));
 
       background-color: var(--sidebar-btn-color);
       content: '';
@@ -905,7 +910,7 @@ $btn-mb: 0.5rem;
 /* --- top-bar --- */
 
 #topbar-wrapper {
-  height: $topbar-height;
+  height: variables.$topbar-height;
   background-color: var(--topbar-bg);
 }
 
@@ -935,43 +940,43 @@ $btn-mb: 0.5rem;
 } /* #topbar */
 
 ::-webkit-input-placeholder {
-  @include placeholder;
+  @include module.placeholder;
 }
 
 ::-moz-placeholder {
-  @include placeholder;
+  @include module.placeholder;
 }
 
 :-ms-input-placeholder {
-  @include placeholder;
+  @include module.placeholder;
 }
 
 ::-ms-input-placeholder {
-  @include placeholder;
+  @include module.placeholder;
 }
 
 ::placeholder {
-  @include placeholder;
+  @include module.placeholder;
 }
 
 :focus::-webkit-input-placeholder {
-  @include placeholder-focus;
+  @include module.placeholder-focus;
 }
 
 :focus::-moz-placeholder {
-  @include placeholder-focus;
+  @include module.placeholder-focus;
 }
 
 :focus:-ms-input-placeholder {
-  @include placeholder-focus;
+  @include module.placeholder-focus;
 }
 
 :focus::-ms-input-placeholder {
-  @include placeholder-focus;
+  @include module.placeholder-focus;
 }
 
 :focus::placeholder {
-  @include placeholder-focus;
+  @include module.placeholder-focus;
 }
 
 search {
@@ -1114,7 +1119,7 @@ search {
 #main-wrapper {
   position: relative;
 
-  @include pl-pr(0);
+  @include module.pl-pr(0);
 
   > .container {
     min-height: 100vh;
@@ -1124,7 +1129,7 @@ search {
 #topbar-wrapper.row,
 #main-wrapper > .container > .row,
 #search-result-wrapper > .row {
-  @include ml-mr(0);
+  @include module.ml-mr(0);
 }
 
 #tail-wrapper {
@@ -1142,12 +1147,12 @@ search {
   cursor: pointer;
   position: fixed;
   right: 1rem;
-  bottom: calc($footer-height-large - $back2top-size / 2);
+  bottom: calc(variables.$footer-height-large - variables.$back2top-size / 2);
   background: var(--button-bg);
   color: var(--btn-backtotop-color);
   padding: 0;
-  width: $back2top-size;
-  height: $back2top-size;
+  width: variables.$back2top-size;
+  height: variables.$back2top-size;
   border-radius: 50%;
   border: 1px solid var(--btn-backtotop-border-color);
   transition: opacity 0.5s ease-in-out, transform 0.2s ease-out;
@@ -1158,7 +1163,7 @@ search {
   }
 
   i {
-    line-height: $back2top-size;
+    line-height: variables.$back2top-size;
     position: relative;
     bottom: 2px;
   }
@@ -1232,7 +1237,7 @@ search {
   main {
     .content {
       > blockquote[class^='prompt-'] {
-        @include ml-mr(-1rem);
+        @include module.ml-mr(-1rem);
 
         border-radius: 0;
         max-width: none;
@@ -1257,7 +1262,7 @@ search {
 
   #main-wrapper > .container {
     @extend %full-width;
-    @include pl-pr(0);
+    @include module.pl-pr(0);
   }
 }
 
@@ -1276,7 +1281,7 @@ search {
   footer {
     @include slide;
 
-    height: $footer-height-large;
+    height: variables.$footer-height-large;
     padding: 1.5rem 0;
   }
 
@@ -1286,7 +1291,7 @@ search {
     }
 
     #main-wrapper {
-      transform: translateX($sidebar-width);
+      transform: translateX(variables.$sidebar-width);
     }
 
     #back-to-top {
@@ -1297,8 +1302,8 @@ search {
   #sidebar {
     @include slide;
 
-    transform: translateX(-$sidebar-width); /* hide */
-    -webkit-transform: translateX(-$sidebar-width);
+    transform: translateX(-(variables.$sidebar-width)); /* hide */
+    -webkit-transform: translateX(-(variables.$sidebar-width));
   }
 
   #main-wrapper {
@@ -1361,7 +1366,7 @@ search {
   }
 
   #main-wrapper {
-    margin-left: $sidebar-width;
+    margin-left: variables.$sidebar-width;
   }
 
   #sidebar {
@@ -1375,11 +1380,11 @@ search {
   }
 
   search {
-    max-width: $search-max-width;
+    max-width: variables.$search-max-width;
   }
 
   #search-result-wrapper {
-    max-width: $main-content-max-width;
+    max-width: variables.$main-content-max-width;
     justify-content: start !important;
   }
 
@@ -1396,7 +1401,7 @@ search {
   /* button 'back-to-Top' position */
   #back-to-top {
     right: 5%;
-    bottom: calc($footer-height - $back2top-size / 2);
+    bottom: calc(variables.$footer-height - variables.$back2top-size / 2);
   }
 
   #topbar-title {
@@ -1473,7 +1478,7 @@ search {
 
 @media all and (min-width: 1400px) {
   #back-to-top {
-    right: calc((100vw - $sidebar-width - 1140px) / 2 + 3rem);
+    right: calc((100vw - variables.$sidebar-width - 1140px) / 2 + 3rem);
   }
 }
 
@@ -1481,21 +1486,21 @@ search {
   $icon-gap: 1rem;
 
   #main-wrapper {
-    margin-left: $sidebar-width-large;
+    margin-left: variables.$sidebar-width-large;
   }
 
   #topbar-wrapper {
-    left: $sidebar-width-large;
+    left: variables.$sidebar-width-large;
   }
 
   search {
     margin-right: calc(
-      $main-content-max-width / 4 - $search-max-width - 0.75rem
+      variables.$main-content-max-width / 4 - variables.$search-max-width - 0.75rem
     );
   }
 
   #main-wrapper > .container {
-    max-width: $main-content-max-width;
+    max-width: variables.$main-content-max-width;
     padding-left: 1.75rem !important;
     padding-right: 1.75rem !important;
   }
@@ -1507,12 +1512,12 @@ search {
 
   #back-to-top {
     right: calc(
-      (100vw - $sidebar-width-large - $main-content-max-width) / 2 + 2rem
+      (100vw - variables.$sidebar-width-large - variables.$main-content-max-width) / 2 + 2rem
     );
   }
 
   #sidebar {
-    width: $sidebar-width-large;
+    width: variables.$sidebar-width-large;
 
     .profile-wrapper {
       margin-top: 3.5rem;
@@ -1522,7 +1527,7 @@ search {
 
     ul {
       li.nav-item {
-        @include pl-pr(2.75rem);
+        @include module.pl-pr(2.75rem);
       }
     }
 
@@ -1531,11 +1536,11 @@ search {
       margin-bottom: 1.75rem;
 
       a:not(:last-child) {
-        margin-right: $sb-btn-gap-lg;
+        margin-right: variables.$sb-btn-gap-lg;
       }
 
       .icon-border {
-        @include ml-mr(calc(($sb-btn-gap-lg - $btn-border-width) / 2));
+        @include module.ml-mr(calc((variables.$sb-btn-gap-lg - $btn-border-width) / 2));
       }
     }
   }
