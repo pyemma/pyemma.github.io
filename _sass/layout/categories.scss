@@ -2,6 +2,9 @@
   Style for Tab Categories
 */
 
+@use 'addon/variables';
+@use 'addon/module';
+
 %category-icon-color {
   color: gray;
 }
@@ -16,7 +19,7 @@
   }
 
   .card-header {
-    $radius: calc($radius-lg - 1px);
+    $radius: calc(variables.$radius-lg - 1px);
 
     padding: 0.75rem;
     border-radius: $radius;
