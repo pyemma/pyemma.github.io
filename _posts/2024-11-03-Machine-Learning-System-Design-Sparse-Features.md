@@ -77,7 +77,7 @@ The last example trying to align semantic embedding from LLM and id embedding co
 
 ![Huawei FLIP](/assets/huawei-flip.png)
 
-### Cardinality of embeddings
+### Cardinality of embeddings {#semantic-id}
 
 One hidden story I haven't talk about is how actually a raw id get converted to a dense vector through the `embedding lookup table`. In general, the raw id would be converted to an index within the `embedding lookup table` and retrieve the corresponding vector. If the total number of raw ids is not that large, we could have a 1-to-1 mapping between ids and index (in another world, the column size of the `embedding lookup table` is the same as the number of ids). However, if we have much much more number of ids, it is impossible to have a that large table. In this scenario, we would apply what is called *hashing trick*: apply a hash function on the id and mod the total column number. This means that a single vector actually represent multiple different ids which might be totally irrelevant with each other: they might be contradict with each other; or the vector is overwhelm by popular ids. In my pervious company, I have asked about this issue and proposed if we could infuse certain category information into id or id hashing function to alleviate this collision issue, but didn't work it out due to "ruthless prioritization" :pensive:.
 
