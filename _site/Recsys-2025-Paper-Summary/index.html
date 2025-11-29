@@ -1,0 +1,294 @@
+<!doctype html><html lang="en" ><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f7"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b1b1e"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="viewport" content="width=device-width, user-scalable=no initial-scale=1, shrink-to-fit=no, viewport-fit=cover" ><meta name="generator" content="Jekyll v4.4.1" /><meta property="og:title" content="Recsys 2025 Paper Summary" /><meta name="author" content="Coding Monkey" /><meta property="og:locale" content="en" /><meta name="description" content="In this post, I would like to summary the paper from Recsys 2025 and share some of my learnings. We would cover several topics such as sequence modeling, cross domain learning as well as LLM integration with recommendation system. Here is a full list of papers in this post:" /><meta property="og:description" content="In this post, I would like to summary the paper from Recsys 2025 and share some of my learnings. We would cover several topics such as sequence modeling, cross domain learning as well as LLM integration with recommendation system. Here is a full list of papers in this post:" /><link rel="canonical" href="https://pyemma.github.io/Recsys-2025-Paper-Summary/" /><meta property="og:url" content="https://pyemma.github.io/Recsys-2025-Paper-Summary/" /><meta property="og:site_name" content="Coding Monkey" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2025-11-27T00:00:00-08:00" /><meta name="twitter:card" content="summary" /><meta property="twitter:title" content="Recsys 2025 Paper Summary" /><meta name="twitter:site" content="@" /><meta name="twitter:creator" content="@pyemma" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Coding Monkey","url":"https://github.com/pyemma"},"dateModified":"2025-11-27T00:00:00-08:00","datePublished":"2025-11-27T00:00:00-08:00","description":"In this post, I would like to summary the paper from Recsys 2025 and share some of my learnings. We would cover several topics such as sequence modeling, cross domain learning as well as LLM integration with recommendation system. Here is a full list of papers in this post:","headline":"Recsys 2025 Paper Summary","mainEntityOfPage":{"@type":"WebPage","@id":"https://pyemma.github.io/Recsys-2025-Paper-Summary/"},"url":"https://pyemma.github.io/Recsys-2025-Paper-Summary/"}</script><title>Recsys 2025 Paper Summary | Coding Monkey</title><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="shortcut icon" href="/assets/img/favicons/favicon.ico"><meta name="apple-mobile-web-app-title" content="Coding Monkey"><meta name="application-name" content="Coding Monkey"><meta name="msapplication-TileColor" content="#da532c"><meta name="msapplication-config" content="/assets/img/favicons/browserconfig.xml"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.googleapis.com" ><link rel="dns-prefetch" href="https://fonts.googleapis.com" ><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="dns-prefetch" href="https://fonts.gstatic.com" ><link rel="preconnect" href="https://cdn.jsdelivr.net" ><link rel="dns-prefetch" href="https://cdn.jsdelivr.net" ><link rel="stylesheet" href="/assets/css/jekyll-theme-chirpy.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Source+Sans+Pro:wght@400;600;700;900&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tocbot@4.29.0/dist/tocbot.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/loading-attribute-polyfill@2.1.1/dist/loading-attribute-polyfill.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox@3.3.0/dist/css/glightbox.min.css"> <script type="text/javascript"> class ModeToggle { static get MODE_KEY() { return 'mode'; } static get MODE_ATTR() { return 'data-mode'; } static get DARK_MODE() { return 'dark'; } static get LIGHT_MODE() { return 'light'; } static get ID() { return 'mode-toggle'; } constructor() { let self = this;this.sysDarkPrefers.addEventListener('change', () => { if (self.hasMode) { self.clearMode(); } self.notify(); }); if (!this.hasMode) { return; } if (this.isDarkMode) { this.setDark(); } else { this.setLight(); } } get sysDarkPrefers() { return window.matchMedia('(prefers-color-scheme: dark)'); } get isPreferDark() { return this.sysDarkPrefers.matches; } get isDarkMode() { return this.mode === ModeToggle.DARK_MODE; } get hasMode() { return this.mode != null; } get mode() { return sessionStorage.getItem(ModeToggle.MODE_KEY); }get modeStatus() { if (this.hasMode) { return this.mode; } else { return this.isPreferDark ? ModeToggle.DARK_MODE : ModeToggle.LIGHT_MODE; } } setDark() { document.documentElement.setAttribute(ModeToggle.MODE_ATTR, ModeToggle.DARK_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE); } setLight() { document.documentElement.setAttribute(ModeToggle.MODE_ATTR, ModeToggle.LIGHT_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE); } clearMode() { document.documentElement.removeAttribute(ModeToggle.MODE_ATTR); sessionStorage.removeItem(ModeToggle.MODE_KEY); }notify() { window.postMessage( { direction: ModeToggle.ID, message: this.modeStatus }, '*' ); } flipMode() { if (this.hasMode) { this.clearMode(); } else { if (this.isPreferDark) { this.setLight(); } else { this.setDark(); } } this.notify(); } } const modeToggle = new ModeToggle(); </script><body><aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end"><header class="profile-wrapper"> <a href="/" id="avatar" class="rounded-circle"><img src="/assets/profile.png" width="112" height="112" alt="avatar" onerror="this.style.display='none'"></a><h1 class="site-title"> <a href="/">Coding Monkey</a>
+</h1>
+<p class="site-subtitle fst-italic mb-0">I’m a staff software engineer with rich experience in recommendation system and machine learning infrastructure. I spent my last 8 years in both Big-Tech (Meta &amp; LinkedIn) and startups (Aven), and I’m glad to see if my past experience and learnings could help boost your career growth <br><br> <a href="https://bit.ly/41vi77B"><strong>book a session now</strong></a></p></header><nav class="flex-column flex-grow-1 w-100 ps-0"><ul class="nav">
+<li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home"></i> <span>HOME</span> </a>
+</li>
+<li class="nav-item"> <a href="/categories/" class="nav-link"> <i class="fa-fw fas fa-stream"></i> <span>CATEGORIES</span> </a>
+</li>
+<li class="nav-item"> <a href="/tags/" class="nav-link"> <i class="fa-fw fas fa-tags"></i> <span>TAGS</span> </a>
+</li>
+<li class="nav-item"> <a href="/archives/" class="nav-link"> <i class="fa-fw fas fa-archive"></i> <span>ARCHIVES</span> </a>
+</li>
+<li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle"></i> <span>ABOUT</span> </a>
+</li>
+</ul></nav><div class="sidebar-bottom d-flex flex-wrap align-items-center w-100"> <button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle"> <i class="fas fa-adjust"></i> </button> <span class="icon-border"></span> <a href="https://github.com/pyemma" aria-label="github" target="_blank" rel="noopener noreferrer"> <i class="fab fa-github"></i> </a> <a href="https://twitter.com/" aria-label="twitter" target="_blank" rel="noopener noreferrer"> <i class="fa-brands fa-x-twitter"></i> </a> <a href="javascript:location.href%20=%20'mailto:'%20+%20['pyemma1991','gmail.com'].join('@')" aria-label="email"> <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss"> <i class="fas fa-rss"></i> </a>
+</div></aside><div id="main-wrapper" class="d-flex justify-content-center">
+<div class="container d-flex flex-column px-xxl-5">
+<header id="topbar-wrapper" aria-label="Top Bar"><div id="topbar" class="d-flex align-items-center justify-content-between px-lg-3 h-100">
+<nav id="breadcrumb" aria-label="Breadcrumb"> <span> <a href="/">Home</a> </span> <span>Recsys 2025 Paper Summary</span></nav><button type="button" id="sidebar-trigger" class="btn btn-link"> <i class="fas fa-bars fa-fw"></i> </button><div id="topbar-title"> Post</div>
+<button type="button" id="search-trigger" class="btn btn-link"> <i class="fas fa-search fa-fw"></i> </button> <search id="search" class="align-items-center ms-3 ms-lg-0"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="Search..."> </search> <button type="button" class="btn btn-link text-decoration-none" id="search-cancel">Cancel</button>
+</div></header><div class="row flex-grow-1">
+<main aria-label="Main Content" class="col-12 col-lg-11 col-xl-9 px-md-4"><article class="px-1"><header><h1 data-toc-skip>Recsys 2025 Paper Summary</h1>
+<div class="post-meta text-muted"> <span> Posted <time data-ts="1764230400" data-df="ll" data-bs-toggle="tooltip" data-bs-placement="bottom"> Nov 27, 2025 </time> </span><div class="d-flex justify-content-between"> <span> By <em> <a href="https://github.com/pyemma">Coding Monkey</a> </em> </span><div> <span class="readtime" data-bs-toggle="tooltip" data-bs-placement="bottom" title="3282 words"> <em>18 min</em> read</span>
+</div>
+</div>
+<div style="text-align: right;"> <span> <a href="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fpyemma.github.io%2F&amp;label=&amp;icon=github&amp;color=%23198754&amp;message=&amp;style=flat&amp;tz=UTC" class="popup img-link shimmer"><img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fpyemma.github.io%2F&amp;label=&amp;icon=github&amp;color=%23198754&amp;message=&amp;style=flat&amp;tz=UTC" alt="Views" loading="lazy"></a> </span>
+</div>
+</div></header><div class="content">
+<p>In this post, I would like to summary the paper from Recsys 2025 and share some of my learnings. We would cover several topics such as sequence modeling, cross domain learning as well as LLM integration with recommendation system. Here is a full list of papers in this post:</p>
+<ul>
+<li><a href="https://dl.acm.org/doi/10.1145/3705328.3748076">Beyond Immediate Click: Engagement-Aware and MoE-Enhanced Transformers for Sequential Movie Recommendation</a></li>
+<li><a href="https://dl.acm.org/doi/10.1145/3705328.3748078">LEAF: Lightweight, Efficient, Adaptive and Flexible Embedding for Large-Scale Recommendation Models</a></li>
+<li><a href="https://dl.acm.org/doi/10.1145/3705328.3748127">You Say Search, I Say Recs: A Scalable Agentic Approach to Query Understanding and Exploratory Search at Spotify</a></li>
+<li><a href="https://dl.acm.org/doi/10.1145/3705328.3748048">Lasso: Large Language Model-based User Simulator for Cross-Domain Recommendation</a></li>
+<li><a href="https://dl.acm.org/doi/10.1145/3705328.3748120">Streaming Trends: A Low-Latency Platform for Dynamic Video Grouping and Trending Corpora Building</a></li>
+<li><a href="https://arxiv.org/abs/2508.12665">Multi-Granularity Distribution Modeling for Video Watch Time Prediction via Exponential-Gaussian Mixture Network</a></li>
+<li><a href="https://arxiv.org/abs/2507.06021">Kamae: Bridging Spark and Keras for Seamless ML Preprocessing</a></li>
+<li><a href="https://dl.acm.org/doi/10.1145/3705328.3748132">Generalized User Representations for Large-Scale Recommendations and Downstream Tasks</a></li>
+<li><a href="https://arxiv.org/abs/2507.10097">User Long-Term Multi-Interest Retrieval Model for Recommendation</a></li>
+<li><a href="https://arxiv.org/abs/2510.20260">Balancing Fine-tuning and RAG: A Hybrid Strategy for Dynamic LLM Recommendation Updates</a></li>
+<li><a href="https://dl.acm.org/doi/10.1145/3705328.3748117">Closing the Online-Offline Gap: A Scalable Framework for Composed Model Evaluation</a></li>
+<li><a href="https://dl.acm.org/doi/10.1145/3705328.3748138">Zero-shot Cross-domain Knowledge Distillation: A Case study on YouTube Music</a></li>
+<li><a href="https://arxiv.org/abs/2508.15326">Exploring Scaling Laws of CTR Model for Online Performance Improvement</a></li>
+<li><a href="https://dl.acm.org/doi/10.1145/3705328.3748071">GenSAR: Unifying Balanced Search and Recommendation with Generative Retrieval</a></li>
+<li><a href="https://arxiv.org/abs/2507.12704">PinFM: Foundation Model for User Activity Sequences at a Billion-scale Visual Discovery Platform</a></li>
+</ul>
+<h3 id="sequence-modeling">
+<span class="me-2">Sequence Modeling</span><a href="#sequence-modeling" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h3>
+<h4 id="pinfm-foundation-model-for-user-activity-sequences-at-a-billion-scale-visual-discovery-platform">
+<span class="me-2">PinFM: Foundation Model for User Activity Sequences at a Billion-scale Visual Discovery Platform</span><a href="#pinfm-foundation-model-for-user-activity-sequences-at-a-billion-scale-visual-discovery-platform" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h4>
+<p>One paper from Pinterest introducing their foundation model work. Different from the pervious TransAct series on user sequence modeling, in this work, they also adopted next token prediction as the training objective.</p>
+<ul>
+<li>The input sequence construction is similar to TransAct, including timestamp, action, surface and item id. These sparse feature is converted to dense embeddings and then sum together. They also applied one MLP to transform these inputs before feeding into the transformer blocks.</li>
+<li>The training objective is primarily next token prediction:<ul>
+<li>To mitigate the large vocab size, they adopted InfoNCE loss</li>
+<li>The loss is computed when there is a future positively engaged item</li>
+<li>Adopt multi token prediction to look all positive actions over a future time window</li>
+</ul>
+</li>
+<li>The foundation model is integrated as a <em>preprocessor</em> for the downstream model.</li>
+<li>In this work, they also verified that <em>unidirectional</em> attention is better than <em>bidirectional</em> attention, which callback to pervious Xiaohongshu’s finding.</li>
+<li>One serving optimization is to leverage KV cache to precompute the context part, which is essentially the user’s past history; and then the cached context is retrieved and broadcast to each candidate for cross attention. They mentioned that they implemented some high performance kernel on this using Triton.</li>
+<li>To deal with the super large embedding tables, they adopted TorchRec. During training, the embedding lookup table is distributed to multiple GPU; and during serving, the embedding is compressed via quantization to fit into a disaggregated CPU (similar to parameter server architecture)</li>
+</ul>
+<p><a href="/assets/recsys25-pinfm.png" class="popup img-link shimmer"><img src="/assets/recsys25-pinfm.png" alt="PinFM Serving Architecture" width="500" height="500" loading="lazy"></a></p>
+<p>In my opinion, this paper is the best paper among all papers I have read from Recsys 25. This paper provides lots of details regarding the infrastructure work how the model is trained and served, which would be a great source of reference.</p>
+<h4 id="user-long-term-multi-interest-retrieval-model-for-recommendation">
+<span class="me-2">User Long-Term Multi-Interest Retrieval Model for Recommendation</span><a href="#user-long-term-multi-interest-retrieval-model-for-recommendation" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h4>
+<p>Due to the volume of candidate in the retrieval stage, it is usually relative challenging to add to much complex interactions into the retrieval model, such as transformer block &amp; user long sequence data. This work from Taobao proposed a solution to integrate user long term sequence into retrieval by exploring structured information, which is similar to Meta’s <a href="https://arxiv.org/pdf/2408.06653">Hierarchial Structured Neural Network</a>.</p>
+<ul>
+<li>User sequence data is split into multiple subsequence based on the item category information.</li>
+<li>The training objective is changed to predict the click probability within each interest cluster instead of over the entire candidate pool. The positive sample strictly matches the category of the corresponding subsequence, and the negative sample are randomly draw from teh same category subspace.</li>
+<li>The short term sequence is processed via self-attention module. Besides, the short term sequence is also pooled together as query and perform cross attention with each interest cluster. During training, only one subsequence is activated while during inference multiple subsequences are activated.</li>
+<li>During serving, user’s long &amp; short term sequence is used as input to generate two distributions over the interest clusters. Then the top k category is selected, the item embedding form these categories are pooled together and used as query for ANN.</li>
+</ul>
+<p><a href="/assets/recsys25-taobao.png" class="popup img-link shimmer"><img src="/assets/recsys25-taobao.png" alt="User Long-Term Multi-Interest Retrieval Model for Recommendation" loading="lazy"></a></p>
+<h4 id="exploring-scaling-laws-of-ctr-model-for-online-performance-improvement">
+<span class="me-2">Exploring Scaling Laws of CTR Model for Online Performance Improvement</span><a href="#exploring-scaling-laws-of-ctr-model-for-online-performance-improvement" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h4>
+<p>This work from Meituan proposed a new building block called unified attention block for sequence modeling, which unifies the attention computation between sequential (e.g. item id) and non-sequential (e.g. user profile) features. Similar to Wukong’s work, they stack multiple UAB for scaling and demonstrate great online and offline result. They also open sourced their <a href="https://github.com/laiweijiang/SUAN">code</a>.</p>
+<p>The design of the UAB includes two key components</p>
+<ul>
+<li>
+<strong>Item sequence cross attention with sequential and non-sequential features</strong>. Once features are converted to dense vectors. The sequence feature first do self-attention and get the hidden state (note that candidate is append as the last item in the sequence). Then, this self-attention state is used as query, and non-sequential feature’s dense embeddings are used and key and value. And a cross attention hidden state is computed.</li>
+<li>
+<strong>Alignment through gating strategy</strong>. The cross attention hidden state is pooled over the sequence dimension and then use different up/down project to covert to gating weights. These weights are then product with the self-attention and cross-attention state and fuse them together as final attention state.</li>
+</ul>
+<p><a href="/assets/recsys25-suan.png" class="popup img-link shimmer"><img src="/assets/recsys25-suan.png" alt="Stacked Unified Attention Network" loading="lazy"></a></p>
+<p>During the inference, sparse attention is adopted as one optimization (sliding widow and dilated self attention). The candidate inference also used a special masking to inference in parallel for multiple items.</p>
+<p><a href="/assets/recsys25-suan-mask.png" class="popup img-link shimmer"><img src="/assets/recsys25-suan-mask.png" alt="SUAN Masking" loading="lazy"></a></p>
+<h4 id="beyond-immediate-click-engagement-aware-and-moe-enhanced-transformers-for-sequential-movie-recommendation">
+<span class="me-2">Beyond Immediate Click: Engagement-Aware and MoE-Enhanced Transformers for Sequential Movie Recommendation</span><a href="#beyond-immediate-click-engagement-aware-and-moe-enhanced-transformers-for-sequential-movie-recommendation" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h4>
+<p>One work from Amazon Prime regarding stream recommendation. Some high level points worth to try out</p>
+<ul>
+<li>Based on user’s completion rate to do personalized hard negative sampling (engagement aware).</li>
+<li>Adopted MOE architecture. Each MOE handles one type of user sequence, which is categorized based on recency of the behaviors (a.k.a short/mid/long term). With each MOE, use the transformer encoder to process the sequence. Finally one <strong>attention pooling</strong> is used to compress the hidden state on the sequence dimension (a.k.a learnable project + softmax to compute attention scores).</li>
+<li>Adopted a gating mechanism to merge different MOE’s output. The gating weight is computed based on user features and use softmax to compute the weight.</li>
+<li>Use multi-task learning as the final loss. The completion rate is also introduced as a weight.</li>
+</ul>
+<p><a href="/assets/recsys25-amazon.png" class="popup img-link shimmer"><img src="/assets/recsys25-amazon.png" alt="Beyond Immediate Click: Engagement-Aware and MoE-Enhanced Transformers for Sequential Movie Recommendation" loading="lazy"></a></p>
+<h3 id="classical-recommendation-tasks">
+<span class="me-2">Classical Recommendation Tasks</span><a href="#classical-recommendation-tasks" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h3>
+<h4 id="multi-granularity-distribution-modeling-for-video-watch-time-prediction-via-exponential-gaussian-mixture-network">
+<span class="me-2">Multi-Granularity Distribution Modeling for Video Watch Time Prediction via Exponential-Gaussian Mixture Network</span><a href="#multi-granularity-distribution-modeling-for-video-watch-time-prediction-via-exponential-gaussian-mixture-network" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h4>
+<p>This work from Xiaohongshu proposed a new solution to model the watch time prediction problem.</p>
+<ul>
+<li>Based on the result from data analysis, they model the watch time as a <strong>Exponential Gaussian Mixture</strong> distribution. The exponential part is used to model the quick-skip behavior and the gaussian mixture part is used to model user’s multiple interest.</li>
+<li>To estimate the parameters of EGM, they proposed a <strong>Exponential Gaussian Mixture Network</strong> to learn from training data. The structure of the model is relative straight forward. A backbone model (e.g. DIN, DCNv2) is used to convert input features into a hidden representation. And then the hidden representation is used to generate the parameters for each distribution, as well as generating the gating wights for gaussian mixture.</li>
+<li>The loss function is composed by three parts. The first part is maximum likelihood estimation to fit on the training data; the second part is an entropy maximization to make sure all distribution could be used instead of collapsing; the third part is a regression loss to minimize the actual watch time and the expectation of the estimated EGM parameters.</li>
+</ul>
+<p><a href="/assets/recsys25-xiaohongshu.png" class="popup img-link shimmer"><img src="/assets/recsys25-xiaohongshu.png" alt="Multi-Granularity Distribution Modeling for Video Watch Time Prediction via Exponential-Gaussian Mixture Network" width="400" height="400" loading="lazy"></a></p>
+<p>My learnings from this work is that:</p>
+<ul>
+<li>Know your data, understand your data</li>
+<li>Bake the right assumption into your model, that will help it learns better on your data</li>
+<li>How to estimate distribution using neural network</li>
+</ul>
+<h3 id="cross-domain">
+<span class="me-2">Cross Domain</span><a href="#cross-domain" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h3>
+<h4 id="gensar-unifying-balanced-search-and-recommendation-with-generative-retrieval">
+<span class="me-2">GenSAR: Unifying Balanced Search and Recommendation with Generative Retrieval</span><a href="#gensar-unifying-balanced-search-and-recommendation-with-generative-retrieval" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h4>
+<p>One work from Kuaishou on unifying the search and recommendation and co-train these two domains together. In this approach, we could learn some signal that perviously is not accessible. For example, during the recommendation, maybe we could leverage user’s recent search history to recommend some related items; during search, maybe we could leverage the rich preference signal in recommendation domain to provide better personalized ranking for user.</p>
+<p>One interesting idea is how the semantic ids are trained in this work</p>
+<ul>
+<li>The semantic embeddings from search and collaborative embeddings from recommendation are trained and quantized together.</li>
+<li>The semantic id algorithm adopted is RQ-VAE and a hybrid codebook strategy is used. The semantic embedding and collaborative embedding is first concatenated together, and go through the quantization process via shared codebooks; and then the residual is split and goes through the individual codebooks.</li>
+</ul>
+<p>The remaining part of the work is similar to OneSearch/OneRec (which I plan to have a separate blog for more detailed discussion). User’s behavior is tokenized using the semantic id, and a special token is prepend to instruct the LLM if the task is a next recommendation item, or next search item generation (which is similar to PinRec’s controllable item generation).</p>
+<p><a href="/assets/recsys25-gensar.png" class="popup img-link shimmer"><img src="/assets/recsys25-gensar.png" alt="GenSAR: Unifying Balanced Search and Recommendation with Generative Retrieval" loading="lazy"></a></p>
+<h4 id="zero-shot-cross-domain-knowledge-distillation-a-case-study-on-youtube-music">
+<span class="me-2">Zero-shot Cross-domain Knowledge Distillation: A Case study on YouTube Music</span><a href="#zero-shot-cross-domain-knowledge-distillation-a-case-study-on-youtube-music" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h4>
+<p>One work from Youtube Music regarding cross domain distillation: how they leverage Youtube ranking model to distill and improve YouTube Music ranking model.</p>
+<ul>
+<li>They use the Youtube Ranking model as the teacher model and tries to improve the HomePage ranking and Radio ranking task in Youtube Music domain</li>
+<li>Since Youtube Ranking model has similar task as the HomePage ranking in Youtube Music, they adopted a data augmentation approach that given teacher model’s logits to predict teacher label</li>
+<li>There is no similar task to Radio ranking in teacher model, and thus they added a non-serving task to predict Youtube’s watch next soft label</li>
+</ul>
+<p>The learnings here is some guidance regarding the setup of knowledge distillation based on the property of the tasks.</p>
+<h3 id="infra">
+<span class="me-2">Infra</span><a href="#infra" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h3>
+<h4 id="leaf-lightweight-efficient-adaptive-and-flexible-embedding-for-large-scale-recommendation-models">
+<span class="me-2">LEAF: Lightweight, Efficient, Adaptive and Flexible Embedding for Large-Scale Recommendation Models</span><a href="#leaf-lightweight-efficient-adaptive-and-flexible-embedding-for-large-scale-recommendation-models" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h4>
+<p>Embedding is a common component in recommendation models. It plays a critical role on “memorization” (please refer to wide &amp; deep series of papers). However, in industry scenarios, we usually need to apply hash trick to fit entity ids with extreme cardinality. And hashing collision is unavoidable and could cause some issue on representation learnings.</p>
+<p>In this paper, the authors proposed a new way of hashing these ids:</p>
+<ul>
+<li>Separation of frequent &amp; infrequent features: this is done via an online sketch counting algorithm that process on streamed batch of data. This create the first level of hierarchy and we could use more resources (e.g. embedding tables) to model the frequent features.</li>
+<li>Multi hash functions: multiple hashing functions (in the format of $(a \times x + b) mod c$) are applied and compute multiple embedding indices for the feature. Then the embeddings are pooled together as the final result. Via multiple hashing functions, we are virtually creating a much larger space beyond the cardinality of the original embedding table.</li>
+</ul>
+<p>The idea in this paper is relative simple and I plan to try this out in my project as well.</p>
+<h4 id="streaming-trends-a-low-latency-platform-for-dynamic-video-grouping-and-trending-corpora-building">
+<span class="me-2">Streaming Trends: A Low-Latency Platform for Dynamic Video Grouping and Trending Corpora Building</span><a href="#streaming-trends-a-low-latency-platform-for-dynamic-video-grouping-and-trending-corpora-building" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h4>
+<p>One work from Google discussion about the overall infrastructure design to detect trending videos. I feel this actually could be a pretty good system design problem <img class="emoji" title=":joy_cat:" alt=":joy_cat:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f639.png" height="20" width="20"></p>
+<p>The core part of the system is an online clustering component. Once a video is uploaded, certain feature is extracted from the video and sent to a online graph service. The service would leverage <em>locality sensitive feature hashes</em> to identify potential neighbors, and these neighbors would be passed to model inference service to compute the exact similarity. Based on the computed similarity, the new videos would be merged into existing clusters or create a new clusters. And these information would be leveraged by the trends API to identify trending contents.</p>
+<h4 id="kamae-bridging-spark-and-keras-for-seamless-ml-preprocessing">
+<span class="me-2">Kamae: Bridging Spark and Keras for Seamless ML Preprocessing</span><a href="#kamae-bridging-spark-and-keras-for-seamless-ml-preprocessing" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h4>
+<p>In machine learning, people are usually exciting about different model architecture and feels that is the most cool thing. However, there are also many dirty work which is critical for the performance of the model, and feature preprocessing is one of these dirty works.</p>
+<p>Feature preprocessing is certain feature transformations on training data before they are feed into model. And how to make sure the feature processing is consistent across different stage of your ML development cycle (e.g. training, serving, offline backfill, etc) is challenging due to the heterogenous design and infrastructure.</p>
+<p>In this work from Expedia, they shared an open source project <a href="https://github.com/ExpediaGroup/kamae">Kamae</a>, which is a framework that unify the feature preprocessing in spark and tensorflow. Their high level design is to implement all the preprocessing logic within Keras using Pyspark. User would use these pre-built component to author feature transformation pipeline, and then export the pipeline as Keras model bundle.</p>
+<p>I have worked on a project the is similar to Kamae and evaluated their direction before. However, we didn’t move along this path due to the concerns on the flexibility and maintaining costs.</p>
+<h4 id="generalized-user-representations-for-large-scale-recommendations-and-downstream-tasks">
+<span class="me-2">Generalized User Representations for Large-Scale Recommendations and Downstream Tasks</span><a href="#generalized-user-representations-for-large-scale-recommendations-and-downstream-tasks" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h4>
+<p>One paper from Spotify on user profiling embedding training. The overall solution is similar to the SUM work from Meta.</p>
+<ul>
+<li>Audio track data is encoded to dense embeddings as well as the collaborative features such as playlist co-occurrence. The paper does not provide too much details on the collaborative feature encoders, my guess is that this is just the sparse feature embeddings used in traditional recsys models.</li>
+<li>The embeddings are versioned on the time dimension into different granularity (1 week, 1 month, 6 months etc) and they are concatenated together. This helps improve the stability of the embeddings learnt, as well as providing richer information in longer time span.</li>
+<li>User features are then concatenated together with the dense embeddings. And is feed into an autoencoder for training. The hidden state generated by the encoder is used as the user profiling embeddings for downstream tasks.</li>
+<li>The embedding update is triggered via event and computed in nearline.</li>
+</ul>
+<p><a href="/assets/recsys25-spotify-user-emb.png" class="popup img-link shimmer"><img src="/assets/recsys25-spotify-user-emb.png" alt="Generalized User Representations for Large-Scale Recommendations and Downstream Tasks" loading="lazy"></a></p>
+<h4 id="closing-the-online-offline-gap-a-scalable-framework-for-composed-model-evaluation">
+<span class="me-2">Closing the Online-Offline Gap: A Scalable Framework for Composed Model Evaluation</span><a href="#closing-the-online-offline-gap-a-scalable-framework-for-composed-model-evaluation" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h4>
+<p>Online offline consistency is a headache for many machine learning engineers even there is no bugs. One reason is that during offline evaluation we usually only look at a single eval metric on a single model (e.g. NE or AUC); while in online multiple model is working together to compose the final scores.</p>
+<p>In this paper from Meta, the author proposed to build a “simulated” online inference environment in offline so that they could replay the traffic in offline. During online inference, they log all model scores and PCT configuration; and in the offline, they reimplemented the PCT evaluation logic and recompute the scores based on newly inferred or logged model scores.</p>
+<p>The solution sounds pretty straightforward, but there are probably lots of engineering challenging even though the short paper does not provide too much details. For example, how to make sure the online/offline implementation is exact same (even on the deployed artifacts); how to guarantee the offline execution could be effect (batch vs request), etc.</p>
+<h3 id="llm">
+<span class="me-2">LLM</span><a href="#llm" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h3>
+<h4 id="you-say-search-i-say-recs-a-scalable-agentic-approach-to-query-understanding-and-exploratory-search-at-spotify">
+<span class="me-2">You Say Search, I Say Recs: A Scalable Agentic Approach to Query Understanding and Exploratory Search at Spotify</span><a href="#you-say-search-i-say-recs-a-scalable-agentic-approach-to-query-understanding-and-exploratory-search-at-spotify" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h4>
+<p>One work from Spotify on how to leverage LLM to better understand user query and route them to the best tools/service. Some high level points:</p>
+<ul>
+<li>Leverage caching on the common queries to scale the system</li>
+<li>Adopted teacher model to generate synthesized training data and combined with rejected sampling finetune to distillation knowledge into smaller model</li>
+<li>Leverage LLM-as-a-judge to evaluate the result</li>
+</ul>
+<h4 id="lasso-large-language-model-based-user-simulator-for-cross-domain-recommendation">
+<span class="me-2">Lasso: Large Language Model-based User Simulator for Cross-Domain Recommendation</span><a href="#lasso-large-language-model-based-user-simulator-for-cross-domain-recommendation" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h4>
+<p>This is one very interesting work from Kuaishou, where they leverage LLM for the cross domain recommendation problem. In cross domain problem, the target domain usually suffers from data sparsity problem and thus we learn from the information rich source domain and transform the hidden knowledge that could be shared with the target domain.</p>
+<p>In this work, LLM is used as simulated users to generate the potential interaction for the target domain</p>
+<ul>
+<li>LLM is first finetuned on the user behavior data from the overlapped user between target and source domain (LORA is adopted for this stage). The LLM is prompted to output <em>yes</em> or <em>no</em> given user’s behavior sequence in source domain and the candidate to evaluate in target domain.</li>
+<li>Certain strategy is used to make sure the LLM could simulate reasonable interactions in target domain. The first one is to limit the candidate to generate action: for each user, a candidate pool is generated through collaborative filtering (user similarity is computed and the top k users’ interaction candidate is pooled together). Another one is to also output the probability of the <em>yes</em> and <em>no</em> decision, which is used as a confidence score used by downstream task to filter the synthesized samples for training.</li>
+</ul>
+<p>In my opinion, this is a very interesting and exciting direction. I have been thinking about if LLM simulation could be used for building RL environment for recommendation system as well. This could be a game changer for the future of how we train recommendation models.</p>
+<h4 id="balancing-fine-tuning-and-rag-a-hybrid-strategy-for-dynamic-llm-recommendation-updates">
+<span class="me-2">Balancing Fine-tuning and RAG: A Hybrid Strategy for Dynamic LLM Recommendation Updates</span><a href="#balancing-fine-tuning-and-rag-a-hybrid-strategy-for-dynamic-llm-recommendation-updates" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h4>
+<p>LLM is powerful and there are lots of work has demonstrated that integrating LLM into recommendation boosts the performance. However, there are still lots of engineer challenges in real world. And how to make sure LLM could consume and adapt user’s latest behavior is one of such challenges.</p>
+<p>In this work, researches from Google proposed one solution to trade off between the quality and infra cost to maintain LLM is refreshed and could capture user’s latest interest</p>
+<ul>
+<li>In the setup, they use LLM to predict user’s interest for next watch. Also they leveraged semantic id of the interest cluster so that they could apply generative recommendation.</li>
+<li>By computing the jaccord similarity based on the interest sequence from users, they find that the interest cluster is relative stable month by month. Thus they adopted monthly fine tuning on their model.</li>
+<li>To better leverage the dynamic information (e.g. hourly trending) on the platform, they use realtime analysis on user’s watch history, and use these as part of the RAG context in LLM prompt</li>
+</ul>
+<h3 id="additional-one-liner">
+<span class="me-2">Additional One Liner</span><a href="#additional-one-liner" class="anchor text-muted"><i class="fas fa-hashtag"></i></a>
+</h3>
+<ul>
+<li>
+<a href="https://dl.acm.org/doi/10.1145/3705328.3748023">Collaborative Interest Modeling in Recommender Systems</a>: Using transformer + routing matrix to learn multi-interest embeddings from user’s sequence data. Also leveraged neighborhood information to augment the multi-interest embeddings.</li>
+<li>
+<a href="https://arxiv.org/abs/2507.09423">Item-centric Exploration for Cold Start Problem</a>: Use beta distribution to maintain a satisfaction distribution for each item and update the distribution based on the new positive and impression. For new item retrieved, filter it out from the result if model’s prediction is beyond certain confidence interval.</li>
+<li>
+<a href="https://dl.acm.org/doi/10.1145/3705328.3748104">Never Miss an Episode: How LLMs are Powering Serial Content Discovery on YouTube</a>: Leverage LLM + few shot prompt to evaluate if the video within a playlist should be watched in certain orders. One interesting finding from this paper is that injecting reasoning or personality into the prompt hurts the quality of the result.</li>
+<li>
+<a href="https://arxiv.org/abs/2403.13574">Enhancing Sequential Recommender with Large Language Models for Joint Video and Comment Recommendation</a>: Use comment data as augmentation to jointly train with video data. A good reference for multiple embeddings and alignments (e.g. text &lt;-&gt; id embedding, video caption &lt;-&gt; comment) are adopted during the training.</li>
+<li>
+<a href="https://dl.acm.org/doi/10.1145/3705328.3748101">Enhancing Online Ranking Systems via Multi-Surface Co-Training for Content Understanding</a>: Use the pre-trained content embedding + content tower and ranking model’s feature excluding id features to train on different tasks. The content tower is exported as the embedding generation model.</li>
+</ul>
+<blockquote class="prompt-tip"><p>If you find this post helpful, feel free to scan the QR code below to support me and treat me to a cup of coffee</p></blockquote>
+<p><a href="/assets/qr%20code.png" class="popup img-link shimmer"><img src="/assets/qr%20code.png" alt="Thank You" width="300" height="300" loading="lazy"></a></p>
+</div>
+<div class="post-tail-wrapper text-muted">
+<div class="post-meta mb-3"> <i class="far fa-folder-open fa-fw me-1"></i> <a href="/categories/machine-learning/">Machine Learning</a>
+</div>
+<div class="post-tags"> <i class="fa fa-tags fa-fw me-1"></i> <a href="/tags/machine-learning-design/" class="post-tag no-text-decoration">machine-learning-design</a> <a href="/tags/recommendation-system/" class="post-tag no-text-decoration">recommendation-system</a> <a href="/tags/user-sequence-modeling/" class="post-tag no-text-decoration">user-sequence-modeling</a> <a href="/tags/llm4rec/" class="post-tag no-text-decoration">llm4rec</a>
+</div>
+<div class=" post-tail-bottom d-flex justify-content-between align-items-center mt-5 pb-2 ">
+<div class="license-wrapper"> This post is licensed under <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> by the author.</div>
+<div class="share-wrapper d-flex align-items-center"> <span class="share-label text-muted">Share</span> <span class="share-icons"> <a href="https://twitter.com/intent/tweet?text=Recsys%202025%20Paper%20Summary%20-%20Coding%20Monkey&amp;url=https%3A%2F%2Fpyemma.github.io%2FRecsys-2025-Paper-Summary%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Twitter" aria-label="Twitter"> <i class="fa-fw fa-brands fa-square-x-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=Recsys%202025%20Paper%20Summary%20-%20Coding%20Monkey&amp;u=https%3A%2F%2Fpyemma.github.io%2FRecsys-2025-Paper-Summary%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Facebook" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=https%3A%2F%2Fpyemma.github.io%2FRecsys-2025-Paper-Summary%2F&amp;text=Recsys%202025%20Paper%20Summary%20-%20Coding%20Monkey" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Telegram" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <button id="copy-link" aria-label="Copy link" class="btn small" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy link" data-title-succeed="Link copied successfully!"> <i class="fa-fw fas fa-link pe-none fs-6"></i> </button> </span>
+</div>
+</div>
+</div></article></main><aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 mb-5 text-muted"><div class="access">
+<section id="access-lastmod"><h2 class="panel-heading">Recently Updated</h2>
+<ul class="content list-unstyled ps-0 pb-1 ms-1 mt-2">
+<li class="text-truncate lh-lg"> <a href="/Recsys-2025-Paper-Summary/">Recsys 2025 Paper Summary</a>
+</li>
+<li class="text-truncate lh-lg"> <a href="/KDD-2025-Paper-Summary/">KDD 2025 Paper Summary</a>
+</li>
+<li class="text-truncate lh-lg"> <a href="/Book-PyTorch-Training-Optimization/">PyTorch 性能与显存优化手册</a>
+</li>
+<li class="text-truncate lh-lg"> <a href="/Long-User-Sequence-Modeling-In-Recsys/">Recommendation System - Long User Sequence Modeling</a>
+</li>
+<li class="text-truncate lh-lg"> <a href="/Machine-Learning-System-Design-Sparse-Features/">Trend of Sparse Features in Recommendation System</a>
+</li>
+</ul></section><section><h2 class="panel-heading">Trending Tags</h2>
+<div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/tags/machine-learning-design/">machine learning design</a> <a class="post-tag btn btn-outline-primary" href="/tags/recommendation-system/">recommendation-system</a> <a class="post-tag btn btn-outline-primary" href="/tags/system-design/">system design</a> <a class="post-tag btn btn-outline-primary" href="/tags/user-sequence-modeling/">user-sequence-modeling</a> <a class="post-tag btn btn-outline-primary" href="/tags/distributed-system/">distributed system</a> <a class="post-tag btn btn-outline-primary" href="/tags/embeddings/">embeddings</a> <a class="post-tag btn btn-outline-primary" href="/tags/llm4rec/">llm4rec</a> <a class="post-tag btn btn-outline-primary" href="/tags/llm/">llm</a> <a class="post-tag btn btn-outline-primary" href="/tags/machine-learning-design/">machine-learning-design</a> <a class="post-tag btn btn-outline-primary" href="/tags/message-queue/">message queue</a>
+</div></section>
+</div>
+<section id="toc-wrapper" class="d-none ps-0 pe-4"><h2 class="panel-heading ps-3 mb-2">Contents</h2>
+<nav id="toc"></nav></section></aside>
+</div>
+<div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 px-md-4">
+<aside id="related-posts" aria-labelledby="related-label"><h3 class="mb-4" id="related-label">Further Reading</h3>
+<nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4"><article class="col"> <a href="/KDD-2025-Paper-Summary/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1760684400" data-df="ll"> Oct 17, 2025 </time><h4 class="pt-0 my-2">KDD 2025 Paper Summary</h4>
+<div class="text-muted"><p>It has been a while since KDD 2025, finally I have had sometime to finish reading all papers that I interested in and summarize some of my learnings in this post <img class="emoji" title=":sweat_smile:" alt=":sweat_smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f605.png" height="20" width="20">. My primary focus is ...</p></div>
+</div></a></article><article class="col"> <a href="/Long-User-Sequence-Modeling-In-Recsys/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1751094000" data-df="ll"> Jun 28, 2025 </time><h4 class="pt-0 my-2">Recommendation System - Long User Sequence Modeling</h4>
+<div class="text-muted"><p>User sequence modeling has been a hot topic recently in recommendation system thanks to the advancement of transformer architecture and more powerful hardware. In this blog, I would like to have a ...</p></div>
+</div></a></article><article class="col"> <a href="/Recsys-Paper-Review-2025-Q1/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1745046000" data-df="ll"> Apr 19, 2025 </time><h4 class="pt-0 my-2">Recsys Paper Summary 2025 Q1</h4>
+<div class="text-muted"><p>In this post, I would like to provide a simple summary on the papers I have read in the first quarter of 2025 and discuss some of my thoughts on recent trend regarding recommendation system. Here i...</p></div>
+</div></a></article></nav></aside><nav class="post-navigation d-flex justify-content-between" aria-label="Post Navigation"> <a href="/KDD-2025-Paper-Summary/" class="btn btn-outline-primary" aria-label="Older"><p>KDD 2025 Paper Summary</p></a><div class="btn btn-outline-primary disabled" aria-label="Newer"><p>-</p></div></nav><div id="disqus_thread"><p class="text-center text-muted small">Comments powered by <a href="https://disqus.com/">Disqus</a>.</p></div>
+<script type="text/javascript"> var disqus_config = function () { this.page.url = 'https://pyemma.github.io/Recsys-2025-Paper-Summary/'; this.page.identifier = '/Recsys-2025-Paper-Summary/'; };var disqus_observer = new IntersectionObserver( function (entries) { if (entries[0].isIntersecting) { (function () { var d = document, s = d.createElement('script'); s.src = 'https://pyemma.disqus.com/embed.js'; s.setAttribute('data-timestamp', +new Date()); (d.head || d.body).appendChild(s); })(); disqus_observer.disconnect(); } }, { threshold: [0] } ); disqus_observer.observe(document.getElementById('disqus_thread'));function reloadDisqus() { if (event.source === window && event.data && event.data.direction === ModeToggle.ID) {if (typeof DISQUS === 'undefined') { return; } if (document.readyState == 'complete') { DISQUS.reset({ reload: true, config: disqus_config }); } } } if (document.getElementById('mode-toggle')) { window.addEventListener('message', reloadDisqus); } </script><footer aria-label="Site Info" class=" d-flex flex-column justify-content-center text-muted flex-lg-row justify-content-lg-between align-items-lg-center pb-lg-3 "><p>© <time>2025</time> <a href="https://github.com/pyemma">Coding Monkey</a>. <span data-bs-toggle="tooltip" data-bs-placement="top" title="Except where otherwise noted, the blog posts on this site are licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License by the author.">Some rights reserved.</span></p>
+<p>Using the <a data-bs-toggle="tooltip" data-bs-placement="top" title="v7.1.1" href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener">Chirpy</a> theme for <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a>.</p></footer>
+</div></div>
+<div id="search-result-wrapper" class="d-flex justify-content-center d-none"><div class="col-11 content">
+<div id="search-hints"><section><h2 class="panel-heading">Trending Tags</h2>
+<div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/tags/machine-learning-design/">machine learning design</a> <a class="post-tag btn btn-outline-primary" href="/tags/recommendation-system/">recommendation-system</a> <a class="post-tag btn btn-outline-primary" href="/tags/system-design/">system design</a> <a class="post-tag btn btn-outline-primary" href="/tags/user-sequence-modeling/">user-sequence-modeling</a> <a class="post-tag btn btn-outline-primary" href="/tags/distributed-system/">distributed system</a> <a class="post-tag btn btn-outline-primary" href="/tags/embeddings/">embeddings</a> <a class="post-tag btn btn-outline-primary" href="/tags/llm4rec/">llm4rec</a> <a class="post-tag btn btn-outline-primary" href="/tags/llm/">llm</a> <a class="post-tag btn btn-outline-primary" href="/tags/machine-learning-design/">machine-learning-design</a> <a class="post-tag btn btn-outline-primary" href="/tags/message-queue/">message queue</a>
+</div></section></div>
+<div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div>
+</div></div>
+</div>
+<aside aria-label="Scroll to Top"> <button id="back-to-top" type="button" class="btn btn-lg btn-box-shadow"> <i class="fas fa-angle-up"></i> </button></aside>
+</div><div id="mask"></div><aside id="notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-animation="true" data-bs-autohide="false"><div class="toast-header"> <button type="button" class="btn-close ms-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+</div>
+<div class="toast-body text-center pt-0">
+<p class="px-2 mb-3">A new version of content is available.</p>
+<button type="button" class="btn btn-primary" aria-label="Update"> Update </button>
+</div></aside><script src="https://cdn.jsdelivr.net/combine/npm/simple-jekyll-search@1.10.0/dest/simple-jekyll-search.min.js,npm/loading-attribute-polyfill@2.1.1/dist/loading-attribute-polyfill.umd.min.js,npm/glightbox@3.3.0/dist/js/glightbox.min.js,npm/clipboard@2.0.11/dist/clipboard.min.js,npm/dayjs@1.11.13/dayjs.min.js,npm/dayjs@1.11.13/locale/en.js,npm/dayjs@1.11.13/plugin/relativeTime.js,npm/dayjs@1.11.13/plugin/localizedFormat.js,npm/tocbot@4.29.0/dist/tocbot.min.js"></script> <script src="/assets/js/dist/post.min.js"></script> <script src="/assets/js/data/mathjax.js"></script> <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script> <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js"></script> <script defer src="/app.min.js?baseurl=&amp;register=true"></script> <script defer src="https://www.googletagmanager.com/gtag/js?id=G-M1GM2SJR6M"></script> <script> document.addEventListener('DOMContentLoaded', function (event) { window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-M1GM2SJR6M'); }); </script> <script>SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<article class="px-1 px-sm-2 px-lg-4 px-xl-0"><header><h2><a href="{url}">{title}</a></h2><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div></header><p>{snippet}</p></article>', noResultsText: '<p class="mt-5">Oops! No results found.</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="me-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); </script>
