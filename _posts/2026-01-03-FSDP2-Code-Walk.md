@@ -537,6 +537,11 @@ FSDP2 represents a significant evolution in PyTorch's distributed training capab
 - **Composability**: Clean integration with other PyTorch features like mixed precision and activation checkpointing
 - **Flexibility**: Support for hybrid parallelism (FSDP + TP) and various memory allocation strategies
 
+> If you find this post helpful, feel free to scan the QR code below to support me and treat me to a cup of coffee
+{: .prompt-tip }
+
+![Thank You](/assets/qr%20code.png){: width="300" height="300" }
+
 ## References
 
 1. [PyTorch FSDP Documentation](https://pytorch.org/docs/stable/fsdp.html)
