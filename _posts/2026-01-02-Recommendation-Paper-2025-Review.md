@@ -36,6 +36,11 @@ In physics, there is *Grand Unified Theory* that tries to unify gravity, electro
 
 Having a *Foundation Model* has several benefits, such as reduced maintenance complexity, better generalizability due to larger volume of data and better task performance (if done correctly). *Foundation Model* is usually several billion in terms number of parameters which makes them pretty expensive to inference in online. A common strategy is to use them as *information compressor* to pre-compute the embedding which would be used for downstream models; another one is to use the knowledge distillation (offline or online) to transfer knowledge to student models. *Meta Lattice* and *External Large Foundation Model* work from Meta Ads are good examples.
 
+> If you find this post helpful, feel free to scan the QR code below to support me and treat me to a cup of coffee
+{: .prompt-tip }
+
+![Thank You](/assets/qr%20code.png){: width="300" height="300" }
+
 ### Reference
 
 - [OneRec](https://arxiv.org/abs/2502.18965)
