@@ -15,6 +15,8 @@ The five papers covered are: **GLASS** (Kuaishou), **Generative Reasoning Re-ran
 
 ## GLASS: Long-Sequence Modeling via SID-Tier and Semantic Search
 
+Paper: [https://arxiv.org/pdf/2602.05663](https://arxiv.org/pdf/2602.05663)) 
+
 This Kuaishou paper centers on a key insight: the **hierarchical structure of semantic IDs** is an under-exploited resource, particularly the first-level SID token $\text{SID}_1$ and its corresponding codebook $\text{codebook}_1$. GLASS leverages this hierarchy in two ways — compressing long-term user sequences into a compact representation, and guiding the SID decoding process through semantic search.
 
 ![GLASS](/assets/glass.png)
@@ -52,6 +54,8 @@ When the long sequence is short or the codebook is large, the SID-based retrieva
 The ablation study reveals that GLASS achieves larger improvements on the Taobao dataset than on KuaiRec. The authors attribute this to the fact that Taobao embeddings were generated through **supervised contrastive learning**, which produces higher-quality representations — a reminder that SID quality is fundamentally bounded by the quality of the input embeddings.
 
 ## Generative Reasoning Re-ranker
+
+Paper: [https://arxiv.org/pdf/2602.07774](https://arxiv.org/pdf/2602.07774)
 
 This Meta paper explores using generative models with semantic IDs for **re-ranking**, incorporating chain-of-thought reasoning into the generation process. The work has been evaluated on Amazon datasets but does not report production deployment results.
 
@@ -96,6 +100,8 @@ The RL stage uses **DAPO** (Dynamic Advantage Policy Optimization), which is sim
 The reward signal comes from the **prompted distance** in the re-ranker, supplemented by a **format reward** to ensure structural compliance of the output.
 
 ## QARM V2: Multi-Modal Recommendation with Improved Embeddings and SID Quantization
+
+Paper: [https://arxiv.org/pdf/2602.08559](https://arxiv.org/pdf/2602.08559)
 
 This Kuaishou paper tackles two interconnected problems in generative recommendation: (1) how to make LLMs better embedding generators for recommendation tasks, and (2) how to reduce SID collisions through improved quantization strategies.
 
@@ -145,6 +151,8 @@ Even with RQ-KMeans + FSQ, the collision rate remains at **32%** — a sobering 
 
 ## OneLive: Generative Framework for Live-Streaming Recommendation
 
+Paper: [https://arxiv.org/pdf/2602.08612](https://arxiv.org/pdf/2602.08612)
+
 This Kuaishou paper extends the generative recommendation paradigm to **live-streaming** scenarios. Live streaming poses unique challenges: content within a single stream changes rapidly, user behavior shifts accordingly, and the strong timeliness of live content demands real-time semantic understanding.
 
 ![OneLive](/assets/onelive.png)
@@ -181,6 +189,8 @@ A **ranking model** serves as the reward model for RL training. The paper compar
 An interesting engineering note: RL is integrated into the **offline stream training** pipeline. This raises practical questions about implementation — for instance, how to combine VERL with FSDP-based model backends for efficient distributed RL training.
 
 ## End-to-End Semantic ID Generation for Generative Advertisement Recommendation
+
+Paper: [https://www.arxiv.org/pdf/2602.10445](https://www.arxiv.org/pdf/2602.10445)
 
 This Tencent paper challenges the conventional two-stage SID pipeline (first generate embeddings, then quantize via RQ-VAE). Instead, it proposes **fine-tuning an MLLM to directly generate SID tokens** from multi-modal inputs in a single end-to-end framework.
 
